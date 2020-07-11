@@ -35,7 +35,19 @@ public class CommonResult<T> {
      * @return com.czj.common.CommonResult<T>
      */
     public static <T> CommonResult<T> success(){
-        return success(null);
+        return success(ResultCode.SUCCESS.getMessage());
+    }
+
+
+    /**
+     * @author czj
+     * 返回成功自定义响应信息，无数据
+     * @date 2020/6/6 22:16
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
+     */
+    public static <T> CommonResult<T> success(String message){
+        return success(null,message);
     }
     /**
      * @author czj
@@ -70,6 +82,17 @@ public class CommonResult<T> {
     public static <T> CommonResult<T> failed(){
         return failed(null);
     }
+
+    /**
+     * @author czj
+     * 返回失败自定义响应信息，无数据
+     * @date 2020/6/6 22:19
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
+     */
+    public static <T> CommonResult<T> failed(String message){
+        return failed(null,message);
+    }
     /**
      * @author czj
      * 返回失败通用响应数据
@@ -80,6 +103,20 @@ public class CommonResult<T> {
     public static <T> CommonResult<T> failed(T data){
         return new CommonResult<>(ResultCode.FAILED,data);
     }
+
+    /**
+     * @author czj
+     * 返回失败通用响应数据
+     * @date 2020/6/6 22:19
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
+     */
+    public static <T> CommonResult<T> failed(T data,String message){
+        return new CommonResult<>(ResultCode.FAILED.getCode(),data,message);
+    }
+
+
+
 
     public int getCode() {
         return code;

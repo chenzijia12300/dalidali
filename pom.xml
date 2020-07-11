@@ -6,6 +6,7 @@
     <modules>
         <module>common</module>
         <module>user</module>
+        <module>video</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
