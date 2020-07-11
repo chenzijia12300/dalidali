@@ -3,6 +3,7 @@ package pers.czj.entity;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 创建在 2020/7/10 15:42
@@ -67,5 +68,15 @@ public class User implements Serializable {
      */
     private long coinNum;
 
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
 }
