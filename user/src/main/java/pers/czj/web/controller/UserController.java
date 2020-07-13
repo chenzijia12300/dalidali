@@ -2,7 +2,6 @@ package pers.czj.web.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.hibernate.validator.constraints.Length;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.dto.LoginUserInputDto;
 import pers.czj.dto.RegisterUserInputDto;
-import pers.czj.entity.User;
+import pers.czj.common.User;
 import pers.czj.exception.UserException;
 import pers.czj.service.UserService;
 

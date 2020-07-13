@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import pers.czj.entity.User;
+import pers.czj.common.User;
 import pers.czj.exception.UserException;
 import pers.czj.mapper.UserMapper;
 import pers.czj.service.UserService;

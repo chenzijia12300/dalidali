@@ -1,6 +1,6 @@
-package pers.czj.entity;
+package pers.czj.dto;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
@@ -8,11 +8,11 @@ import pers.czj.constant.VideoResolutionEnum;
 import java.util.Date;
 
 /**
- * 创建在 2020/7/11 19:40
- * 视频对象(项目重点啊)
+ * 创建在 2020/7/13 18:19
  */
 @Data
-public class Video {
+@ApiModel("视频详细信息传输输出类")
+public class VideoDetailsOutputDto {
 
     /**
      * 视频自增主键
@@ -40,11 +40,6 @@ public class Video {
     private long commentNum;
 
     /**
-     * 视频时长（秒为单位）
-     */
-    private long length;
-
-    /**
      * 视频点赞量
      */
     private long praiseNum;
@@ -65,20 +60,25 @@ public class Video {
     private long categoryId;
 
     /**
-     * 预览图片
+     * up主头像
      */
-    private String previewUrl;
+    private String upImg;
 
-/*    *//**
+    /**
+     * up主名字
+     */
+    private String upName;
+
+
+    /**
      *  视频的顶级频道（冗余）
-     *//*
+     */
     private String categoryPName;
 
-    *//**
+    /**
      * 视频所属频道（冗余）
-     *//*
-    private String categoryName;*/
-
+     */
+    private String categoryName;
 
     /**
      * 视频标题
@@ -105,18 +105,11 @@ public class Video {
      */
     private VideoResolutionEnum resolutionState;
 
-    /**
-     * 视频发布状态
-     */
-    private VideoPublishStateEnum publishState;
-
-    /**
-     * 视频创建时间
-     */
-    private Date createTime;
 
     /**
      * 视频更改时间
      */
     private Date updateTime;
+
+
 }

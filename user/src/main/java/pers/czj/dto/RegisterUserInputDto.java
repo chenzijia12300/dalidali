@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.BeanUtils;
-import pers.czj.entity.User;
+import pers.czj.common.User;
 
 import javax.validation.constraints.Email;
 

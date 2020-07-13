@@ -6,15 +6,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.dto.CategoryOutputDto;
+import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Category;
 import pers.czj.exception.CategoryException;
+import pers.czj.exception.VideoException;
 import pers.czj.service.CategoryService;
+import pers.czj.service.VideoService;
 
 import java.util.List;
 
@@ -30,6 +30,8 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private VideoService videoService;
 
     @PostMapping("/category")
     @ApiOperation("添加视频分类")
@@ -48,5 +50,12 @@ public class CategoryController {
     public CommonResult listCategory() throws CategoryException {
         List<CategoryOutputDto> categoryOutputDtos = categoryService.listCategory();
         return CommonResult.success(categoryOutputDtos);
+    }
+
+    @GetMapping("/category/random/{pid}")
+    @ApiOperation("获得顶级频道随机视频列表")
+    public CommonResult listRandomByPId(@PathVariable("pid") long pid) throws VideoException {
+        List<VideoDetailsOutputDto> list = videoService.listRandomByCategoryPId(pid);
+        return CommonResult.success(list);
     }
 }
