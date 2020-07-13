@@ -1,7 +1,7 @@
 package pers.czj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import pers.czj.entity.User;
+import pers.czj.common.User;
 import pers.czj.exception.UserException;
 
 /**

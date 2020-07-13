@@ -12,3 +12,14 @@ logging:
   level:
     root: ERROR
     pers.czj: DEBUG
+
+
+tencent:
+  secretId: AKIDsc7LI28nSs65IFOiGfnmDOHtTmoYqRaR
+  secretKey: kTv60fMnxqkNjkUryoNxKVQuNZU8nCRP
+  bucket: ap-shenzhen-fsi
+  bucket-name: dalidali-1259389037
+
+
+mybatis-plus:
+  type-enums-package: pers.czj.constant

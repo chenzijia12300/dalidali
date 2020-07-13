@@ -1,4 +1,4 @@
-package pers.czj.entity;
+package pers.czj.common;
 
 import lombok.Data;
 

@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler(CategoryException.class)
+    @ExceptionHandler({CategoryException.class,VideoException.class})
     public CommonResult handler(Exception e){
         log.info("抛出异常：{}",e.getMessage());
         return CommonResult.failed(e.getMessage());
