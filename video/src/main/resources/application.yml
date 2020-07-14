@@ -15,9 +15,9 @@ logging:
 
 
 tencent:
-  secretId: AKIDsc7LI28nSs65IFOiGfnmDOHtTmoYqRaR
-  secretKey: kTv60fMnxqkNjkUryoNxKVQuNZU8nCRP
-  bucket: ap-shenzhen-fsi
+  secretId: 别看啦
+  secretKey: 别看啦
+  bucket: 别看啦
   bucket-name: dalidali-1259389037
 
 
