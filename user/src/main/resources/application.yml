@@ -11,3 +11,9 @@ logging:
   level:
     root: ERROR
     pers.czj: DEBUG
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8100/eureka/
+server:
+  port: 8080

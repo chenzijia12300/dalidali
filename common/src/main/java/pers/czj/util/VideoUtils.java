@@ -51,6 +51,7 @@ public class VideoUtils {
             map.forEach((key,value)->{
                 log.debug("key:{},value:{}",key,value);
             });
+            return map;
         } catch (IOException e) {
             log.error("处理视频信息出现错误：{}",e.getMessage());
             e.printStackTrace();

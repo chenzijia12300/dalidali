@@ -34,6 +34,7 @@ public class UserController {
         log.info("account:{}\tpassword:{}",inputDto.getAccount(),inputDto.getPassword());
         User user = userService.login(inputDto.getAccount(),inputDto.getPassword());
         httpSession.setAttribute("USER",user);
+        log.debug("sessionID:{}",httpSession.getId());
         return CommonResult.success(user);
     }
 
