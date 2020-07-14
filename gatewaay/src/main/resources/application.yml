@@ -1,0 +1,25 @@
+server:
+  port: 8111
+spring:
+  application:
+    name: dalidali-gateway
+  redis:
+    password: chenzijia12300
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8100/eureka
+zuul:
+  routes:
+    user-api:
+      path: /userservice/**
+      service-id: dalidali-user
+      sensitive-headers: "*"
+      custom-sensitive-headers: true
+    video-api:
+      path: /videoservice/**
+      service-id: dalidali-video
+      sensitive-headers: "*"
+      custom-sensitive-headers: true
+
+  sensitive-headers: "*"

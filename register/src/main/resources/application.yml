@@ -1,0 +1,39 @@
+spring:
+  application:
+    #应用程序名
+    name: dalidali-register
+  security:
+    basic:
+      enabled: false
+server:
+  port: 8100
+eureka:
+  instance:
+    #注册中心地址
+    hostname: 127.0.0.1
+  client:
+    service-url:
+      #客户端调用地址
+      defaultZone: http://${eureka.instance.hostname}:8100/eureka/
+    #是否将自己注册到eureka中
+    register-with-eureka: false
+    #是否从注册中心中获得信息
+    fetch-registry: false
+
+---
+spring:
+  profiles: eureka-node2
+server:
+  port: 8101
+eureka:
+  instance:
+    #注册中心地址
+    hostname: 127.0.0.1
+  client:
+    service-url:
+      #客户端调用地址
+      defaultZone: http://${eureka.instance.hostname}:8100/eureka/
+    #是否将自己注册到eureka中
+    register-with-eureka: true
+    #是否从注册中心中获得信息
+    fetch-registry: true
