@@ -51,9 +51,9 @@ public class VideoController {
     public CommonResult addVideo(HttpSession httpSession,@RequestBody @Validated VideoInputDto dto) throws VideoException {
         Video video = dto.convert();
         log.debug("sessionID:{}",httpSession.getId());
-        User user = (User) httpSession.getAttribute("USER");
+        long userId = (long) httpSession.getAttribute("USER_ID");
         Map<String,String> videoInfoMap = (Map<String, String>) httpSession.getAttribute("VIDEO_INFO");
-        video.setUid(user.getId());
+        video.setUid(userId);
         boolean flag = videoService.save(video);
         if (!flag){
             throw new VideoException("添加视频失败，请重试尝试");
@@ -76,9 +76,12 @@ public class VideoController {
             httpSession.invalidate();
             throw new UserException("请重新登录！");
         }*/
+        String filename = file.getOriginalFilename();
+        String suffix = filename.substring(filename.lastIndexOf("."));
+        log.info("文件名:{}\t文件后缀:{}",filename,suffix);
         String UUID = java.util.UUID.randomUUID().toString();
         log.debug("随机生成的文件名为：{}",UUID);
-        File temp = new File(dir,UUID);
+        File temp = new File(dir,UUID+suffix);
         try {
             file.transferTo(temp);
         } catch (IOException e) {
@@ -88,7 +91,7 @@ public class VideoController {
         log.debug("文件存储路径:{}",temp.getAbsoluteFile());
         Map<String,String> map = VideoUtils.getVideoInfo(temp.getAbsolutePath());
         httpSession.setAttribute("VIDEO_INFO",map);
-        String fileName = cosUtils.uploadFile(temp);
-        return CommonResult.success(fileName);
+        String url = cosUtils.uploadFile(temp);
+        return CommonResult.success(url);
     }
 }

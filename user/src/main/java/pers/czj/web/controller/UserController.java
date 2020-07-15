@@ -33,7 +33,7 @@ public class UserController {
     public CommonResult login(HttpSession httpSession,@RequestBody @Validated LoginUserInputDto inputDto) throws UserException {
         log.info("account:{}\tpassword:{}",inputDto.getAccount(),inputDto.getPassword());
         User user = userService.login(inputDto.getAccount(),inputDto.getPassword());
-        httpSession.setAttribute("USER",user);
+        httpSession.setAttribute("USER_ID",user.getId());
         log.debug("sessionID:{}",httpSession.getId());
         return CommonResult.success(user);
     }

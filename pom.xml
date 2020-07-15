@@ -8,6 +8,7 @@
         <module>user</module>
         <module>video</module>
         <module>gatewaay</module>
+        <module>comment</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
