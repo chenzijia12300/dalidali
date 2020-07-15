@@ -36,11 +36,10 @@ public class COSUtils {
      * @return java.lang.String
      */
     public String uploadFile(File file){
-        String fileName = UUID.randomUUID().toString();
-        log.debug("将上传的视频名:{}.视频大小:{}",fileName,file.length());
-        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName,fileName,file);
+        log.debug("将上传的视频名:{}.视频大小:{}",file.getName(),file.length());
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName,file.getName(),file);
         PutObjectResult result = cosClient.putObject(putObjectRequest);
         log.debug("上传结果："+result.getDateStr());
-        return fileName;
+        return file.getName();
     }
 }
