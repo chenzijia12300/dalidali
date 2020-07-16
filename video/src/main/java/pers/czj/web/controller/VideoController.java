@@ -9,22 +9,28 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pers.czj.common.CommonResult;
-import pers.czj.common.User;
+import pers.czj.dto.CategoryOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.dto.VideoInputDto;
 import pers.czj.entity.Video;
+import pers.czj.exception.CategoryException;
 import pers.czj.exception.UserException;
 import pers.czj.exception.VideoException;
+import pers.czj.service.CategoryService;
 import pers.czj.service.VideoService;
 import pers.czj.util.VideoUtils;
-import pers.czj.utils.COSUtils;
+import pers.czj.utils.MinIOUtils;
+import pers.czj.utils.RedisUtils;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * 创建在 2020/7/11 23:43
@@ -40,8 +46,13 @@ public class VideoController {
     private VideoService videoService;
 
     @Autowired
-    private COSUtils cosUtils;
+    private CategoryService categoryService;
 
+    @Autowired
+    private MinIOUtils minIOUtils;
+
+    @Autowired
+    private RedisUtils redisUtils;
 
     private String dir = System.getProperty("user.dir");
 
@@ -54,6 +65,7 @@ public class VideoController {
         long userId = (long) httpSession.getAttribute("USER_ID");
         Map<String,String> videoInfoMap = (Map<String, String>) httpSession.getAttribute("VIDEO_INFO");
         video.setUid(userId);
+        video.setLength(Long.parseLong(videoInfoMap.get("duration")));
         boolean flag = videoService.save(video);
         if (!flag){
             throw new VideoException("添加视频失败，请重试尝试");
@@ -67,11 +79,13 @@ public class VideoController {
     @ApiOperation("获得视频的详细信息")
     public CommonResult findVideoById(@PathVariable("id")@Min(1) long id) throws VideoException {
         VideoDetailsOutputDto detailsOutputDto = videoService.findDetailsById(id);
+        log.info("当前日期：{}",LocalDate.now());
+        redisUtils.zincrBy(LocalDate.now().toString()+"::"+detailsOutputDto.getCategoryId(),1, String.valueOf(detailsOutputDto.getId()));
         return CommonResult.success(detailsOutputDto);
     }
 
     @PostMapping("/video/upload")
-    public CommonResult uploadVideo(HttpSession httpSession,MultipartFile file) throws VideoException, UserException {
+    public CommonResult uploadVideo(HttpSession httpSession,MultipartFile file) throws VideoException, UserException, IOException {
 /*        if (httpSession.isNew()){
             httpSession.invalidate();
             throw new UserException("请重新登录！");
@@ -91,7 +105,23 @@ public class VideoController {
         log.debug("文件存储路径:{}",temp.getAbsoluteFile());
         Map<String,String> map = VideoUtils.getVideoInfo(temp.getAbsolutePath());
         httpSession.setAttribute("VIDEO_INFO",map);
-        String url = cosUtils.uploadFile(temp);
+        String url = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp));
+
         return CommonResult.success(url);
     }
+
+
+    public void setTopVideoData() throws CategoryException {
+        List<CategoryOutputDto> categoryOutputDtos = categoryService.listCategory();
+        String date = LocalDate.now().toString();
+        for (CategoryOutputDto dto:categoryOutputDtos){
+            List<String> strings = new ArrayList<>();
+            for (CategoryOutputDto childDto:dto.getChildList()){
+                long id = childDto.getId();
+                strings.add(date+"::"+id);
+            }
+            redisUtils.unionZSet(strings,date+"::"+dto.getId());
+        }
+    }
+
 }
