@@ -32,11 +32,11 @@
 
 
     <dependencies>
-        <!-- Eureka 客户端 -->
+<!--        &lt;!&ndash; Eureka 客户端 &ndash;&gt;
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter</artifactId>
