@@ -1,10 +1,13 @@
 package pers.czj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Video;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,4 +33,14 @@ public interface VideoMapper extends BaseMapper<Video> {
      * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
      */
     public List<VideoDetailsOutputDto> listRandomByCategoryPId(long id);
+
+
+    /**
+     * @author czj
+     * 根据主键们获得视频的基本信息
+     * @date 2020/7/17 10:28
+     * @param [ids]
+     * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
+     */
+    public List<VideoBasicOutputDto> listBasicInfoByIds(@Param("ids") Collection<Long> ids);
 }

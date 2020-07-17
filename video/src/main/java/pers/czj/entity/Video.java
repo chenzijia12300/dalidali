@@ -69,6 +69,12 @@ public class Video {
      */
     private String previewUrl;
 
+
+    /**
+     * 视频封面
+     */
+    private String cover;
+
 /*    *//**
      *  视频的顶级频道（冗余）
      *//*

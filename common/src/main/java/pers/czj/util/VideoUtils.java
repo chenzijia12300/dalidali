@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.omg.PortableServer.POA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pers.czj.common.VideoBasicInfo;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class VideoUtils {
 
     private static final Logger log = LoggerFactory.getLogger(VideoUtils.class);
 
-    public static Map<String,String> getVideoInfo(String filePath){
+    public static VideoBasicInfo getVideoInfo(String filePath,String videoName){
         List<String> commandList = new ArrayList<>();
         commandList.add("ffprobe");
         commandList.add("-select_streams");
@@ -39,7 +40,7 @@ public class VideoUtils {
         commandList.add("-of");
         commandList.add("json");
         commandList.add("-i");
-        commandList.add(filePath);
+        commandList.add(filePath+videoName);
         ProcessBuilder processBuilder = new ProcessBuilder();
         try {
             processBuilder.command(commandList);
@@ -47,11 +48,13 @@ public class VideoUtils {
             Process process = processBuilder.start();
             log.debug("{}视频处理中",filePath);
             process.waitFor();
-            Map<String,String> map = handlerInputStream(process.getInputStream());
-            map.forEach((key,value)->{
-                log.debug("key:{},value:{}",key,value);
-            });
-            return map;
+            //获得视频基本信息
+            VideoBasicInfo basicInfo = handlerInputStream(process.getInputStream());
+            //获得视频第一帧当封面
+            String imageName = videoName.substring(0,videoName.lastIndexOf("."));
+            createFirstImage(filePath+videoName,filePath+imageName);
+            basicInfo.setCover(filePath+imageName);
+            return basicInfo;
         } catch (IOException e) {
             log.error("处理视频信息出现错误：{}",e.getMessage());
             e.printStackTrace();
@@ -61,7 +64,27 @@ public class VideoUtils {
         return null;
     }
 
-    private static Map<String,String> handlerInputStream(InputStream inputStream){
+    /**
+     * @author czj
+     * 处理FFMPEG的JSON数据
+     * @date 2020/7/17 21:57
+     * @param [jsonObject]
+     * @return VideoBasicInfo
+     */
+    private static VideoBasicInfo handlerJson(JSONObject jsonObject){
+        //获得视频时长
+        String duration = jsonObject.getJSONObject("format").getString("duration");
+        JSONObject streamObject = jsonObject.getJSONArray("streams").getJSONObject(0);
+        String width = streamObject.getString("width");
+        String height = streamObject.getString("height");
+        VideoBasicInfo videoBasicInfo = new VideoBasicInfo();
+        videoBasicInfo.setDuration((long) Double.parseDouble(duration));
+        videoBasicInfo.setWidth(width);
+        videoBasicInfo.setHeight(height);
+        return videoBasicInfo;
+    }
+
+    private static VideoBasicInfo handlerInputStream(InputStream inputStream){
         try(
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
         ){
@@ -79,29 +102,24 @@ public class VideoUtils {
         return null;
     }
 
-    private static Map<String,String> handlerJson(JSONObject jsonObject){
-        //获得视频时长
-        String duration = jsonObject.getJSONObject("format").getString("duration");
-        JSONObject streamObject = jsonObject.getJSONArray("streams").getJSONObject(0);
-        String width = streamObject.getString("width");
-        String height = streamObject.getString("height");
-        Map<String,String> map = new HashMap<>();
-        map.put("duration",duration);
-        map.put("width",width);
-        map.put("height",height);
-        return map;
+    public static void createFirstImage(String filePath,String imagePath){
+        List<String> list = new ArrayList<>();
+        list.add("ffmpeg");
+        list.add("-i");
+        list.add(filePath);
+        list.add("-y");
+        list.add("-f");
+        list.add("mjpeg");
+        list.add("-ss");
+        list.add("0.1");
+        list.add("-t");
+        list.add("0.001");
+        list.add(imagePath);
+        ProcessBuilder builder = new ProcessBuilder(list);
+        try {
+            Process process = builder.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-
-    public static void main(String[] args) {
-        getVideoInfo("C:\\Users\\ZJ\\Videos\\Captures\\video.mp4 ");
-/*        Pattern pattern = Pattern.compile("\\d*");
-        String str = "1234ABCD56789ABCD";
-        Matcher matcher = pattern.matcher(str);
-        System.out.printlsn(matcher.find());
-        System.out.println(matcher.group());*/
-    }
-
-/*    public static Map<String,String> getVideoInfo(InputStream inputStream) {
-
-    }*/
 }

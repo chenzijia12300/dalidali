@@ -6,12 +6,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Video;
 import pers.czj.exception.VideoException;
 import pers.czj.mapper.VideoMapper;
 import pers.czj.service.VideoService;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -39,4 +41,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         }
         return list;
     }
+
+    @Override
+    public List<VideoBasicOutputDto> listBasicInfoByIds(Collection<Long> ids) {
+        return baseMapper.listBasicInfoByIds(ids);
+    }
+
+
 }

@@ -91,6 +91,12 @@ public class VideoDetailsOutputDto {
     private String urls;
 
     /**
+     * 视频封面
+     */
+    private String cover;
+
+
+    /**
      * 视频简介
      */
     private String description;
