@@ -25,10 +25,13 @@ public class VideoInputDto {
     private String title;
 
     @ApiModelProperty("视频基本地址，根据清晰度确定准确地址")
-    private String basicUrl;
+    private String urls;
 
     @ApiModelProperty("标签们")
     private String tags;
+
+    @ApiModelProperty("视频简介")
+    private String description;
 
 /*    @ApiModelProperty("视频的顶级频道（冗余）")
     private String categoryPName;
@@ -36,8 +39,6 @@ public class VideoInputDto {
     @ApiModelProperty("视频所属频道（冗余）")
     private String categoryName;*/
 
-    @ApiModelProperty("视频分辨率枚举类")
-    private VideoResolutionEnum resolutionState;
 
     public Video convert(){
         Video video = new Video();

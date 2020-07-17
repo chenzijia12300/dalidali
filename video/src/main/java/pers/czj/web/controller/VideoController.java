@@ -5,11 +5,17 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pers.czj.common.CommonResult;
+import pers.czj.common.VideoBasicInfo;
+import pers.czj.constant.VideoResolutionEnum;
 import pers.czj.dto.CategoryOutputDto;
+import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.dto.VideoInputDto;
 import pers.czj.entity.Video;
@@ -17,6 +23,7 @@ import pers.czj.exception.CategoryException;
 import pers.czj.exception.UserException;
 import pers.czj.exception.VideoException;
 import pers.czj.service.CategoryService;
+import pers.czj.service.PlayNumTabService;
 import pers.czj.service.VideoService;
 import pers.czj.util.VideoUtils;
 import pers.czj.utils.MinIOUtils;
@@ -27,10 +34,9 @@ import javax.validation.constraints.Min;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 创建在 2020/7/11 23:43
@@ -54,6 +60,12 @@ public class VideoController {
     @Autowired
     private RedisUtils redisUtils;
 
+    @Autowired
+    private PlayNumTabService playNumTabService;
+
+    @Value("${redis.category-pre-key}")
+    private String categoryTopKey;
+
     private String dir = System.getProperty("user.dir");
 
 
@@ -62,15 +74,16 @@ public class VideoController {
     public CommonResult addVideo(HttpSession httpSession,@RequestBody @Validated VideoInputDto dto) throws VideoException {
         Video video = dto.convert();
         log.debug("sessionID:{}",httpSession.getId());
-        long userId = (long) httpSession.getAttribute("USER_ID");
-        Map<String,String> videoInfoMap = (Map<String, String>) httpSession.getAttribute("VIDEO_INFO");
+        long userId = /*(long) httpSession.getAttribute("USER_ID");*/ 1;
+        VideoBasicInfo basicInfo = (VideoBasicInfo) httpSession.getAttribute("VIDEO_INFO");
         video.setUid(userId);
-        video.setLength(Long.parseLong(videoInfoMap.get("duration")));
+        video.setLength(basicInfo.getDuration());
+        video.setCover(basicInfo.getCover());
+        video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getWidth()));
         boolean flag = videoService.save(video);
         if (!flag){
             throw new VideoException("添加视频失败，请重试尝试");
         }
-
         //这里应该要有个消息队列
         return CommonResult.success("你滴视频提交成功~，等待管理员的审核把");
     }
@@ -103,25 +116,74 @@ public class VideoController {
             throw new VideoException("上传视频出现错误，请重新尝试");
         }
         log.debug("文件存储路径:{}",temp.getAbsoluteFile());
-        Map<String,String> map = VideoUtils.getVideoInfo(temp.getAbsolutePath());
-        httpSession.setAttribute("VIDEO_INFO",map);
+        VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(temp.getAbsolutePath(),temp.getName());
+        httpSession.setAttribute("VIDEO_INFO",basicInfo);
+        //上传视频文件到文件服务器
         String url = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp));
-
         return CommonResult.success(url);
     }
 
+    @ApiOperation("获得该分类类型下的排行榜")
+    @GetMapping("/video/top/{name}")
+    public CommonResult findTopVideoByCategory(@PathVariable("name")String name) throws ConnectException {
+        return CommonResult.success(redisUtils.get(categoryTopKey+name));
+    }
 
-    public void setTopVideoData() throws CategoryException {
+
+    /**
+     * @author czj
+     * 设置排行榜【定时任务】
+     * @date 2020/7/17 22:17
+     * @param []
+     * @return void
+     */
+    @GetMapping("/video/setTop")
+    @ApiOperation("手动调用定时任务（待删）")
+    public CommonResult setTopVideoData() throws CategoryException, ConnectException {
         List<CategoryOutputDto> categoryOutputDtos = categoryService.listCategory();
+        List<String> pCategoryNames = new ArrayList<>();
         String date = LocalDate.now().toString();
+
+        /*
+            获得分类列表，将基本分类组成顶级分类
+         */
+        log.info("开始循环");
         for (CategoryOutputDto dto:categoryOutputDtos){
             List<String> strings = new ArrayList<>();
+            //获得顶级频道缓存名
+            String pCategoryName = date+"::"+dto.getId();
+            pCategoryNames.add(pCategoryName);
+
+            //获得二级频道缓存名
             for (CategoryOutputDto childDto:dto.getChildList()){
                 long id = childDto.getId();
                 strings.add(date+"::"+id);
             }
-            redisUtils.unionZSet(strings,date+"::"+dto.getId());
+            //合并集合并获得全部数据
+            redisUtils.unionZSet(strings,pCategoryName);
+            Set set = redisUtils.zRevRange(pCategoryName,0,-1,false);
+            if (CollectionUtils.isEmpty(set)){
+                log.info("集合为空");
+                return CommonResult.failed();
+            }
+            //将各个顶级频道前100名视频放置缓存中
+            List<Long> top100List = pers.czj.utils.CollectionUtils.slicer(set,0,100);
+            List<VideoBasicOutputDto> basicOutputDtos = videoService.listBasicInfoByIds(top100List);
+            redisUtils.set(categoryTopKey+dto.getId(),basicOutputDtos,0);
+            //待写持久化
+            log.info("执行完一圈");
         }
+        //合并全区总排行榜
+        String key = date+"::ALL";
+        redisUtils.unionZSet(pCategoryNames,key);
+
+        //将全区前100名视频放置缓存（算冗余，不过不大嘛~）
+        Set<ZSetOperations.TypedTuple> allSet = redisUtils.zRevRange(key,0,-1,true);
+        List<Long> top100List = pers.czj.utils.CollectionUtils.speicalSlicer(allSet,0,100);
+        List<VideoBasicOutputDto> basicOutputDtos = videoService.listBasicInfoByIds(top100List);
+        redisUtils.set(categoryTopKey+"ALL",basicOutputDtos,0);
+        playNumTabService.addAll(allSet);
+        return CommonResult.success();
     }
 
 }

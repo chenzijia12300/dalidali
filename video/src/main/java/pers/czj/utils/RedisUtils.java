@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.net.ConnectException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -70,23 +71,11 @@ public class RedisUtils {
      * @param [key]
      * @return java.util.Optional<java.lang.Object>
      */
-    public Optional<Object> get(String key) throws ConnectException {
-        try {
-            if (StringUtils.isEmpty(key)) {
-                return Optional.empty();
-            }
-            Object o = redisTemplate.opsForValue().get(key);
-            return Optional.ofNullable(o);
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new ConnectException("redis连接失败！");
-        }
+    public Object get(String key) throws ConnectException {
+        Object o = redisTemplate.opsForValue().get(key);
+        return o;
     }
 
-    public int getInt(String key) throws ConnectException {
-        int num = (int) get(key).orElse(-1);
-        return num;
-    }
 
     /**
      * @author czj
@@ -145,11 +134,19 @@ public class RedisUtils {
         return redisTemplate.opsForZSet().incrementScore(key,member,num);
     }
 
-    public Set<ZSetOperations.TypedTuple<Object>> zRevRange(String key, long start, long end){
-        return redisTemplate.opsForZSet().reverseRangeWithScores(key,start,end);
+    public Set zRevRange(String key, long start, long end,boolean needWithScores){
+        if (needWithScores)
+            return redisTemplate.opsForZSet().reverseRangeWithScores(key,start,end);
+        else
+            return redisTemplate.opsForZSet().reverseRange(key,start,end);
     }
 
     public void unionZSet(List<String> strings,String destKey){
         redisTemplate.opsForZSet().unionAndStore(strings.get(0),strings.subList(1,strings.size()),destKey);
+    }
+
+
+    public long addList(String key, Collection collection){
+        return redisTemplate.opsForList().leftPushAll(key,collection);
     }
 }
