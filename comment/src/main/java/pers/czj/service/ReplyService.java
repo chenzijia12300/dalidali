@@ -12,5 +12,5 @@ import java.util.List;
  */
 public interface ReplyService extends IService<Reply> {
 
-    public List<ReplyOutputDto> listReply(TableNameEnum nameEnum, long id,int pageNum,int pageSize);
+    public List<ReplyOutputDto> listReply(TableNameEnum nameEnum, long id,long userId,int pageNum,int pageSize);
 }

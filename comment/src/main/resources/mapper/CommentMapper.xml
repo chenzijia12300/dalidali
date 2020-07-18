@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.czj.mapper.CommentMapper">
-    <select id="listComment" resultType="per.czj.dto.CommentOutputDto">
-        SELECT * FROM ${tableName}_comment WHERE id = #{id}
+    <select id="listComment" resultType="pers.czj.dto.CommentOutputDto">
+        SELECT comment.*,log.id as flag FROM ${tableName}_comment as comment LEFT JOIN ${tableName}_comment_log as log
+        ON comment.id = #{id} and log.uid=#{userId} and log.cid = comment.id
     </select>
 </mapper>

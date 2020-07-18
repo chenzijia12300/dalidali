@@ -4,11 +4,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
+import pers.czj.constant.TableNameEnum;
 import pers.czj.dto.Page;
 import pers.czj.dto.CommentInputDto;
 import pers.czj.dto.CommentOutputDto;
@@ -33,7 +31,7 @@ public class CommentController {
     @PostMapping("/comment")
     @ApiOperation("添加评论")
     public CommonResult addComment(HttpSession httpSession,@RequestBody CommentInputDto dto) throws CommentException {
-        long userId = (long) httpSession.getAttribute("USER_ID");
+        long userId = /*(long) httpSession.getAttribute("USER_ID");*/1;
         Comment comment = dto.convert();
         comment.setUid(userId);
         boolean flag = commentService.save(comment);
@@ -43,11 +41,19 @@ public class CommentController {
         return CommonResult.success("发表评论成功！");
     }
 
-    @GetMapping("/video/list")
+    @GetMapping("/comment/list/{tableName}/{id}/{pageNum}/{pageSize}")
     @ApiOperation("获得评论列表")
-    public CommonResult listComment(HttpSession httpSession,@RequestBody @Validated Page page, @RequestBody CommonRequest request){
+    public CommonResult listComment(HttpSession httpSession, @PathVariable("tableName") TableNameEnum nameEnum,
+                                    @PathVariable("id") long id,
+                                    @PathVariable("pageNum")int pageNum,
+                                    @PathVariable("pageSize")int pageSize){
         long userId = (long) httpSession.getAttribute("USER_ID");
-        List<CommentOutputDto> dtoList = commentService.listComment(request.getName(),request.getId(),page.getPageNum(),page.getPageSize());
+        List<CommentOutputDto> dtoList = commentService.listComment(nameEnum,id,userId,pageNum,pageSize);
         return CommonResult.success(dtoList,"返回评论列表成功~");
     }
+
+/*    @PostMapping("/comment/dynamic_like")
+    public CommonResult likeComment(HttpSession httpSession,@RequestBody CommonRequest request){
+        long userId = (long) httpSession.getAttribute("USER_ID");
+    }*/
 }

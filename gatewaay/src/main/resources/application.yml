@@ -21,5 +21,10 @@ zuul:
       service-id: dalidali-video
       sensitive-headers: "*"
       custom-sensitive-headers: true
+    comment-api:
+      path: /commentservice/**
+      service-id: dalidali-comment
+      sensitive-headers: "*"
+      custom-sensitive-headers: true
 
   sensitive-headers: "*"

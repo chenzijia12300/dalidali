@@ -41,4 +41,7 @@ public class CommentOutputDto {
     @ApiModelProperty("回复列表")
     private List<ReplyOutputDto> replyList;
 
+    @ApiModelProperty("点赞记录")
+    private long flag;
+
 }

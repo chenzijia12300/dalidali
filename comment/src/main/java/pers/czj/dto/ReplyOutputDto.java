@@ -34,4 +34,7 @@ public class ReplyOutputDto {
 
     @ApiModelProperty("被回复人的用户名")
     private String rusername;
+
+    @ApiModelProperty("点赞记录")
+    private long flag;
 }
