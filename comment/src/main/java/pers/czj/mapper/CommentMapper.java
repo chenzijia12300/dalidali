@@ -16,8 +16,8 @@ public interface CommentMapper extends BaseMapper<Comment> {
      * tableName:动态表名
      * id:对应视频/专栏主键
      * @date 2020/7/15 17:06
-     * @param [tableName, id]
+     * @param [tableName, id,userId]
      * @return pers.czj.dto.CommentOutputDto
      */
-    public List<CommentOutputDto> listComment(String tableName, long id);
+    public List<CommentOutputDto> listComment(String tableName, long id,long userId);
 }

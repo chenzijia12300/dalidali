@@ -19,5 +19,15 @@ public interface CommentService extends IService<Comment> {
      * @param [nameEnum, id]
      * @return pers.czj.dto.CommentOutputDto
      */
-    public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id, int pageNum, int pageSize);
+    public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id,long userId,int pageNum, int pageSize);
+
+
+    /**
+     * @author czj
+     * 动态处理点赞情况
+     * @date 2020/7/18 23:38
+     * @param [tableNameEnum, id, userId]
+     * @return boolean
+     */
+    public boolean dynamicHandlerLike(TableNameEnum tableNameEnum,long id,long userId);
 }
