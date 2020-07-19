@@ -3,6 +3,7 @@ package pers.czj.dto;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
+import pers.czj.constant.TableNameEnum;
 import pers.czj.entity.Reply;
 
 import javax.validation.constraints.NotEmpty;
@@ -23,9 +24,12 @@ public class ReplyInputDto {
     @NotEmpty
     private String content;
 
+    private TableNameEnum tableNameEnum;
+
     public Reply convert(){
         Reply reply = new Reply();
         BeanUtils.copyProperties(this,reply);
+        reply.setTableName(tableNameEnum.getName());
         return reply;
     }
 }

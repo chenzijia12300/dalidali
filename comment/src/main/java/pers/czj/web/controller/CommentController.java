@@ -52,8 +52,12 @@ public class CommentController {
         return CommonResult.success(dtoList,"返回评论列表成功~");
     }
 
-/*    @PostMapping("/comment/dynamic_like")
+    @PostMapping("/comment/dynamic_like")
+    @ApiOperation("操作点赞/取消赞的操作")
     public CommonResult likeComment(HttpSession httpSession,@RequestBody CommonRequest request){
-        long userId = (long) httpSession.getAttribute("USER_ID");
-    }*/
+        long userId = /*(long) httpSession.getAttribute("USER_ID");*/1;
+        commentService.dynamicHandlerLike(request.getName(),request.getId(),userId);
+        return CommonResult.success();
+    }
+
 }

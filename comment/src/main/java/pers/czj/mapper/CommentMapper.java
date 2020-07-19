@@ -1,6 +1,7 @@
 package pers.czj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Update;
 import pers.czj.dto.CommentOutputDto;
 import pers.czj.entity.Comment;
 
@@ -20,4 +21,15 @@ public interface CommentMapper extends BaseMapper<Comment> {
      * @return pers.czj.dto.CommentOutputDto
      */
     public List<CommentOutputDto> listComment(String tableName, long id,long userId);
+
+
+    /**
+     * @author czj
+     * 添加播放量
+     * @date 2020/7/19 18:45
+     * @param [name, cid, num]
+     * @return int
+     */
+    @Update("UPDATE ${name}_comment SET praise_num=praise_num+#{num} WHERE id = #{cid}")
+    public int incrPraiseNum(String name,long cid,long num);
 }

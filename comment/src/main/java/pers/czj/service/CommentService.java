@@ -12,6 +12,15 @@ import java.util.List;
  */
 public interface CommentService extends IService<Comment> {
 
+/*    *//**
+     * @author czj
+     * 根据动态表名添加
+     * @date 2020/7/19 11:13
+     * @param [tableNameEnum, entity]
+     * @return boolean
+     *//*
+    public boolean save(TableNameEnum tableNameEnum,Comment entity);*/
+
     /**
      * @author czj
      * 根据表名和对应主键查询评论列表

@@ -6,11 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
+import pers.czj.constant.TableNameEnum;
 import pers.czj.dto.CommonRequest;
 import pers.czj.dto.Page;
 import pers.czj.dto.ReplyInputDto;
@@ -47,11 +45,14 @@ public class ReplyController {
         return CommonResult.success();
     }
 
-    @GetMapping("/reply/list")
+    @GetMapping("/reply/list/{tableName}/{id}/{pageNum}/{pageSize}")
     @ApiOperation("获得回复列表")
-    public CommonResult listReply(HttpSession httpSession, @RequestBody Page page, @RequestBody CommonRequest commonRequest){
-        long userId = (long) httpSession.getAttribute("USER_ID");
-        List<ReplyOutputDto> replyOutputDtoList = replyService.listReply(commonRequest.getName(),commonRequest.getId(),userId,page.getPageNum(),page.getPageSize());
+    public CommonResult listReply(HttpSession httpSession, @PathVariable("tableName") TableNameEnum nameEnum,
+                                  @PathVariable("id") long id,
+                                  @PathVariable("pageNum")int pageNum,
+                                  @PathVariable("pageSize")int pageSize){
+        long userId = 1/*(long) httpSession.getAttribute("USER_ID")*/;
+        List<ReplyOutputDto> replyOutputDtoList = replyService.listReply(nameEnum,id,userId,pageNum,pageSize);
         return CommonResult.success(replyOutputDtoList);
     }
 }

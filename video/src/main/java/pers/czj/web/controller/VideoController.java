@@ -19,11 +19,13 @@ import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.dto.VideoInputDto;
 import pers.czj.entity.Video;
+import pers.czj.entity.VideoLog;
 import pers.czj.exception.CategoryException;
 import pers.czj.exception.UserException;
 import pers.czj.exception.VideoException;
 import pers.czj.service.CategoryService;
 import pers.czj.service.PlayNumTabService;
+import pers.czj.service.VideoLogService;
 import pers.czj.service.VideoService;
 import pers.czj.util.VideoUtils;
 import pers.czj.utils.MinIOUtils;
@@ -50,6 +52,9 @@ public class VideoController {
 
     @Autowired
     private VideoService videoService;
+
+    @Autowired
+    private VideoLogService videoLogService;
 
     @Autowired
     private CategoryService categoryService;
@@ -185,5 +190,15 @@ public class VideoController {
         playNumTabService.addAll(allSet);
         return CommonResult.success();
     }
+
+/*    @GetMapping("/video/dynamic_like")
+    @ApiOperation("动态处理点")
+    public CommonResult dynamicLike(HttpSession httpSession,long vid){
+        long userId = 1;*//*httpSession.getAttribute("USER_ID");*//*
+        VideoLog videoLog = new VideoLog();
+        videoLog.setUid(userId);
+        videoLog.setVid(vid);
+        boolean flag = videoLogService.handlerVideoLog()
+    }*/
 
 }
