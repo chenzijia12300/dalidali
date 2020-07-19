@@ -1,5 +1,7 @@
 package pers.czj.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 import java.util.Date;
@@ -46,4 +48,11 @@ public class Comment {
      * 评论时间
      */
     private Date createTime;
+
+    /**
+     *  动态表名（冗余）
+     */
+    @TableField(exist = false)
+    @TableLogic
+    private String tableName;
 }

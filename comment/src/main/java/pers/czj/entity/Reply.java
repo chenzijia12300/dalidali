@@ -1,5 +1,6 @@
 package pers.czj.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.Date;
@@ -44,5 +45,11 @@ public class Reply {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     * 动态表名(冗余)
+     */
+    @TableField(exist = false)
+    private String tableName;
 
 }

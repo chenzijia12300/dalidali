@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 public enum TableNameEnum {
-    VIDEO("video");
+    VIDEO("video"),POST("post");
 
     String name;
 
