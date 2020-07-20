@@ -44,4 +44,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return true;
     }
 
+    @Override
+    public int findCoinNumById(long id) {
+        return baseMapper.findCoinNumById(id);
+    }
+
+    @Override
+    public int incrCoinNum(long id, int num) {
+        return baseMapper.incrCoinNum(id,num);
+    }
+
+
 }

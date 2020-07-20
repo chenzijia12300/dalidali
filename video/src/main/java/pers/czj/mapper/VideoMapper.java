@@ -2,6 +2,7 @@ package pers.czj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
@@ -43,4 +44,11 @@ public interface VideoMapper extends BaseMapper<Video> {
      * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
      */
     public List<VideoBasicOutputDto> listBasicInfoByIds(@Param("ids") Collection<Long> ids);
+
+
+    @Update("UPDATE video SET praise_num=praise_num+#{num} WHERE id = #{vid}")
+    public int incrPraiseNum(long vid,int num);
+
+    @Update("UPDATE video SET coin_num=coin_num+#{num} WHERE id = #{vid}")
+    public int incrCoinNum(long vid,int num);
 }

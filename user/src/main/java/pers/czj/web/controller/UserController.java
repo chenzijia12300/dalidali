@@ -28,6 +28,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @PostMapping("/login")
     @ApiOperation("用户登录接口")
     public CommonResult login(HttpSession httpSession,@RequestBody @Validated LoginUserInputDto inputDto) throws UserException {
@@ -53,4 +54,15 @@ public class UserController {
             session.invalidate();
         return CommonResult.success("注销成功");
     }
+
+    @GetMapping("/user/coin/{id}")
+    public CommonResult findCoinNumById(@PathVariable("id") long id){
+        return CommonResult.success(userService.findCoinNumById(id));
+    }
+
+    @PostMapping("/user/coin")
+    public CommonResult incrCoinNumById(long id,int num){
+        return CommonResult.success(userService.incrCoinNum(id,num));
+    }
+
 }

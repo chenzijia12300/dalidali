@@ -6,10 +6,16 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import pers.czj.dto.UserCollectionLogInputDto;
 import pers.czj.entity.VideoLog;
+import pers.czj.exception.UserException;
+import pers.czj.exception.VideoException;
+import pers.czj.feign.UserFeignClient;
 import pers.czj.mapper.VideoLogMapper;
+import pers.czj.mapper.VideoMapper;
 import pers.czj.service.VideoLogService;
 
 /**
@@ -17,6 +23,12 @@ import pers.czj.service.VideoLogService;
  */
 @Service
 public class VideoLogServiceImpl extends ServiceImpl<VideoLogMapper, VideoLog>implements VideoLogService{
+
+    @Autowired
+    private VideoMapper videoMapper;
+
+    @Autowired
+    private UserFeignClient userFeignClient;
 
     private static final Logger log = LoggerFactory.getLogger(VideoLogServiceImpl.class);
 
@@ -35,5 +47,69 @@ public class VideoLogServiceImpl extends ServiceImpl<VideoLogMapper, VideoLog>im
             log.info("用户{}对视频{}进行了更改操作",entity.getUid(),entity.getVid());
         }
         return true;
+    }
+
+    @Override
+    public boolean dynamicLike(long vid, long uid) {
+        VideoLog videoLog = getVideo(vid,uid);
+        if (ObjectUtils.isEmpty(videoLog)){
+            videoLog = new VideoLog().setVid(vid).setUid(uid).setIsPraise(true);
+            save(videoLog);
+            videoMapper.incrPraiseNum(vid,1);
+            log.info("用户{}对视频{}进行了插入赞操作",uid,vid);
+        }else {
+            boolean flag = !videoLog.getIsPraise();
+            videoLog.setIsPraise(flag);
+            updateById(videoLog);
+            videoMapper.incrPraiseNum(vid,flag?1:-1);
+            log.info("用户{}对视频{}进行了更新赞操作",uid,vid);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addCoins(long vid, long uid, int num) throws VideoException, UserException {
+        int userCoinNum = userFeignClient.findCoinNumById(uid);
+        if (userCoinNum<num){
+            throw new UserException("你没有足够的硬币喔~");
+        }
+        VideoLog videoLog = getVideo(vid,uid);
+        if (ObjectUtils.isEmpty(videoLog)){
+            videoLog = new VideoLog().setVid(vid).setUid(uid).setCoinNum(num);
+            save(videoLog);
+        }else {
+            int coinNum = videoLog.getCoinNum();
+            if (coinNum>=2){
+                throw new VideoException("投币数已经到上限拉~");
+            }
+            videoLog.setCoinNum(coinNum==0?num:num-1);
+            updateById(videoLog);
+        }
+        videoMapper.incrCoinNum(vid,videoLog.getCoinNum());
+        userFeignClient.incrCoinNumById(uid,-num);
+        log.info("用户{}给视频{}投了{}个硬币",uid,vid,videoLog.getCoinNum());
+        return true;
+    }
+
+    @Override
+    public boolean addCollection(long vid, long uid) {
+        VideoLog videoLog = getVideo(vid,uid);
+        if (ObjectUtils.isEmpty(videoLog)){
+            videoLog = new VideoLog().setVid(vid).setUid(uid).setIsCollection(true);
+            save(videoLog);
+        }else {
+            videoLog.setIsCollection(!videoLog.getIsCollection());
+            updateById(videoLog);
+        }
+        UserCollectionLogInputDto dto = new UserCollectionLogInputDto(uid,vid,videoLog.getIsCollection());
+        userFeignClient.dynamicCollection(dto);
+        return true;
+    }
+
+    private VideoLog getVideo(long vid,long uid){
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("vid",vid);
+        queryWrapper.eq("uid",uid);
+        return getOne(queryWrapper);
     }
 }
