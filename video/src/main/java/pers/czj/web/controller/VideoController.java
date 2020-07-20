@@ -191,14 +191,5 @@ public class VideoController {
         return CommonResult.success();
     }
 
-/*    @GetMapping("/video/dynamic_like")
-    @ApiOperation("动态处理点")
-    public CommonResult dynamicLike(HttpSession httpSession,long vid){
-        long userId = 1;*//*httpSession.getAttribute("USER_ID");*//*
-        VideoLog videoLog = new VideoLog();
-        videoLog.setUid(userId);
-        videoLog.setVid(vid);
-        boolean flag = videoLogService.handlerVideoLog()
-    }*/
 
 }
