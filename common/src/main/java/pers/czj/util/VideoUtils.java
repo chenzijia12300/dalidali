@@ -122,4 +122,29 @@ public class VideoUtils {
             e.printStackTrace();
         }
     }
+
+    /**
+     * @author czj
+     * 创建不同分辨率的视频
+     * @date 2020/7/21 15:08
+     * @param [fileName, destFileName, width, height]
+     * @return void
+     */
+    public static void createOtherResolutionVideo(String fileName,String destFileName,String width,String height){
+        List<String> list = new ArrayList<>();
+        list.add("ffmpeg");
+        list.add("-i");
+        list.add(fileName);
+        list.add("-vf");
+        list.add("scale=="+height+":"+width);
+        list.add(destFileName);
+        list.add("-hide_banner");
+        ProcessBuilder builder = new ProcessBuilder(list);
+        try {
+            log.info("尝试创建{}*{}分辨率的视频",height,width);
+            Process process = builder.start();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 }

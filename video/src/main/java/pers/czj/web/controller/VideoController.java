@@ -71,6 +71,9 @@ public class VideoController {
     @Value("${redis.category-pre-key}")
     private String categoryTopKey;
 
+    @Value("${redis.play-key}")
+    private String playKey;
+
     private String dir = System.getProperty("user.dir");
 
 
@@ -95,10 +98,15 @@ public class VideoController {
 
     @GetMapping("/video/{id}")
     @ApiOperation("获得视频的详细信息")
-    public CommonResult findVideoById(@PathVariable("id")@Min(1) long id) throws VideoException {
+    public CommonResult findVideoById(HttpSession httpSession,@PathVariable("id")@Min(1) long id) throws VideoException {
+        long userId = /*(long) httpSession.getAttribute("USER_ID");*/ 1;
         VideoDetailsOutputDto detailsOutputDto = videoService.findDetailsById(id);
         log.info("当前日期：{}",LocalDate.now());
-        redisUtils.zincrBy(LocalDate.now().toString()+"::"+detailsOutputDto.getCategoryId(),1, String.valueOf(detailsOutputDto.getId()));
+        if(!redisUtils.getBit(playKey+id,userId)){
+            videoService.incrPlayNum(id,1);
+            redisUtils.setBit(playKey+id,userId,true);
+            redisUtils.zincrBy(LocalDate.now().toString()+"::"+detailsOutputDto.getCategoryId(),1, String.valueOf(detailsOutputDto.getId()));
+        }
         return CommonResult.success(detailsOutputDto);
     }
 

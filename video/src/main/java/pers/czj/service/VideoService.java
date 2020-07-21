@@ -40,4 +40,13 @@ public interface VideoService extends IService<Video> {
      * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
      */
     public List<VideoBasicOutputDto> listBasicInfoByIds(Collection<Long> ids);
+
+    /**
+     * @author czj
+     * 自增视频播放量
+     * @date 2020/7/21 15:43
+     * @param [vid, num]
+     * @return boolean
+     */
+    public int incrPlayNum(long vid,int num);
 }

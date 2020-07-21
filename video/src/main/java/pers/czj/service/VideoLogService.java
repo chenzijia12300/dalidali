@@ -46,5 +46,5 @@ public interface VideoLogService extends IService<VideoLog> {
      * @param [vid, uid]
      * @return boolean
      */
-    public boolean addCollection(long vid,long uid);
+    public boolean dynamicCollection(long vid,long uid);
 }

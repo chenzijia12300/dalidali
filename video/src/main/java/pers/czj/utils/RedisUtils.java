@@ -149,4 +149,27 @@ public class RedisUtils {
     public long addList(String key, Collection collection){
         return redisTemplate.opsForList().leftPushAll(key,collection);
     }
+
+
+    /**
+     * @author czj
+     * 设置bit
+     * @date 2020/7/21 15:26
+     * @param [key, num, flag]
+     * @return boolean
+     */
+    public boolean setBit(String key,long num,boolean flag){
+        return redisTemplate.opsForValue().setBit(key,num,flag);
+    }
+
+    /**
+     * @author czj
+     * 获得bit的值
+     * @date 2020/7/21 15:26
+     * @param [key, num]
+     * @return boolean
+     */
+    public boolean getBit(String key,long num){
+        return redisTemplate.opsForValue().getBit(key,num);
+    }
 }

@@ -17,7 +17,7 @@ public interface UserFeignClient {
     public int findCoinNumById(@PathVariable("id") long id);
 
     @PostMapping("/user/coin")
-    public int incrCoinNumById(long id,int num);
+    public CommonResult incrCoinNumById(@RequestParam long id,@RequestParam int num);
 
     @PostMapping("/collection/dynamic")
     public CommonResult dynamicCollection(@RequestBody UserCollectionLogInputDto dto);

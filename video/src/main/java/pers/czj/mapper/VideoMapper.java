@@ -51,4 +51,7 @@ public interface VideoMapper extends BaseMapper<Video> {
 
     @Update("UPDATE video SET coin_num=coin_num+#{num} WHERE id = #{vid}")
     public int incrCoinNum(long vid,int num);
+
+    @Update(("UPDATE video SET play_num=play_num+#{num} WHERE id = #{vid}"))
+    public int incrPlayNum(long vid,int num);
 }
