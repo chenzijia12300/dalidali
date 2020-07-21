@@ -56,12 +56,12 @@ public class UserController {
     }
 
     @GetMapping("/user/coin/{id}")
-    public CommonResult findCoinNumById(@PathVariable("id") long id){
-        return CommonResult.success(userService.findCoinNumById(id));
+    public long findCoinNumById(@PathVariable("id") long id){
+        return userService.findCoinNumById(id);
     }
 
     @PostMapping("/user/coin")
-    public CommonResult incrCoinNumById(long id,int num){
+    public CommonResult incrCoinNumById(@RequestParam long id,@RequestParam int num){
         return CommonResult.success(userService.incrCoinNum(id,num));
     }
 

@@ -30,6 +30,8 @@ public class VideoLogServiceImpl extends ServiceImpl<VideoLogMapper, VideoLog>im
     @Autowired
     private UserFeignClient userFeignClient;
 
+    private static final int MAX_COIN_NUM=2;
+
     private static final Logger log = LoggerFactory.getLogger(VideoLogServiceImpl.class);
 
     @Override
@@ -79,25 +81,26 @@ public class VideoLogServiceImpl extends ServiceImpl<VideoLogMapper, VideoLog>im
             save(videoLog);
         }else {
             int coinNum = videoLog.getCoinNum();
-            if (coinNum>=2){
+            if (coinNum>=MAX_COIN_NUM||coinNum+num>MAX_COIN_NUM){
                 throw new VideoException("投币数已经到上限拉~");
             }
-            videoLog.setCoinNum(coinNum==0?num:num-1);
+            videoLog.setCoinNum(coinNum+num);
             updateById(videoLog);
         }
-        videoMapper.incrCoinNum(vid,videoLog.getCoinNum());
+        videoMapper.incrCoinNum(vid,num);
         userFeignClient.incrCoinNumById(uid,-num);
         log.info("用户{}给视频{}投了{}个硬币",uid,vid,videoLog.getCoinNum());
         return true;
     }
 
     @Override
-    public boolean addCollection(long vid, long uid) {
+    public boolean dynamicCollection(long vid, long uid) {
         VideoLog videoLog = getVideo(vid,uid);
         if (ObjectUtils.isEmpty(videoLog)){
             videoLog = new VideoLog().setVid(vid).setUid(uid).setIsCollection(true);
             save(videoLog);
         }else {
+            log.debug("isCollection:{}",videoLog.getIsCollection());
             videoLog.setIsCollection(!videoLog.getIsCollection());
             updateById(videoLog);
         }

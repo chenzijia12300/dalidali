@@ -47,5 +47,10 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         return baseMapper.listBasicInfoByIds(ids);
     }
 
+    @Override
+    public int incrPlayNum(long vid, int num) {
+        return baseMapper.incrPlayNum(vid,num);
+    }
+
 
 }

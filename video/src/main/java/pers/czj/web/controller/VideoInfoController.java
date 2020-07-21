@@ -1,5 +1,6 @@
 package pers.czj.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,28 @@ public class VideoInfoController {
     private VideoLogService videoLogService;
 
     @PostMapping("/video/dynamic_like")
-    @ApiOperation("动态处理点")
-    public CommonResult dynamicLike(HttpSession httpSession, long vid){
+    @ApiOperation("动态处理点赞")
+    public CommonResult dynamicLike(HttpSession httpSession,@RequestBody String str){
         long userId = 1;httpSession.getAttribute("USER_ID");
-        boolean flag = videoLogService.dynamicLike(vid,userId);
+        boolean flag = videoLogService.dynamicLike(JSON.parseObject(str).getLong("vid"),userId);
         return CommonResult.success();
     }
 
     @PostMapping("/video/coin")
-    public CommonResult dynamicCoin(HttpSession httpSession,@RequestBody @Validated CoinInputDto dto) throws VideoException, UserException {
+    @ApiOperation("视频投币~")
+    public CommonResult addCoin(HttpSession httpSession,@RequestBody @Validated CoinInputDto dto) throws VideoException, UserException {
         long userId = 1;httpSession.getAttribute("USER_ID");
         boolean flag = videoLogService.addCoins(dto.getVid(),userId,dto.getNum());
         return CommonResult.success();
     }
+
+    @PostMapping("/video/collection")
+    @ApiOperation("动态处理收藏")
+    public CommonResult dynamicCollection(HttpSession httpSession,@RequestBody String str){
+        long userId = 1;httpSession.getAttribute("USER_ID");
+        boolean flag = videoLogService.dynamicCollection(JSON.parseObject(str).getLong("vid"),userId);
+        return CommonResult.success();
+    }
+
+
 }
