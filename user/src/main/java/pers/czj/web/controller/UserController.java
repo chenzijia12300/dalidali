@@ -1,9 +1,15 @@
 package pers.czj.web.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.GetResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +21,7 @@ import pers.czj.exception.UserException;
 import pers.czj.service.UserService;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * 创建在 2020/7/10 16:00
@@ -27,6 +34,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private Connection connection;
 
 
     @PostMapping("/login")
@@ -64,5 +77,35 @@ public class UserController {
     public CommonResult incrCoinNumById(@RequestParam long id,@RequestParam int num){
         return CommonResult.success(userService.incrCoinNum(id,num));
     }
+
+
+    @PostMapping("/test/send")
+    public CommonResult testSend(@RequestBody String str){
+        rabbitTemplate.convertAndSend("dalidali-test-exchange","test",str);
+        return CommonResult.success();
+    }
+
+    @GetMapping("/test/receive")
+    public CommonResult testReceive() throws IOException {
+        /*
+            参数为是否支持事务
+            channel不是线程安全对象,因此每次都要new
+        */
+        Channel channel = connection.createChannel(false);
+        /*
+            是否自动提交
+         */
+        GetResponse response = channel.basicGet("dalidali-test-queue",false);
+        log.info("message:{}",response);
+        return CommonResult.success(response.getEnvelope().getDeliveryTag(),new String(response.getBody()));
+    }
+
+    @PostMapping("/test/ack")
+    public CommonResult testAck(@RequestBody String str) throws IOException {
+        Channel channel = connection.createChannel(false);
+        channel.basicAck(JSON.parseObject(str).getLong("id"),true);
+        return CommonResult.success("审核成功！");
+    }
+
 
 }
