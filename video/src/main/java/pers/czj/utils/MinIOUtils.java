@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -67,5 +65,45 @@ public class MinIOUtils {
             e.printStackTrace();
         }
         return url+fileName;
+    }
+
+    /**
+     * @author czj
+     * 将文件保存到本地
+     * @date 2020/7/23 19:08
+     * @param [fileName]
+     * @return
+     */
+    public void saveLocalTemp(String fileName,String destPath){
+        try(BufferedInputStream bufferedInputStream = new BufferedInputStream(minioClient.getObject(bucketName,fileName));
+            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(destPath,fileName)))
+        ){
+            byte [] bytes = new byte[1024];
+            int len = -1;
+            while((len = bufferedInputStream.read(bytes))!=-1){
+                bufferedOutputStream.write(bytes,0,len);
+            }
+
+        } catch (InvalidBucketNameException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InsufficientDataException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (NoResponseException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (ErrorResponseException e) {
+            e.printStackTrace();
+        } catch (InternalException e) {
+            e.printStackTrace();
+        } catch (InvalidArgumentException e) {
+            e.printStackTrace();
+        }
     }
 }

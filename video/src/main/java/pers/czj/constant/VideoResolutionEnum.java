@@ -9,12 +9,18 @@ import lombok.Getter;
  */
 @Getter
 public enum  VideoResolutionEnum implements IEnum<Integer> {
-    P_360(0),P_480(1),P_720(2),P_1080(3);
+    P_360(0,"640","360"),P_480(1,"720","480"),P_720(2,"1280","720"),P_1080(3,"1920","1080");
 
     private int code;
 
-    VideoResolutionEnum(int code) {
+    private String width;
+
+    private String height;
+
+    VideoResolutionEnum(int code, String width, String height) {
         this.code = code;
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -22,7 +28,19 @@ public enum  VideoResolutionEnum implements IEnum<Integer> {
         return code;
     }
 
-/*    public static VideoResolutionEnum getInstance(int code){
+    public int getCode() {
+        return code;
+    }
+
+    public String getWidth() {
+        return width;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    /*    public static VideoResolutionEnum getInstance(int code){
         for (VideoResolutionEnum stateEnum:VideoResolutionEnum.values()){
             if (stateEnum.code==code){
                 return stateEnum;

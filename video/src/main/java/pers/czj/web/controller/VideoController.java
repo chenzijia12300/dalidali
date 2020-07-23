@@ -1,5 +1,7 @@
 package pers.czj.web.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pers.czj.common.CommonResult;
 import pers.czj.common.VideoBasicInfo;
+import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
 import pers.czj.dto.CategoryOutputDto;
 import pers.czj.dto.VideoBasicOutputDto;
@@ -35,6 +38,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.time.LocalDate;
@@ -87,7 +91,8 @@ public class VideoController {
         video.setUid(userId);
         video.setLength(basicInfo.getDuration());
         video.setCover(basicInfo.getCover());
-        video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getWidth()));
+        video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getHeight()));
+        video.setUrls(basicInfo.getUrl());
         boolean flag = videoService.save(video);
         if (!flag){
             throw new VideoException("添加视频失败，请重试尝试");
@@ -129,10 +134,12 @@ public class VideoController {
             throw new VideoException("上传视频出现错误，请重新尝试");
         }
         log.debug("文件存储路径:{}",temp.getAbsoluteFile());
-        VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(temp.getAbsolutePath(),temp.getName());
-        httpSession.setAttribute("VIDEO_INFO",basicInfo);
         //上传视频文件到文件服务器
         String url = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp));
+        log.info("dir:{},name:{}",dir,temp.getName());
+        VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(dir,temp.getName());
+        httpSession.setAttribute("VIDEO_INFO",basicInfo);
+        basicInfo.setUrl(url);
         return CommonResult.success(url);
     }
 
@@ -198,5 +205,17 @@ public class VideoController {
         return CommonResult.success();
     }
 
+
+    @PutMapping("/video")
+    public CommonResult updateVideoPublishStatus(@RequestBody String str) throws FileNotFoundException {
+        JSONObject jsonObject = JSON.parseObject(str);
+        videoService.updatePublishStatus(jsonObject.getLong("id"),jsonObject.getObject("state", VideoPublishStateEnum.class));
+        return CommonResult.success("发布成功！");
+    }
+
+    @GetMapping("/video/audit")
+    public String findNeedAuditVideo() throws VideoException {
+        return JSON.toJSONString(videoService.findNeedAuditVideo());
+    }
 
 }

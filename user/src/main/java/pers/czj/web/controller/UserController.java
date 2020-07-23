@@ -22,6 +22,8 @@ import pers.czj.service.UserService;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 创建在 2020/7/10 16:00
@@ -40,6 +42,8 @@ public class UserController {
 
     @Autowired
     private Connection connection;
+
+    private Map<Long,Channel> map = new ConcurrentHashMap<>(2);
 
 
     @PostMapping("/login")
@@ -79,33 +83,38 @@ public class UserController {
     }
 
 
-    @PostMapping("/test/send")
+/*    @PostMapping("/test/send")
     public CommonResult testSend(@RequestBody String str){
         rabbitTemplate.convertAndSend("dalidali-test-exchange","test",str);
         return CommonResult.success();
     }
 
     @GetMapping("/test/receive")
-    public CommonResult testReceive() throws IOException {
-        /*
+    public CommonResult testReceive(HttpSession session) throws IOException {
+        *//*
             参数为是否支持事务
             channel不是线程安全对象,因此每次都要new
-        */
+        *//*
         Channel channel = connection.createChannel(false);
-        /*
+        *//*
             是否自动提交
-         */
+         *//*
         GetResponse response = channel.basicGet("dalidali-test-queue",false);
         log.info("message:{}",response);
+        long adminId = 1;*//*(long) session.getAttribute("ADMIN_ID");*//*
+        session.setAttribute("ADMIN_ID",adminId);
+        map.put(adminId,channel);
         return CommonResult.success(response.getEnvelope().getDeliveryTag(),new String(response.getBody()));
     }
 
     @PostMapping("/test/ack")
-    public CommonResult testAck(@RequestBody String str) throws IOException {
-        Channel channel = connection.createChannel(false);
-        channel.basicAck(JSON.parseObject(str).getLong("id"),true);
+    public CommonResult testAck(HttpSession session,@RequestBody String str) throws IOException {
+        long adminId = (long) session.getAttribute("ADMIN_ID");
+        Channel channel = map.get(adminId);
+        channel.basicAck(JSON.parseObject(str).getLong("id"),false);
+        rabbitTemplate.convertAndSend("dalidali-video-exchange","video");
         return CommonResult.success("审核成功！");
-    }
+    }*/
 
 
 }
