@@ -17,4 +17,6 @@ public class VideoBasicInfo implements Serializable {
     private String width;
 
     private String height;
+
+    private String url;
 }

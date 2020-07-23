@@ -40,16 +40,18 @@ public class VideoUtils {
         commandList.add("-of");
         commandList.add("json");
         commandList.add("-i");
-        commandList.add(filePath+videoName);
+        commandList.add(filePath+"/"+videoName);
         ProcessBuilder processBuilder = new ProcessBuilder();
         try {
             processBuilder.command(commandList);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-            log.debug("{}视频处理中",filePath);
             process.waitFor();
+            log.debug("{}视频处理中",filePath+"/"+videoName);
             //获得视频基本信息
-            VideoBasicInfo basicInfo = handlerInputStream(process.getInputStream());
+            String str = handlerInputStream(process.getInputStream());
+            JSONObject jsonObject = JSONObject.parseObject(str);
+            VideoBasicInfo basicInfo = handlerJson(jsonObject);
             //获得视频第一帧当封面
             String imageName = videoName.substring(0,videoName.lastIndexOf("."));
             createFirstImage(filePath+videoName,filePath+imageName);
@@ -84,7 +86,7 @@ public class VideoUtils {
         return videoBasicInfo;
     }
 
-    private static VideoBasicInfo handlerInputStream(InputStream inputStream){
+    private static String handlerInputStream(InputStream inputStream){
         try(
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
         ){
@@ -94,8 +96,7 @@ public class VideoUtils {
             while((str=bufferedReader.readLine())!=null){
                 stringBuilder.append(str);
             }
-            JSONObject jsonObject = JSONObject.parseObject(stringBuilder.toString());
-            return handlerJson(jsonObject);
+            return stringBuilder.toString();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -136,14 +137,22 @@ public class VideoUtils {
         list.add("-i");
         list.add(fileName);
         list.add("-vf");
-        list.add("scale=="+height+":"+width);
+        list.add("scale="+height+":"+width);
         list.add(destFileName);
         list.add("-hide_banner");
-        ProcessBuilder builder = new ProcessBuilder(list);
+        ProcessBuilder builder = new ProcessBuilder();
         try {
+            builder.command(list);
+            builder.redirectErrorStream(true);
             log.info("尝试创建{}*{}分辨率的视频",height,width);
             Process process = builder.start();
+            InputStream inputStream = process.getInputStream();
+            String str = handlerInputStream(inputStream);
+            log.info("str:{}",str);
+            process.waitFor();
         }catch (IOException e){
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

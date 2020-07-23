@@ -9,6 +9,7 @@
         <module>video</module>
         <module>gatewaay</module>
         <module>comment</module>
+        <module>admin</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

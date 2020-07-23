@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import pers.czj.receiver.BaseReceiver;
 
 /**
  * 创建在 2020/7/22 17:47
@@ -22,8 +21,6 @@ import pers.czj.receiver.BaseReceiver;
 @Configuration
 public class RabbitConfig {
 
-    @Autowired
-    private BaseReceiver baseReceiver;
 
     @Autowired
     private CachingConnectionFactory cachingConnectionFactory;
@@ -65,6 +62,8 @@ public class RabbitConfig {
     public Connection connection(@Autowired ConnectionFactory connectionFactory){
         return connectionFactory.createConnection();
     }
+
+
 
 /*    @Bean
     public SimpleMessageListenerContainer simpleMessageListenerContainer(){

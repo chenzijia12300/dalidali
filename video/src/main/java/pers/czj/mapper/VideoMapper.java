@@ -2,8 +2,10 @@ package pers.czj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
+import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Video;
@@ -54,4 +56,10 @@ public interface VideoMapper extends BaseMapper<Video> {
 
     @Update(("UPDATE video SET play_num=play_num+#{num} WHERE id = #{vid}"))
     public int incrPlayNum(long vid,int num);
+
+    @Select("SELECT * FROM video WHERE publish_state = #{state} ORDER BY create_time ASC LIMIT 0,1 FOR UPDATE")
+    public Video findNeedAuditVideo(VideoPublishStateEnum state);
+
+    @Update("UPDATE video SET publish_state = #{state} WHERE id = #{id}")
+    public int auditing(long id,VideoPublishStateEnum state);
 }

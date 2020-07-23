@@ -10,8 +10,10 @@ import lombok.Getter;
 @Getter
 public enum  VideoPublishStateEnum implements IEnum<Integer> {
     //制作中        审核           未发布               发布            下架
-    MAKING(0),AUDIT(1),UN_PUBLISH(2),PUBLISH(3),SOLD_OUT(4);
+    MAKING(0),AUDIT(1),UN_PUBLISH(2),PUBLISH(3),SOLD_OUT(4),
 
+    //审核中
+    AUDITING(-1);
     private int code;
 
     VideoPublishStateEnum(int code) {

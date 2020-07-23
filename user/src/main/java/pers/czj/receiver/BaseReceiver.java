@@ -1,3 +1,4 @@
+/*
 package pers.czj.receiver;
 
 import com.rabbitmq.client.Channel;
@@ -7,9 +8,11 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.stereotype.Component;
 
+*/
 /**
  * 创建在 2020/7/22 20:50
- */
+ *//*
+
 @Component
 public class BaseReceiver implements ChannelAwareMessageListener {
     
@@ -25,3 +28,4 @@ public class BaseReceiver implements ChannelAwareMessageListener {
 
 
 }
+*/
