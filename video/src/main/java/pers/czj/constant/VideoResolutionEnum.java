@@ -9,7 +9,8 @@ import lombok.Getter;
  */
 @Getter
 public enum  VideoResolutionEnum implements IEnum<Integer> {
-    P_360(0,"640","360"),P_480(1,"720","480"),P_720(2,"1280","720"),P_1080(3,"1920","1080");
+    P_360(0,"640","360"),P_480(1,"720","480"),P_720(2,"1280","720"),P_1080(3,"1920","1080"),
+    P_1920(3,"1920","1080");
 
     private int code;
 

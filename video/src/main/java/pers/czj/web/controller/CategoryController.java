@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
@@ -15,6 +17,7 @@ import pers.czj.exception.CategoryException;
 import pers.czj.exception.VideoException;
 import pers.czj.service.CategoryService;
 import pers.czj.service.VideoService;
+import pers.czj.utils.RedisUtils;
 
 import java.util.List;
 
@@ -23,6 +26,7 @@ import java.util.List;
  */
 @RestController
 @Api("视频分类接口")
+@CrossOrigin
 public class CategoryController {
 
     private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
@@ -32,6 +36,12 @@ public class CategoryController {
 
     @Autowired
     private VideoService videoService;
+
+    @Autowired
+    private RedisUtils redisUtils;
+
+    @Value("${redis.category-list}")
+    private String categoryListKey;
 
     @PostMapping("/category")
     @ApiOperation("添加视频分类")
@@ -48,8 +58,15 @@ public class CategoryController {
     @GetMapping("/category")
     @ApiOperation("获得视频总分类")
     public CommonResult listCategory() throws CategoryException {
-        List<CategoryOutputDto> categoryOutputDtos = categoryService.listCategory();
-        return CommonResult.success(categoryOutputDtos);
+        List list = null;
+        if (redisUtils.hasKey(categoryListKey)){
+            log.debug("分类走缓存");
+            list = redisUtils.getList(categoryListKey);
+        }else {
+            list = categoryService.listCategory();
+            redisUtils.pushList(categoryListKey,list);
+        }
+        return CommonResult.success(list);
     }
 
     @GetMapping("/category/random/{pid}")

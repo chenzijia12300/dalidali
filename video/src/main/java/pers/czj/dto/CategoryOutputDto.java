@@ -20,5 +20,7 @@ public class CategoryOutputDto {
 
     private long proNum;
 
+    private long dayProNum;
+
     private List<CategoryOutputDto> childList;
 }

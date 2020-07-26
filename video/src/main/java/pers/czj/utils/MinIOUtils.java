@@ -29,7 +29,7 @@ public class MinIOUtils {
     @Value("${minio.bucket-name}")
     private String bucketName;
 
-    @Value("${minio.url}")
+    @Value("${minio.download-url}")
     private String url;
 
     /**
@@ -64,7 +64,7 @@ public class MinIOUtils {
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
         }
-        return url+fileName;
+        return url+bucketName+"/"+fileName;
     }
 
     /**

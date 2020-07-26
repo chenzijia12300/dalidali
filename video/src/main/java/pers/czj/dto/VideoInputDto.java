@@ -33,6 +33,8 @@ public class VideoInputDto {
     @ApiModelProperty("视频简介")
     private String description;
 
+    private long uid;
+
 /*    @ApiModelProperty("视频的顶级频道（冗余）")
     private String categoryPName;
 

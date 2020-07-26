@@ -2,23 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.czj.mapper.VideoMapper">
     <sql id="detailsFieldSql">
-        id,uid,play_num, danmu_num, comment_num, praise_num, coin_num, category_p_id, category_id, category_p_name, category_name, title, urls, description, tags, resolution_state create_time, update_time,length,cover
+        video.id,uid,play_num, danmu_num, comment_num, praise_num, coin_num, category_p_id, category_id, c2.name as category_p_name, c1.name as category_name, title, urls, description, tags, resolution_state create_time, update_time,length,cover
     </sql>
     <sql id="basicFieldSql">
-                video.id,uid,play_num,danmu_num,title,length,cover,username as upName
+        video.id,uid,play_num,danmu_num,title,length,cover,username as upName
     </sql>
     <select id="findDetailsById" parameterType="long" resultType="pers.czj.dto.VideoDetailsOutputDto">
         SELECT
             <include refid="detailsFieldSql"/>
-            FROM video WHERE id = #{id}
+            FROM video,category as c1,category as c2 WHERE video.id = #{id}
+            AND c1.id = video.category_id
+            AND c2.id = video.category_p_id
     </select>
 
     <select id="listRandomByCategoryPId" parameterType="long" resultType="pers.czj.dto.VideoDetailsOutputDto">
         SELECT
         <include refid="basicFieldSql"/>
-        FROM video AS t1 JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
-        WHERE category_p_id = #{id} AND t1.id >= t2.id AND user.id = t1.uid
-        ORDER BY t1.id ASC
+        FROM video  JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
+        WHERE category_p_id = #{id} AND video.id >= t2.id AND user.id = video.uid
+        ORDER BY video.id ASC
     </select>
 
     <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">

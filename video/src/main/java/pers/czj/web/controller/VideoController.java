@@ -78,17 +78,16 @@ public class VideoController {
     @Value("${redis.play-key}")
     private String playKey;
 
-    private String dir = System.getProperty("user.dir");
+    private String dir = System.getProperty("user.dir")+"/";
 
 
     @PostMapping("/video")
     @ApiOperation("添加视频")
-    public CommonResult addVideo(HttpSession httpSession,@RequestBody @Validated VideoInputDto dto) throws VideoException {
+    public CommonResult addVideo(HttpSession httpSession,@RequestParam long uid,@RequestBody @Validated VideoInputDto dto) throws VideoException {
         Video video = dto.convert();
-        log.debug("sessionID:{}",httpSession.getId());
-        long userId = /*(long) httpSession.getAttribute("USER_ID");*/ 1;
+        video.setUid(uid);
+        log.info("video:{}",video);
         VideoBasicInfo basicInfo = (VideoBasicInfo) httpSession.getAttribute("VIDEO_INFO");
-        video.setUid(userId);
         video.setLength(basicInfo.getDuration());
         video.setCover(basicInfo.getCover());
         video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getHeight()));
@@ -103,8 +102,7 @@ public class VideoController {
 
     @GetMapping("/video/{id}")
     @ApiOperation("获得视频的详细信息")
-    public CommonResult findVideoById(HttpSession httpSession,@PathVariable("id")@Min(1) long id) throws VideoException {
-        long userId = /*(long) httpSession.getAttribute("USER_ID");*/ 1;
+    public CommonResult findVideoById(@RequestParam long userId,@PathVariable("id")@Min(1) long id) throws VideoException {
         VideoDetailsOutputDto detailsOutputDto = videoService.findDetailsById(id);
         log.info("当前日期：{}",LocalDate.now());
         if(!redisUtils.getBit(playKey+id,userId)){
@@ -116,11 +114,12 @@ public class VideoController {
     }
 
     @PostMapping("/video/upload")
-    public CommonResult uploadVideo(HttpSession httpSession,MultipartFile file) throws VideoException, UserException, IOException {
+    public CommonResult uploadVideo(HttpSession httpSession,@RequestParam("file") MultipartFile file) throws VideoException, UserException, IOException {
 /*        if (httpSession.isNew()){
             httpSession.invalidate();
             throw new UserException("请重新登录！");
         }*/
+        //视频存储到本地
         String filename = file.getOriginalFilename();
         String suffix = filename.substring(filename.lastIndexOf("."));
         log.info("文件名:{}\t文件后缀:{}",filename,suffix);
@@ -134,12 +133,19 @@ public class VideoController {
             throw new VideoException("上传视频出现错误，请重新尝试");
         }
         log.debug("文件存储路径:{}",temp.getAbsoluteFile());
-        //上传视频文件到文件服务器
-        String url = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp));
-        log.info("dir:{},name:{}",dir,temp.getName());
+
+        //获得视频处理后的基本信息
         VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(dir,temp.getName());
-        httpSession.setAttribute("VIDEO_INFO",basicInfo);
+
+        //上传视频文件和图片文件到文件服务器
+        String url = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp));
+        String coverLocalUrl = basicInfo.getCover();
+        String coverWebUrl = minIOUtils.uploadFile(coverLocalUrl.substring(coverLocalUrl.lastIndexOf("/")+1),new FileInputStream(coverLocalUrl));
+        basicInfo.setCover(coverWebUrl);
         basicInfo.setUrl(url);
+        log.info("dir:{},name:{},coverWebUrl:{}",dir,temp.getName(),coverWebUrl);
+        httpSession.setAttribute("VIDEO_INFO",basicInfo);
+        temp.delete();
         return CommonResult.success(url);
     }
 

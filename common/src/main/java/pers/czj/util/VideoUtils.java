@@ -25,6 +25,7 @@ public class VideoUtils {
 
     private static final Logger log = LoggerFactory.getLogger(VideoUtils.class);
 
+
     public static VideoBasicInfo getVideoInfo(String filePath,String videoName){
         List<String> commandList = new ArrayList<>();
         commandList.add("ffprobe");
@@ -40,20 +41,21 @@ public class VideoUtils {
         commandList.add("-of");
         commandList.add("json");
         commandList.add("-i");
-        commandList.add(filePath+"/"+videoName);
+        commandList.add(filePath+videoName);
         ProcessBuilder processBuilder = new ProcessBuilder();
         try {
             processBuilder.command(commandList);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
             process.waitFor();
-            log.debug("{}视频处理中",filePath+"/"+videoName);
+            log.debug("{}视频处理中",filePath+videoName);
             //获得视频基本信息
             String str = handlerInputStream(process.getInputStream());
             JSONObject jsonObject = JSONObject.parseObject(str);
             VideoBasicInfo basicInfo = handlerJson(jsonObject);
             //获得视频第一帧当封面
-            String imageName = videoName.substring(0,videoName.lastIndexOf("."));
+            String imageName = videoName.substring(0,videoName.lastIndexOf(".")+1)+"jpg";
+            log.info("imageName:{}",imageName);
             createFirstImage(filePath+videoName,filePath+imageName);
             basicInfo.setCover(filePath+imageName);
             return basicInfo;
@@ -119,7 +121,11 @@ public class VideoUtils {
         ProcessBuilder builder = new ProcessBuilder(list);
         try {
             Process process = builder.start();
+            process.waitFor();
+            log.info("生成封面完毕~");
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
