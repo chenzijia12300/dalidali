@@ -1,6 +1,7 @@
 package pers.czj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import pers.czj.dto.CategoryOutputDto;
 import pers.czj.entity.Category;
@@ -30,5 +31,10 @@ public interface CategoryMapper extends BaseMapper<Category> {
      * @return java.util.List<pers.czj.dto.CategoryOutputDto>
      */
     List<CategoryOutputDto> findCategoryByPid(int pid);
+
+
+    @Update("UPDATE category SET pro_num = pro_num+#{num} WHERE id = #{id}")
+    int incrProNum(long id,int num);
+
 
 }

@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.net.ConnectException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 public class RedisUtils {
 
     private static final Logger log = LoggerFactory.getLogger(RedisUtils.class);
+
+
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
 
@@ -108,24 +107,46 @@ public class RedisUtils {
         return redisTemplate.delete(key);
     }
 
+    /**
+     * @author czj
+     * 删除对应前缀建
+     * @date 2020/7/25 23:50
+     * @param [key]
+     * @return java.lang.Long
+     */
+    @Deprecated
     public Long deleteAll(String key){
         Set keys=redisTemplate.keys(key+"*");
         return redisTemplate.delete(keys);
     }
 
 
+    /**
+     * @author czj
+     * 获得键对应的SET集合
+     * @date 2020/7/25 23:51
+     * @param [key, num]
+     * @return java.util.Set<java.lang.Object>
+     */
     public Set<Object> getSet(String key,long num){
         return redisTemplate.opsForSet().distinctRandomMembers(key,num);
     }
 
 
+    /**
+     * @author czj
+     * 设置SET集合
+     * @date 2020/7/25 23:51
+     * @param [key, object]
+     * @return long
+     */
     public long addSet(String key,Object object){
         return redisTemplate.opsForSet().add(key,object);
     }
 
     /**
      * @author czj
-     * 用于排行榜
+     * 使用ZSET数据类型存储，用于排行榜
      * @date 2020/7/16 18:10
      * @param [key, num, member]
      * @return double
@@ -171,5 +192,63 @@ public class RedisUtils {
      */
     public boolean getBit(String key,long num){
         return redisTemplate.opsForValue().getBit(key,num);
+    }
+
+
+    /**
+     * @author czj
+     * 将对象存储进hash数据类型中
+     * @date 2020/7/25 23:57
+     * @param [key, params]
+     * @return
+     */
+    public void putHash(String key, Map<String,Object> params){
+        redisTemplate.opsForHash().putAll(key,params);
+    }
+
+    /**
+     * @author czj
+     * 将对象存储进list数据类型中
+     * @date 2020/7/26 0:10
+     * @param [key, collection]
+     * @return void
+     */
+    public void pushList(String key,Collection collection){
+        redisTemplate.opsForList().leftPushAll(key,collection);
+    }
+
+
+    /**
+     * @author czj
+     * 返回list对象
+     * @date 2020/7/26 0:35
+     * @param [key]
+     * @return java.util.List<java.lang.Object>
+     */
+    public List<Object> getList(String key){
+
+        return redisTemplate.opsForList().range(key,0,-1);
+    }
+
+    /**
+     * @author czj
+     * 返回list对象对应的下标成员
+     * @date 2020/7/26 11:34
+     * @param [key, id]
+     * @return T
+     */
+    public<T> T getItemByList(String key,long id,Class<T> tClass){
+        return (T)redisTemplate.opsForList().index(key,id);
+    }
+
+    /**
+     * @author czj
+     * 设置list对象对应的下标成员
+     * @date 2020/7/26 11:35
+     * @param [key, o, id]
+     * @return void
+     */
+    public void setItemByList(String key,Object o,long id){
+        redisTemplate.opsForList().set(key,id,o);
     }
 }

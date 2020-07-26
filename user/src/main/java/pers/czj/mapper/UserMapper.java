@@ -18,10 +18,10 @@ public interface UserMapper extends BaseMapper<User> {
     @Update("UPDATE user SET coin_num=coin_num+#{num} WHERE id = #{id}")
     public int incrCoinNum(long id,int num);
 
-    @Update("UPDATE user SET follow_num=follow_num+#{num} WHERE uid = #{uid}")
+    @Update("UPDATE user SET follow_num=follow_num+#{num} WHERE id = #{uid}")
     public int incrFollowNum(long uid,int num);
 
-    @Update("UPDATE user SET fans_num=fans_num+#{num} WHERE uid = #{uid}")
+    @Update("UPDATE user SET fans_num=fans_num+#{num} WHERE id = #{uid}")
     public int incrFansNum(long uid,int num);
 
 
