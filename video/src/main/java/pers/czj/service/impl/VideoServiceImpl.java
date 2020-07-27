@@ -43,6 +43,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     private static final Logger log = LoggerFactory.getLogger(VideoServiceImpl.class);
 
+
     private String dir = System.getProperty("user.dir");
 
     @Autowired
@@ -116,6 +117,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             builder.append(dir+newFileName+",");
         }
 
+        //生成预览图
+        String previewImage = VideoUtils.createPreviewImage(dir,fileName,1.0/(video.getLength()/10));
+        String webPreviewUrl = minIOUtils.uploadFile(previewImage,new FileInputStream(new File(dir,previewImage)));
+        video.setPreviewUrl(webPreviewUrl);
+        log.debug("预览图路径:{}",webPreviewUrl);
         //更新视频对应存储路径
         video.setUrls(builder.substring(0,builder.length()-1));
         video.setUpdateTime(new Date());

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.czj.mapper.VideoMapper">
     <sql id="detailsFieldSql">
-        video.id,uid,play_num, danmu_num, comment_num, praise_num, coin_num, category_p_id, category_id, c2.name as category_p_name, c1.name as category_name, title, urls, description, tags, resolution_state create_time, update_time,length,cover
+        video.id,uid,play_num, danmu_num, comment_num, praise_num, coin_num, category_p_id, category_id, c2.name as category_p_name, c1.name as category_name, title, urls, description, tags, resolution_state create_time, update_time,length,cover,preview_url
     </sql>
     <sql id="basicFieldSql">
         video.id,uid,play_num,danmu_num,title,length,cover,username as upName
