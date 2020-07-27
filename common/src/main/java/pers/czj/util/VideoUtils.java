@@ -25,6 +25,9 @@ public class VideoUtils {
 
     private static final Logger log = LoggerFactory.getLogger(VideoUtils.class);
 
+    private static final String VIDEO_IMAGE_SUFFIX="%d.png";
+
+    private static final String MERGE_IMAGE_SUFFIX="_preview.png";
 
     public static VideoBasicInfo getVideoInfo(String filePath,String videoName){
         List<String> commandList = new ArrayList<>();
@@ -161,5 +164,61 @@ public class VideoUtils {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * @author czj
+     * 创建预览图（雪碧图）
+     * @date 2020/7/27 21:08
+     * @param [videoPath, videoName]
+     * @return string
+     */
+    public static String createPreviewImage(String videoPath,String videoName,double second){
+        log.debug("videoPath:{}\nvideoName:{}\nsecond:{}",videoPath,videoName,second);
+
+        /*
+            每second秒生成一帧图片
+         */
+        int ch = videoName.lastIndexOf(".");
+        String imageName = videoName.substring(0,ch);
+        log.debug("imageName:{}",imageName);
+        List<String> list = new ArrayList<>();
+        list.add("ffmpeg");
+        list.add("-i");
+        list.add(videoPath+videoName);
+        list.add("-vf");
+        list.add("fps="+second);
+        list.add(videoPath+imageName+VIDEO_IMAGE_SUFFIX);
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(list);
+        processBuilder.redirectErrorStream(true);
+        try {
+            Process process = processBuilder.start();
+            log.debug("输入流:{}",handlerInputStream(process.getInputStream()));
+            process.waitFor();
+            /*
+                合并图片,并删除本地图片
+             */
+            list.clear();
+            list.add("montage");
+            list.add(videoPath+imageName+"*.png");
+            list.add("-tile");
+            list.add("10");
+            list.add("-geometry");
+            list.add("206x116");
+            list.add(videoPath+imageName+MERGE_IMAGE_SUFFIX);
+            ProcessBuilder builder = new ProcessBuilder();
+            builder.redirectErrorStream(true);
+            builder.command(list);
+            Process process1 = builder.start();
+            log.debug("合并输入流:{}",handlerInputStream(process1.getInputStream()));
+            process1.waitFor();
+            return imageName+MERGE_IMAGE_SUFFIX;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

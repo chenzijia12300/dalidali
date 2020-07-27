@@ -106,6 +106,13 @@ public class VideoDetailsOutputDto {
      */
     private String tags;
 
+
+    /**
+     * 预览图
+     */
+    private String previewUrl;
+
+
     /**
      * 视频分辨率枚举类
      */

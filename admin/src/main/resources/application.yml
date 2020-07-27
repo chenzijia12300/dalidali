@@ -22,5 +22,8 @@ eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:8100/eureka/
-
-
+feign:
+  hystrix:
+    enabled: false
+  httpclient:
+    connection-timeout: 60000
