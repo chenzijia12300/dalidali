@@ -32,7 +32,7 @@ public interface VideoService extends IService<Video> {
      * @param [id]
      * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
      */
-    public List<VideoDetailsOutputDto> listRandomByCategoryPId(long id) throws VideoException;
+    public List<VideoBasicOutputDto> listRandomByCategoryPId(long id) throws VideoException;
 
 
     /**

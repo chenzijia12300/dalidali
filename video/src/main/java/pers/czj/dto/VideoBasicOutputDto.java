@@ -26,9 +26,19 @@ public class VideoBasicOutputDto {
     private long playNum;
 
     /**
+     * 点赞数
+     */
+    private long praiseNum;
+
+    /**
      * 弹幕数（别问我为什么是拼音）
      */
     private long danmuNum;
+
+    /**
+     * 时长
+     */
+    private long length;
 
 
     /**
@@ -50,6 +60,11 @@ public class VideoBasicOutputDto {
      * 视频封面
      */
     private String cover;
+
+    /**
+     * 预览图
+     */
+    private String previewUrl;
 
 
 }

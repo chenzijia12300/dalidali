@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.dto.CategoryOutputDto;
+import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Category;
 import pers.czj.exception.CategoryException;
@@ -72,7 +73,7 @@ public class CategoryController {
     @GetMapping("/category/random/{pid}")
     @ApiOperation("获得顶级频道随机视频列表")
     public CommonResult listRandomByPId(@PathVariable("pid") long pid) throws VideoException {
-        List<VideoDetailsOutputDto> list = videoService.listRandomByCategoryPId(pid);
+        List<VideoBasicOutputDto> list = videoService.listRandomByCategoryPId(pid);
         return CommonResult.success(list);
     }
 }

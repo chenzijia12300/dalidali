@@ -5,7 +5,7 @@
         video.id,uid,play_num, danmu_num, comment_num, praise_num, coin_num, category_p_id, category_id, c2.name as category_p_name, c1.name as category_name, title, urls, description, tags, resolution_state create_time, update_time,length,cover,preview_url
     </sql>
     <sql id="basicFieldSql">
-        video.id,uid,play_num,danmu_num,title,length,cover,username as upName
+        video.id,uid,play_num,danmu_num,title,length,cover,username as upName,preview_url,praise_num
     </sql>
     <select id="findDetailsById" parameterType="long" resultType="pers.czj.dto.VideoDetailsOutputDto">
         SELECT
@@ -15,7 +15,7 @@
             AND c2.id = video.category_p_id
     </select>
 
-    <select id="listRandomByCategoryPId" parameterType="long" resultType="pers.czj.dto.VideoDetailsOutputDto">
+    <select id="listRandomByCategoryPId" parameterType="long" resultType="pers.czj.dto.VideoBasicOutputDto">
         SELECT
         <include refid="basicFieldSql"/>
         FROM video  JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user

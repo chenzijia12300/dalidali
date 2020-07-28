@@ -107,10 +107,6 @@ public class VideoDetailsOutputDto {
     private String tags;
 
 
-    /**
-     * 预览图
-     */
-    private String previewUrl;
 
 
     /**
