@@ -35,7 +35,7 @@ public interface VideoMapper extends BaseMapper<Video> {
      * @param [id]
      * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
      */
-    public List<VideoDetailsOutputDto> listRandomByCategoryPId(long id);
+    public List<VideoBasicOutputDto> listRandomByCategoryPId(long id);
 
 
     /**

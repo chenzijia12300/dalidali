@@ -68,9 +68,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
-    public List<VideoDetailsOutputDto> listRandomByCategoryPId(long id) throws VideoException {
+    public List<VideoBasicOutputDto> listRandomByCategoryPId(long id) throws VideoException {
         PageHelper.startPage(1,8);
-        List<VideoDetailsOutputDto> list = baseMapper.listRandomByCategoryPId(id);
+        List<VideoBasicOutputDto> list = baseMapper.listRandomByCategoryPId(id);
         if (CollectionUtils.isEmpty(list)){
             throw new VideoException("该频道下没有视频。。。");
         }
