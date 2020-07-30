@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pers.czj.constant.OrderFieldEnum;
 import pers.czj.constant.TableNameEnum;
 import pers.czj.dto.CommentOutputDto;
 import pers.czj.entity.Comment;
@@ -38,9 +39,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     private CommentLogMapper commentLogMapper;
 
     @Override
-    public List<CommentOutputDto> listComment(TableNameEnum nameEnum,long id,long userId,int pageNum,int pageSize) {
+    public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id, long userId, int pageNum, int pageSize, OrderFieldEnum orderFieldEnum) {
+
+        log.debug("pageNum:{}\npageSize:{}",pageNum,pageSize);
         PageHelper.startPage(pageNum,pageSize);
-        List<CommentOutputDto> dtos = baseMapper.listComment(nameEnum.getName(),id,userId);
+        List<CommentOutputDto> dtos = baseMapper.listComment(nameEnum.getName(),id,userId,orderFieldEnum.getField());
         PageHelper.startPage(1,2);
         for (CommentOutputDto dto:dtos){
             dto.setReplyList(replyMapper.listReply(nameEnum.getName(),dto.getId(),userId));

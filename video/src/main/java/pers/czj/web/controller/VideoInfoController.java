@@ -27,6 +27,8 @@ public class VideoInfoController {
     @Autowired
     private VideoLogService videoLogService;
 
+
+
     @PostMapping("/video/dynamic_like")
     @ApiOperation("动态处理点赞")
     public CommonResult dynamicLike(HttpSession httpSession,@RequestBody String str){

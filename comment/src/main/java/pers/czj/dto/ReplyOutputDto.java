@@ -2,6 +2,7 @@ package pers.czj.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 /**
@@ -35,6 +36,10 @@ public class ReplyOutputDto {
     @ApiModelProperty("被回复人的用户名")
     private String rusername;
 
+    @ApiModelProperty("内容")
+    private String content;
+
     @ApiModelProperty("点赞记录")
     private long flag;
+
 }

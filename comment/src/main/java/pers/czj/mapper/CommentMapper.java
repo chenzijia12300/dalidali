@@ -17,10 +17,10 @@ public interface CommentMapper extends BaseMapper<Comment> {
      * tableName:动态表名
      * id:对应视频/专栏主键
      * @date 2020/7/15 17:06
-     * @param [tableName, id,userId]
+     * @param tableName, id, userId, orderField
      * @return pers.czj.dto.CommentOutputDto
      */
-    public List<CommentOutputDto> listComment(String tableName, long id,long userId);
+    public List<CommentOutputDto> listComment(String tableName, long id,long userId,String orderField);
 
 
     /**
@@ -32,4 +32,7 @@ public interface CommentMapper extends BaseMapper<Comment> {
      */
     @Update("UPDATE ${name}_comment SET praise_num=praise_num+#{num} WHERE id = #{cid}")
     public int incrPraiseNum(String name,long cid,long num);
+
+    @Update("UPDATE ${name}_comment SET reply_num=reply_num+#{num} WHERE id = #{cid}")
+    public int incrReplyNum(String name,long cid,long num);
 }
