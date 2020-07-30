@@ -13,7 +13,7 @@ import javax.validation.constraints.NotEmpty;
  */
 @Data
 @ApiModel
-public class ReplyInputDto {
+public class        ReplyInputDto {
 
     private long id;
 

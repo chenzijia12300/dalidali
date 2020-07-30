@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * 创建在 2020/7/18 14:23
  */
+@CrossOrigin
 @RestController
 @Api("回复接口")
 public class ReplyController {

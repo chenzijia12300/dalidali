@@ -1,6 +1,7 @@
 package pers.czj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import pers.czj.constant.OrderFieldEnum;
 import pers.czj.constant.TableNameEnum;
 import pers.czj.dto.CommentOutputDto;
 import pers.czj.entity.Comment;
@@ -28,7 +29,7 @@ public interface CommentService extends IService<Comment> {
      * @param [nameEnum, id]
      * @return pers.czj.dto.CommentOutputDto
      */
-    public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id,long userId,int pageNum, int pageSize);
+    public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id, long userId, int pageNum, int pageSize, OrderFieldEnum orderFieldEnum);
 
 
     /**

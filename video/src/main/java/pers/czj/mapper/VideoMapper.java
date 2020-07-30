@@ -57,9 +57,17 @@ public interface VideoMapper extends BaseMapper<Video> {
     @Update(("UPDATE video SET play_num=play_num+#{num} WHERE id = #{vid}"))
     public int incrPlayNum(long vid,int num);
 
+    @Update("UPDATE video SET comment_num=comment_num+#{num} WHERE id = #{id}")
+    public int incrCommentNum(long id,int num);
+
+    @Update("UPDATE video SET danmu_num=danmu_num+#{num} WHERE id = #{id}")
+    public int incrDanmuNum(long id,int num);
+
     @Select("SELECT * FROM video WHERE publish_state = #{state} ORDER BY create_time ASC LIMIT 0,1 FOR UPDATE")
     public Video findNeedAuditVideo(VideoPublishStateEnum state);
 
     @Update("UPDATE video SET publish_state = #{state} WHERE id = #{id}")
     public int auditing(long id,VideoPublishStateEnum state);
+
+
 }

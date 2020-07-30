@@ -53,6 +53,25 @@ public interface VideoService extends IService<Video> {
      */
     public int incrPlayNum(long vid,int num);
 
+    /**
+     * @author czj
+     * 自增视频评论量
+     * @date 2020/7/30 17:24
+     * @param [id, num]
+     * @return int
+     */
+    public int incrCommentNum(long id,int num);
+
+    /**
+     * @author czj
+     * 自增视频弹幕量
+     * @date 2020/7/30 17:26
+     * @param [id, num]
+     * @return int
+     */
+    public int incrDanmuNum(long id,int num);
+
+
 
     /**
      * @author czj

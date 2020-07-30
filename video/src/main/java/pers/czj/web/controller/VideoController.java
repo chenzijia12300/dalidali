@@ -17,10 +17,7 @@ import pers.czj.common.CommonResult;
 import pers.czj.common.VideoBasicInfo;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
-import pers.czj.dto.CategoryOutputDto;
-import pers.czj.dto.VideoBasicOutputDto;
-import pers.czj.dto.VideoDetailsOutputDto;
-import pers.czj.dto.VideoInputDto;
+import pers.czj.dto.*;
 import pers.czj.entity.Video;
 import pers.czj.entity.VideoLog;
 import pers.czj.exception.CategoryException;
@@ -222,6 +219,19 @@ public class VideoController {
     @GetMapping("/video/audit")
     public String findNeedAuditVideo() throws VideoException {
         return JSON.toJSONString(videoService.findNeedAuditVideo());
+    }
+
+
+    @PostMapping("/video/comment")
+    public CommonResult incrCommentNum(@RequestBody NumberInputDto dto){
+        videoService.incrCommentNum(dto.getId(),dto.getNum());
+        return CommonResult.success();
+    }
+
+    @PostMapping("/video/danmu")
+    public CommonResult incrDanmuNum(@RequestBody NumberInputDto dto){
+        videoService.incrDanmuNum(dto.getId(),dto.getNum());
+        return CommonResult.success();
     }
 
 }

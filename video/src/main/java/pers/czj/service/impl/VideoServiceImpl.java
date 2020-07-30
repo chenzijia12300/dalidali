@@ -88,6 +88,16 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
+    public int incrCommentNum(long id, int num) {
+        return baseMapper.incrCommentNum(id,num);
+    }
+
+    @Override
+    public int incrDanmuNum(long id, int num) {
+        return baseMapper.incrDanmuNum(id,num);
+    }
+
+    @Override
     public boolean updatePublishStatus(long id, VideoPublishStateEnum stateEnum) throws FileNotFoundException {
 
         /*
