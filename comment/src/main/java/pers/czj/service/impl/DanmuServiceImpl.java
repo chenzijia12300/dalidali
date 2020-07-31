@@ -20,7 +20,8 @@ public class DanmuServiceImpl extends ServiceImpl<DanmuMapper, Danmu> implements
     public List<Danmu> listDanmu(long vid, long showSecond) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("vid",vid);
-        queryWrapper.eq("show_second",showSecond);
+        queryWrapper.ge("show_second",showSecond);
+        queryWrapper.le("show_second",showSecond+10);
         return baseMapper.selectList(queryWrapper);
     }
 }

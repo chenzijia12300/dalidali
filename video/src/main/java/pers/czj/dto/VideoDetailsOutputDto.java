@@ -60,6 +60,11 @@ public class VideoDetailsOutputDto {
     private long categoryId;
 
     /**
+     * 秒数
+     */
+    private long length;
+
+    /**
      * up主头像
      */
     private String upImg;

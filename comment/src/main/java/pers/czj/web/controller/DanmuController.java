@@ -10,9 +10,12 @@ import pers.czj.common.CommonResult;
 import pers.czj.entity.Danmu;
 import pers.czj.service.DanmuService;
 
+import java.util.List;
+
 /**
  * 创建在 2020/7/30 19:29
  */
+@CrossOrigin
 @RestController
 @Api("弹幕接口")
 public class DanmuController {
@@ -32,7 +35,9 @@ public class DanmuController {
     @GetMapping("/danmu/{vid}/{second}")
     @ApiOperation("返回弹幕列表")
     public CommonResult listDanmu(@PathVariable("vid") long vid,@PathVariable("second")long second){
-        return CommonResult.success(danmuService.listDanmu(vid,second));
+        List<Danmu> danmus = danmuService.listDanmu(vid,second);
+        log.debug("弹幕列表:{}",danmus);
+        return CommonResult.success(danmus);
     }
 
 
