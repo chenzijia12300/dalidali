@@ -32,4 +32,5 @@ public class FollowController {
         followService.dynamicFollow(uid,params.get("followUserId"));
         return CommonResult.success();
     }
+
 }

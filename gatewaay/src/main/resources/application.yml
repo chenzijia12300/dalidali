@@ -26,5 +26,5 @@ zuul:
       service-id: dalidali-comment
       sensitive-headers: "*"
       custom-sensitive-headers: true
-
   sensitive-headers: "*"
+  ignored-patterns: /login
