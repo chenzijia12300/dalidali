@@ -16,6 +16,8 @@ public class CommentInputDto {
 
     private long pid;
 
+    private long puid;
+
     private String content;
 
     @TableLogic

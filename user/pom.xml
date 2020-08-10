@@ -87,6 +87,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--Feign依赖-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>2.2.2.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>

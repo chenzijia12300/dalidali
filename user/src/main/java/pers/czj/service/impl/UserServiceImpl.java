@@ -1,6 +1,7 @@
 package pers.czj.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,7 @@ import pers.czj.exception.UserException;
 import pers.czj.mapper.UserMapper;
 import pers.czj.service.UserService;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -54,5 +56,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return baseMapper.incrCoinNum(id,num);
     }
 
-
+    @Override
+    public boolean updateLastReadDynamicTime(long uid, Date lastTime) {
+        UpdateWrapper wrapper = new UpdateWrapper();
+        wrapper.set("read_dynamic_time",lastTime);
+        wrapper.eq("id",uid);
+        return update(wrapper);
+    }
 }

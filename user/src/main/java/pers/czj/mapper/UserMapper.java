@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import pers.czj.common.User;
 
+import java.util.Date;
+
 /**
  * 创建在 2020/7/10 16:02
  */
@@ -24,5 +26,9 @@ public interface UserMapper extends BaseMapper<User> {
     @Update("UPDATE user SET fans_num=fans_num+#{num} WHERE id = #{uid}")
     public int incrFansNum(long uid,int num);
 
+    @Select("SELECT read_dynamic_time FROM user WHERE id = #{uid}")
+    public Date findLastReadDynamicTime(long uid);
 
+    @Select("SELECT read_message_time FROM user WHERE id = #{uid}")
+    public Date findLastReadMessageTime(long uid);
 }

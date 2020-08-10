@@ -1,45 +1,46 @@
 package pers.czj.web.controller;
 
-        import com.alibaba.fastjson.JSON;
-        import com.alibaba.fastjson.JSONObject;
-        import io.swagger.annotations.Api;
-        import io.swagger.annotations.ApiOperation;
-        import org.slf4j.Logger;
-        import org.slf4j.LoggerFactory;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.beans.factory.annotation.Value;
-        import org.springframework.data.redis.core.ZSetOperations;
-        import org.springframework.util.CollectionUtils;
-        import org.springframework.validation.annotation.Validated;
-        import org.springframework.web.bind.annotation.*;
-        import org.springframework.web.multipart.MultipartFile;
-        import pers.czj.common.CommonResult;
-        import pers.czj.common.VideoBasicInfo;
-        import pers.czj.constant.VideoPublishStateEnum;
-        import pers.czj.constant.VideoResolutionEnum;
-        import pers.czj.dto.*;
-        import pers.czj.entity.Video;
-        import pers.czj.entity.VideoLog;
-        import pers.czj.exception.CategoryException;
-        import pers.czj.exception.UserException;
-        import pers.czj.exception.VideoException;
-        import pers.czj.service.CategoryService;
-        import pers.czj.service.PlayNumTabService;
-        import pers.czj.service.VideoLogService;
-        import pers.czj.service.VideoService;
-        import pers.czj.util.VideoUtils;
-        import pers.czj.utils.MinIOUtils;
-        import pers.czj.utils.RedisUtils;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import pers.czj.common.CommonResult;
+import pers.czj.common.VideoBasicInfo;
+import pers.czj.constant.VideoPublishStateEnum;
+import pers.czj.constant.VideoResolutionEnum;
+import pers.czj.dto.*;
+import pers.czj.entity.Video;
+import pers.czj.entity.VideoLog;
+import pers.czj.exception.CategoryException;
+import pers.czj.exception.UserException;
+import pers.czj.exception.VideoException;
+import pers.czj.feign.DynamicFeignClient;
+import pers.czj.service.CategoryService;
+import pers.czj.service.PlayNumTabService;
+import pers.czj.service.VideoLogService;
+import pers.czj.service.VideoService;
+import pers.czj.util.VideoUtils;
+import pers.czj.utils.MinIOUtils;
+import pers.czj.utils.RedisUtils;
 
-        import javax.servlet.http.HttpSession;
-        import javax.validation.constraints.Min;
-        import java.io.File;
-        import java.io.FileInputStream;
-        import java.io.FileNotFoundException;
-        import java.io.IOException;
-        import java.net.ConnectException;
-        import java.time.LocalDate;
-        import java.util.*;
+import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Min;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * 创建在 2020/7/11 23:43
@@ -68,6 +69,7 @@ public class VideoController {
 
     @Autowired
     private PlayNumTabService playNumTabService;
+
 
     @Value("${redis.category-pre-key}")
     private String categoryTopKey;
@@ -209,40 +211,7 @@ public class VideoController {
     }
 
 
-    @PutMapping("/video")
-    @ApiOperation("发布视频并进行分辨率，雪碧图等处理(建议异步调用此接口)")
-    public CommonResult updateVideoPublishStatus(@RequestBody String str) throws FileNotFoundException {
-        JSONObject jsonObject = JSON.parseObject(str);
-        videoService.updatePublishStatus(jsonObject.getLong("id"),jsonObject.getObject("state", VideoPublishStateEnum.class));
-        return CommonResult.success("发布成功！");
-    }
-
-    @GetMapping("/video/audit")
-    @ApiOperation("发现需要审核的视频")
-    public String findNeedAuditVideo() throws VideoException {
-        return JSON.toJSONString(videoService.findNeedAuditVideo());
-    }
 
 
-    @PutMapping("/video/comment")
-    @ApiOperation("更改视频评论数")
-    public CommonResult incrCommentNum(@RequestBody NumberInputDto dto){
-        videoService.incrCommentNum(dto.getId(),dto.getNum());
-        return CommonResult.success();
-    }
-
-    @PutMapping("/video/danmu")
-    @ApiOperation("更改视频弹幕数")
-    public CommonResult incrDanmuNum(@RequestBody NumberInputDto dto){
-        videoService.incrDanmuNum(dto.getId(),dto.getNum());
-        return CommonResult.success();
-    }
-
-    @GetMapping("/video/list")
-    @ApiOperation("根据视频主键返回视频基本信息列表")
-    public CommonResult listBasicVideoInfoByIds(@RequestBody Collection<Long> ids){
-        List<VideoBasicOutputDto> videoBasicOutputDtos = videoService.listBasicInfoByIds(ids);
-        return CommonResult.success(videoBasicOutputDtos);
-    }
 
 }

@@ -18,4 +18,12 @@ public interface DynamicService extends IService<Dynamic> {
      * @return java.util.List<pers.czj.entity.Dynamic>
      */
     public List<Dynamic> listDynamicByPage(long uid,int startPage,int pageSize);
+
+
+    /**
+     * 获得用户未读动态的总数
+     * @param uid
+     * @return
+     */
+    public int findUnreadCount(long uid);
 }
