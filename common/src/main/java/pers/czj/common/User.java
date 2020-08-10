@@ -79,4 +79,14 @@ public class User implements Serializable {
      */
     private Date updateTime;
 
+    /**
+     * 阅读个人动态的时间
+     */
+    private Date readDynamicTime;
+
+    /**
+     * 阅读个人消息的时间
+     */
+    private Date readMessageTime;
+
 }

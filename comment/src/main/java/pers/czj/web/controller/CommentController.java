@@ -6,16 +6,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
+import pers.czj.constant.ActionType;
 import pers.czj.constant.OrderFieldEnum;
 import pers.czj.constant.TableNameEnum;
 import pers.czj.dto.*;
 import pers.czj.entity.Comment;
 import pers.czj.exception.CommentException;
+import pers.czj.feign.MessageFeignClient;
 import pers.czj.feign.VideoFeignClient;
 import pers.czj.service.CommentService;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import static pers.czj.utils.MessageUtils.createMessage;
 
 /**
  * 创建在 2020/7/15 21:12
@@ -25,23 +30,32 @@ import java.util.List;
 @Api("评论接口")
 public class CommentController {
 
-    @Autowired
     private CommentService commentService;
 
-    @Autowired
     private VideoFeignClient videoFeignClient;
+
+    private MessageFeignClient messageFeignClient;
+
+
+    @Autowired
+    public CommentController(CommentService commentService, VideoFeignClient videoFeignClient, MessageFeignClient messageFeignClient) {
+        this.commentService = commentService;
+        this.videoFeignClient = videoFeignClient;
+        this.messageFeignClient = messageFeignClient;
+    }
 
     @PostMapping("/comment")
     @ApiOperation("添加评论")
-    public CommonResult addComment(HttpSession httpSession,@RequestBody CommentInputDto dto) throws CommentException {
-        long userId = /*(long) httpSession.getAttribute("USER_ID");*/1;
+    public CommonResult addComment(@RequestParam long uid,@RequestBody CommentInputDto dto) throws CommentException {
         Comment comment = dto.convert();
-        comment.setUid(userId);
+        comment.setUid(uid);
         boolean flag = commentService.save(comment);
         if (!flag){
             throw new CommentException("发表评论失败，请重试~");
         }
         videoFeignClient.incrCommentNum(new NumberInputDto(comment.getPid(),1));
+        //发送消息
+        messageFeignClient.addMessage(createMessage(uid,dto.getPuid(),ActionType.COMMENT,dto.getContent()));
         return CommonResult.success("发表评论成功！");
     }
 
@@ -73,5 +87,8 @@ public class CommentController {
         commentService.dynamicHandlerLike(request.getName(),request.getId(),userId);
         return CommonResult.success();
     }
+
+
+
 
 }
