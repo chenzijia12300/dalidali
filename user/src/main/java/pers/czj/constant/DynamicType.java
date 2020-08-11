@@ -1,5 +1,6 @@
 package pers.czj.constant;
 
+import com.baomidou.mybatisplus.core.enums.IEnum;
 import lombok.Getter;
 
 /**
@@ -7,7 +8,7 @@ import lombok.Getter;
  * 动态类型常量
  */
 @Getter
-public enum DynamicType {
+public enum DynamicType implements IEnum<Integer> {
 
     // 视频   帖子      个人
     VIDEO(0),POST(1),PERSONAL(2);
@@ -16,5 +17,10 @@ public enum DynamicType {
 
     DynamicType(int type) {
         this.type = type;
+    }
+
+    @Override
+    public Integer getValue() {
+        return type;
     }
 }

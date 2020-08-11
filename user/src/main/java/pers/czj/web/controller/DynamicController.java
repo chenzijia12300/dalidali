@@ -36,9 +36,9 @@ public class DynamicController {
         this.userService = userService;
     }
 
-    @GetMapping("/dynamic/{uid}/{pageNum}/{pageSize}")
+    @GetMapping("/dynamic/list/{pageNum}/{pageSize}")
     @ApiOperation("获得动态列表")
-    public CommonResult listDynamic(@PathVariable("uid") long uid,
+    public CommonResult listDynamic(@RequestParam long uid,
                                     @PathVariable("pageNum") int pageNum,
                                     @PathVariable("pageSize") int pageSize){
         /**

@@ -6,6 +6,8 @@ import pers.czj.common.CommonResult;
 import pers.czj.common.User;
 import pers.czj.dto.UserCollectionLogInputDto;
 
+import java.util.Map;
+
 /**
  * 创建在 2020/7/20 11:36
  */
@@ -26,4 +28,7 @@ public interface UserFeignClient {
 
     @DeleteMapping("/collection/video/{id}")
     public CommonResult deleteCollectionLog(@PathVariable("id") long id);*/
+
+    @PostMapping("/api/dynamic")
+    public CommonResult addDynamic(@RequestBody Map<String,Object> map);
 }

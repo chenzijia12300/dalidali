@@ -35,7 +35,7 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
 
     @Override
     public List<Dynamic> listDynamicByPage(long uid, int startPage, int pageSize) {
-        List<Long> ids = followMapper.findFollowerId(uid);
+        List<Long> ids = followMapper.findByFollowId(uid);
         PageHelper.startPage(startPage,pageSize);
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.in("uid",ids);
@@ -46,8 +46,9 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
     @Override
     public int findUnreadCount(long uid) {
         Date lastReadTime = userMapper.findLastReadDynamicTime(uid);
-        List<Long> ids = followMapper.
+        List<Long> ids = followMapper.findByFollowId(uid);
         QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.in("uid",ids);
         queryWrapper.gt("create_time",lastReadTime);
         return count(queryWrapper);
     }

@@ -10,7 +10,6 @@ import java.util.Map;
 /**
  * 创建在 2020/8/10 11:34
  */
-@FeignClient(value = "dalidali-user",url = "/api")
 public interface DynamicFeignClient {
 
     public CommonResult addDynamic(@RequestBody Map<String,Object> map);

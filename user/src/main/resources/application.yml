@@ -30,3 +30,6 @@ eureka:
       defaultZone: http://127.0.0.1:8100/eureka/
 server:
   port: 8083
+
+mybatis-plus:
+  type-enums-package: pers.czj.constant

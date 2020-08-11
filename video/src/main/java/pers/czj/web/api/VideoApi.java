@@ -13,6 +13,7 @@ import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.entity.Video;
 import pers.czj.exception.VideoException;
 import pers.czj.feign.DynamicFeignClient;
+import pers.czj.feign.UserFeignClient;
 import pers.czj.service.VideoService;
 
 import java.io.FileNotFoundException;
@@ -24,20 +25,21 @@ import java.util.Map;
 /**
  * 创建在 2020/8/10 11:22
  */
-@RestController("/api")
+@RestController
 @Api("视频feign接口")
+@RequestMapping("/api")
 public class VideoApi {
 
     public static final String DYNAMIC_VIDEO_TYPE = "VIDEO";
 
     private VideoService videoService;
 
-    private DynamicFeignClient dynamicFeignClient;
+    private UserFeignClient userFeignClient;
 
     @Autowired
-    public VideoApi(VideoService videoService, DynamicFeignClient dynamicFeignClient) {
+    public VideoApi(VideoService videoService, UserFeignClient userFeignClient) {
         this.videoService = videoService;
-        this.dynamicFeignClient = dynamicFeignClient;
+        this.userFeignClient = userFeignClient;
     }
 
     /*
@@ -66,9 +68,9 @@ public class VideoApi {
      */
     @GetMapping("/video/list")
     @ApiOperation("根据视频主键返回视频基本信息列表")
-    public CommonResult listBasicVideoInfoByIds(@RequestParam Collection<Long> ids){
+    public List listBasicVideoInfoByIds(@RequestParam Collection<Long> ids){
         List<VideoBasicOutputDto> videoBasicOutputDtos = videoService.listBasicInfoByIds(ids);
-        return CommonResult.success(videoBasicOutputDtos);
+        return videoBasicOutputDtos;
     }
 
 
@@ -90,7 +92,7 @@ public class VideoApi {
     public CommonResult updateVideoPublishStatus(@RequestBody String str) throws FileNotFoundException {
         Video video = JSON.parseObject(str, Video.class);
         videoService.updatePublishStatus(video.getId(),video.getPublishState());
-        dynamicFeignClient.addDynamic(createDynamicModel(video));
+        userFeignClient.addDynamic(createDynamicModel(video));
         return CommonResult.success("发布成功！");
     }
 

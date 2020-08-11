@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import pers.czj.constant.ActionType;
 import pers.czj.entity.Message;
@@ -30,19 +31,21 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("receive_uid",uid);
+        queryWrapper.orderByDesc("create_time");
         if (!ObjectUtils.isEmpty(type)){
             queryWrapper.eq("type",type);
         }
         PageHelper.startPage(pageNum, pageSize);
-        return baseMapper.selectList(queryWrapper);
+        List<Message> messages = baseMapper.selectList(queryWrapper);
+        return messages;
     }
 
     @Override
     public int findUnreadCount(long uid) {
         Date lastTime = userMapper.findLastReadMessageTime(uid);
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.gt("read_message_time",lastTime);
+        wrapper.gt("create_time",lastTime);
         wrapper.eq("receive_uid",uid);
-        return 0;
+        return count(wrapper);
     }
 }

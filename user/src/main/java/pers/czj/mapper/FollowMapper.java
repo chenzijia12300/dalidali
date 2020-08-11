@@ -25,4 +25,15 @@ public interface FollowMapper extends BaseMapper<Follow> {
      */
     @Select("SELECT uid FROM follow WHERE fuid = #{fuid}")
     public List<Long> findFollowerId(long fuid);
+
+
+    /**
+     * @author czj
+     * 获得被uid所关注的人们
+     * @date 2020/8/11 11:47
+     * @param [uid]
+     * @return java.util.List<java.lang.Long>
+     */
+    @Select("SELECT fuid FROM follow WHERE uid = #{uid}")
+    public List<Long> findByFollowId(long uid);
 }
