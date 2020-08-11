@@ -43,4 +43,14 @@ public interface UserService extends IService<User> {
      * @return boolean
      */
     public boolean updateLastReadDynamicTime(long uid, Date lastTime);
+
+
+    /**
+     * @author czj
+     * 更改最后阅读消息时间
+     * @date 2020/8/11 15:07
+     * @param [uid, lastTime]
+     * @return boolean
+     */
+    public boolean updateLastReadMessageTime(long uid, Date lastTime);
 }

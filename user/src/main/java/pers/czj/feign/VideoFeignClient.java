@@ -12,9 +12,9 @@ import java.util.List;
 /**
  * 创建在 2020/8/10 10:55
  */
-@FeignClient(value = "dalidali-video",url = "/api")
+@FeignClient(value = "dalidali-video")
 public interface VideoFeignClient {
 
-    @GetMapping("/video/list")
+    @GetMapping("/api/video/list")
     public List listBasicVideoInfoByIds(@RequestParam Collection<Long> ids);
 }

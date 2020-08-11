@@ -63,4 +63,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq("id",uid);
         return update(wrapper);
     }
+
+    @Override
+    public boolean updateLastReadMessageTime(long uid, Date lastTime) {
+        UpdateWrapper wrapper = new UpdateWrapper();
+        wrapper.set("read_message_time",lastTime);
+        wrapper.eq("id",uid);
+        return update(wrapper);
+    }
 }
