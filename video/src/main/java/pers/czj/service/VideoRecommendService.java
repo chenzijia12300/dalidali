@@ -1,6 +1,7 @@
 package pers.czj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import pers.czj.constant.RecommendLocation;
 import pers.czj.entity.VideoRecommend;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import java.util.List;
 public interface VideoRecommendService extends IService<VideoRecommend> {
 
 
-    List<Long> findRecommendId(int pageNum);
+    List<Long> findRecommendIdByLocation(int pageNum, RecommendLocation location);
 }

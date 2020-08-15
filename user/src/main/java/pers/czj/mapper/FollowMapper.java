@@ -3,6 +3,7 @@ package pers.czj.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.entity.Follow;
 
 import java.util.List;
@@ -36,4 +37,7 @@ public interface FollowMapper extends BaseMapper<Follow> {
      */
     @Select("SELECT fuid FROM follow WHERE uid = #{uid}")
     public List<Long> findByFollowId(long uid);
+
+    @Select("SELECT user.id,user.username,user.uimg FROM follow,user WHERE uid = #{uid} AND fuid = user.id")
+    public List<BasicUserInfoOutputDto> findByFollowBasicInfo(long uid);
 }

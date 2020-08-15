@@ -1,6 +1,7 @@
 package pers.czj.entity;
 
 import lombok.Data;
+import pers.czj.constant.RecommendLocation;
 
 import java.util.Date;
 
@@ -21,4 +22,6 @@ public class VideoRecommend {
     private Date createTime;
 
     private Date endTime;
+
+    private RecommendLocation location;
 }

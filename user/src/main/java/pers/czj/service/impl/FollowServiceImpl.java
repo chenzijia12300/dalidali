@@ -9,10 +9,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.entity.Follow;
 import pers.czj.mapper.FollowMapper;
 import pers.czj.mapper.UserMapper;
 import pers.czj.service.FollowService;
+
+import java.util.List;
 
 /**
  * 创建在 2020/7/22 13:25
@@ -42,5 +45,10 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow>implemen
             log.info("用户{}取消了对用户{}的关注",userId,followUserId);
         }
         return true;
+    }
+
+    @Override
+    public List<BasicUserInfoOutputDto> findByFollowBasicInfo(long uid) {
+        return findByFollowBasicInfo(uid);
     }
 }

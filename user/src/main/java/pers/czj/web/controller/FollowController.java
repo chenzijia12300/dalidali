@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.service.FollowService;
 
@@ -31,6 +28,13 @@ public class FollowController {
     public CommonResult dynamicFollow(@RequestParam long uid, @RequestBody Map<String,Long> params){
         followService.dynamicFollow(uid,params.get("followUserId"));
         return CommonResult.success();
+    }
+
+
+    @GetMapping("/follow/user")
+    @ApiOperation("获得被关注着的基本信息")
+    public CommonResult findByFollowBasicUserInfo(@RequestParam long uid){
+        return CommonResult.success(followService.findByFollowBasicInfo(uid));
     }
 
 }
