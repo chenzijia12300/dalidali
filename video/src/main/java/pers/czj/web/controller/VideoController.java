@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +35,7 @@ import pers.czj.utils.MinIOUtils;
 import pers.czj.utils.RedisUtils;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,6 +55,7 @@ public class VideoController {
 
     private static final Logger log = LoggerFactory.getLogger(VideoController.class);
 
+    private static final String TIMED_TASK_VALUE="lock";
     @Autowired
     private VideoService videoService;
 
@@ -76,6 +80,11 @@ public class VideoController {
 
     @Value("${redis.play-key}")
     private String playKey;
+
+    @Value("${redis.timed-task-key}")
+    private String timedTaskKey;
+
+
 
     private String dir = System.getProperty("user.dir")+"/";
 
@@ -104,7 +113,7 @@ public class VideoController {
     public CommonResult findVideoById(@RequestParam long userId,@PathVariable("id")@Min(1) long id) throws VideoException {
         VideoDetailsOutputDto detailsOutputDto = videoService.findDetailsById(id);
         log.info("当前日期：{}",LocalDate.now());
-        if(!redisUtils.getBit(playKey+id,userId)){
+        if(/*!redisUtils.getBit(playKey+id,userId)*/true){
             videoService.incrPlayNum(id,1);
             redisUtils.setBit(playKey+id,userId,true);
             redisUtils.zincrBy(LocalDate.now().toString()+"::"+detailsOutputDto.getCategoryId(),1, String.valueOf(detailsOutputDto.getId()));
@@ -149,9 +158,20 @@ public class VideoController {
     }
 
     @ApiOperation("获得该分类类型下的排行榜")
-    @GetMapping("/video/top/{name}")
-    public CommonResult findTopVideoByCategory(@PathVariable("name")String name) throws ConnectException {
-        return CommonResult.success(redisUtils.get(categoryTopKey+name));
+    @GetMapping("/video/top/{categoryId}/{pageSize}")
+    public CommonResult findTopVideoByCategory(@PathVariable("categoryId")long categoryId,
+                                               @PathVariable("pageSize")@Max(value = 100,message = "最大数目不能超过100") int pageSize
+    ) throws ConnectException {
+        String date = LocalDate.now().toString();
+        String setKey = date+"::"+categoryId;
+        log.debug("setKey:{}",setKey);
+        Object object = redisUtils.get(categoryTopKey+categoryId+"_"+pageSize);
+        if (ObjectUtils.isEmpty(object)){
+            Set<Long> set = redisUtils.zRevRange(setKey, 0, pageSize, false);
+            object = videoService.listBasicInfoByIds(set);
+            redisUtils.set(categoryTopKey+categoryId+"_"+pageSize,object,10);
+        }
+        return CommonResult.success(object);
     }
 
     /**
@@ -163,55 +183,50 @@ public class VideoController {
      */
     @GetMapping("/video/setTop")
     @ApiOperation("手动调用定时任务（待删）")
+    @Scheduled(cron = "0 */1 * * * ?")
     public CommonResult setTopVideoData() throws CategoryException, ConnectException {
-        List<CategoryOutputDto> categoryOutputDtos = categoryService.listCategory();
-        List<String> pCategoryNames = new ArrayList<>();
-        String date = LocalDate.now().toString();
-
+        //集群要上锁~
+        if (redisUtils.setnx(timedTaskKey, TIMED_TASK_VALUE,10)) {
+            log.info("开始启动视频排行榜定时任务");
+            List<CategoryOutputDto> categoryOutputDtos = categoryService.listCategory();
+            List<String> pCategoryNames = new ArrayList<>();
+            String date = LocalDate.now().toString();
         /*
             获得分类列表，将基本分类组成顶级分类
          */
-        log.info("开始循环");
-        for (CategoryOutputDto dto:categoryOutputDtos){
-            List<String> strings = new ArrayList<>();
-            //获得顶级频道缓存名
-            String pCategoryName = date+"::"+dto.getId();
-            pCategoryNames.add(pCategoryName);
+            for (CategoryOutputDto dto : categoryOutputDtos) {
+                List<String> strings = new ArrayList<>();
+                //获得顶级频道缓存名
+                String pCategoryName = date + "::" + dto.getId();
+                pCategoryNames.add(pCategoryName);
 
-            //获得二级频道缓存名
-            for (CategoryOutputDto childDto:dto.getChildList()){
-                long id = childDto.getId();
-                strings.add(date+"::"+id);
+                //获得二级频道缓存名
+                for (CategoryOutputDto childDto : dto.getChildList()) {
+                    long id = childDto.getId();
+                    String key = date + "::" + id;
+                    strings.add(key);
+
+                }
+                log.debug("strings:{}",strings);
+                //合并集合并获得全部数据
+                if (!CollectionUtils.isEmpty(strings)) {
+                    redisUtils.unionZSet(strings, pCategoryName);
+                }
+                redisUtils.delete(strings);
             }
-            //合并集合并获得全部数据
-            redisUtils.unionZSet(strings,pCategoryName);
-            Set set = redisUtils.zRevRange(pCategoryName,0,-1,false);
-            if (CollectionUtils.isEmpty(set)){
-                log.info("集合为空");
-                return CommonResult.failed();
-            }
-            //将各个顶级频道前100名视频放置缓存中
-            List<Long> top100List = pers.czj.utils.CollectionUtils.slicer(set,0,100);
-            List<VideoBasicOutputDto> basicOutputDtos = videoService.listBasicInfoByIds(top100List);
-            redisUtils.set(categoryTopKey+dto.getId(),basicOutputDtos,0);
-            //待写持久化
-            log.info("执行完一圈");
+            //合并全区总排行榜
+            String key = date + "::ALL";
+            redisUtils.unionZSet(pCategoryNames, key);
+
+            //将全区前100名视频放置缓存（算冗余，不过不大嘛~）
+            Set<ZSetOperations.TypedTuple> allSet = redisUtils.zRevRange(key, 0, -1, true);
+            playNumTabService.addAll(allSet);
+            //释放锁
+            redisUtils.delete(timedTaskKey);
+            return CommonResult.success();
         }
-        //合并全区总排行榜
-        String key = date+"::ALL";
-        redisUtils.unionZSet(pCategoryNames,key);
+        return CommonResult.failed();
 
-        //将全区前100名视频放置缓存（算冗余，不过不大嘛~）
-        Set<ZSetOperations.TypedTuple> allSet = redisUtils.zRevRange(key,0,-1,true);
-        List<Long> top100List = pers.czj.utils.CollectionUtils.speicalSlicer(allSet,0,100);
-        List<VideoBasicOutputDto> basicOutputDtos = videoService.listBasicInfoByIds(top100List);
-        redisUtils.set(categoryTopKey+"ALL",basicOutputDtos,0);
-        playNumTabService.addAll(allSet);
-        return CommonResult.success();
     }
-
-
-
-
 
 }

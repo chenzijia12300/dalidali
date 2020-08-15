@@ -31,4 +31,5 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT read_message_time FROM user WHERE id = #{uid}")
     public Date findLastReadMessageTime(long uid);
+
 }

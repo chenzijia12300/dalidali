@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pers.czj.constant.RecommendLocation;
 import pers.czj.entity.VideoRecommend;
 import pers.czj.mapper.VideoRecommendMapper;
 import pers.czj.service.VideoRecommendService;
@@ -20,10 +21,11 @@ public class VideoRecommendServiceImpl extends ServiceImpl<VideoRecommendMapper,
     @Value("${recommend-page-size}")
     private int pageSize;
 
+
     @Override
-    public List<Long> findRecommendId(int pageNum) {
+    public List<Long> findRecommendIdByLocation(int pageNum, RecommendLocation location) {
         PageHelper.startPage(pageNum,pageSize);
-        List<Long> ids = baseMapper.findRecommendId();
+        List<Long> ids = baseMapper.findRecommendIdByLocation(location);
         return ids;
     }
 }

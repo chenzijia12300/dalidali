@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.common.VideoBasicInfo;
+import pers.czj.constant.RecommendLocation;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.entity.VideoRecommend;
 import pers.czj.service.VideoRecommendService;
@@ -38,9 +39,10 @@ public class VideoRecommendController {
         return CommonResult.success("添加推荐成功");
     }
 
-    @GetMapping("/video/recommend/{pageNum}")
-    public CommonResult findRecommend(@PathVariable("pageNum")int pageNum){
-        List<Long> ids = recommendService.findRecommendId(pageNum);
+    @GetMapping("/video/recommend/{type}/{pageNum}")
+    public CommonResult findRecommend(@PathVariable("pageNum")int pageNum, @PathVariable("type") RecommendLocation location){
+
+        List<Long> ids = recommendService.findRecommendIdByLocation(pageNum,location);
         List<VideoBasicOutputDto> basicOutputDtos = videoService.listBasicInfoByIds(ids);
         return CommonResult.success(basicOutputDtos);
     }

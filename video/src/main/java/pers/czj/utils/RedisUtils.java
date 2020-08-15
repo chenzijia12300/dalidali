@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.net.ConnectException;
@@ -109,6 +110,18 @@ public class RedisUtils {
 
     /**
      * @author czj
+     * 批量删除
+     * @date 2020/8/15 23:34
+     * @param [keys]
+     * @return boolean
+     */
+    public boolean delete(Collection<String> keys){
+        keys.forEach(key->delete(key));
+        return true;
+    }
+
+    /**
+     * @author czj
      * 删除对应前缀建
      * @date 2020/7/25 23:50
      * @param [key]
@@ -163,7 +176,22 @@ public class RedisUtils {
     }
 
     public void unionZSet(List<String> strings,String destKey){
-        redisTemplate.opsForZSet().unionAndStore(strings.get(0),strings.subList(1,strings.size()),destKey);
+        boolean isAllEmpty = true;
+        for (String str:strings){
+            if (isZSetNotEmpty(str)){
+                isAllEmpty = false;
+                break;
+            }
+        }
+        if (isAllEmpty){
+            log.debug("子频道集合都为空,直接跳出~");
+            return;
+        }
+        log.debug("destKey:{}",destKey);
+        log.debug("first:{}",strings.subList(0,1).toString());
+        List<String> list = strings.subList(1,strings.size());
+        log.debug("subList:{}",list);
+        redisTemplate.opsForZSet().unionAndStore(strings.get(0),list,destKey);
     }
 
 
@@ -250,5 +278,29 @@ public class RedisUtils {
      */
     public void setItemByList(String key,Object o,long id){
         redisTemplate.opsForList().set(key,id,o);
+    }
+
+
+    /**
+     * @author czj
+     * SET if Not Exists
+     * redis原子性操作，如果key不存在则返回true，否则返回false
+     * @date 2020/8/15 17:52
+     * @param [key, value]
+     * @return boolean
+     */
+    public boolean setnx(String key,String value,long second){
+        return redisTemplate.opsForValue().setIfAbsent(key,value,second,TimeUnit.SECONDS);
+    }
+
+    /**
+     * @author czj
+     * 判断集合是否有元素，有返回true，否则false
+     * @date 2020/8/15 23:30
+     * @param [key]
+     * @return boolean
+     */
+    public boolean isZSetNotEmpty(String key){
+        return redisTemplate.opsForZSet().zCard(key)==0?false:true;
     }
 }
