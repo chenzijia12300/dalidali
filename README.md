@@ -1,4 +1,6 @@
 # dalidali（开发中）
+
+![](https://img.shields.io/badge/dalidali-后端项目-green.svg)
 ### 项目介绍
 dalidali是一个模仿哔哩哔哩视频网站的后端系统，在技术上选择了Spring Boot,Spring Cloud,Mybatis Plus,Docker,RabbitMQ,Elasticsearch等基本技术。
 
