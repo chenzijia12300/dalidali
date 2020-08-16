@@ -7,6 +7,9 @@
 ### 项目介绍
 dalidali是一个模仿哔哩哔哩视频网站的后端系统，在技术上选择了Spring Boot,Spring Cloud,Mybatis Plus,Docker,RabbitMQ,Elasticsearch等基本技术。
 
+### 项目结构图
+![dalidali项目结构图](https://github.com/chenzijia12300/dalidali/blob/master/%E5%93%92%E7%90%86%E5%93%92%E7%90%86%E7%BB%93%E6%9E%84%E5%9B%BE.jpg)
+
 ### 项目结构
 |模块|简介|
 |----|----|
