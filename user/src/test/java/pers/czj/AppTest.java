@@ -1,3 +1,4 @@
+/*
 package pers.czj;
 
 import static org.junit.Assert.assertTrue;
@@ -11,9 +12,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Scanner;
 
+*/
 /**
  * Unit test for simple App.
- */
+ *//*
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = UserApplication.class)
@@ -21,9 +24,11 @@ public class AppTest {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    /**
+    */
+/**
      * Rigorous Test :-)
-     */
+     *//*
+
     @Test
     public void shouldAnswerWithTrue(){
         assertTrue( true );
@@ -35,3 +40,4 @@ public class AppTest {
         
     }
 }
+*/

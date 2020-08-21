@@ -1,3 +1,4 @@
+/*
 package pers.czj.config;
 
 
@@ -15,9 +16,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+*/
 /**
  * 创建在 2020/7/22 17:47
- */
+ *//*
+
 @Configuration
 public class RabbitConfig {
 
@@ -65,6 +68,7 @@ public class RabbitConfig {
 
 
 
+*/
 /*    @Bean
     public SimpleMessageListenerContainer simpleMessageListenerContainer(){
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(cachingConnectionFactory);
@@ -72,5 +76,7 @@ public class RabbitConfig {
         container.setQueueNames("dalidali-test-queue");
         container.setMessageListener(baseReceiver);
         return container;
-    }*/
+    }*//*
+
 }
+*/

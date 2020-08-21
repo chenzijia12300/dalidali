@@ -5,12 +5,14 @@ spring:
   security:
     basic:
       enabled: false
+
 server:
   port: 8100
+
 eureka:
   instance:
     #注册中心地址
-    hostname: 127.0.0.1
+    hostname: 192.168.0.3
   client:
     service-url:
       #客户端调用地址

@@ -1,15 +1,15 @@
 package pers.czj.web.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.GetResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.connection.Connection;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+//import org.springframework.amqp.core.Message;
+//import org.springframework.amqp.rabbit.connection.Connection;
+//import org.springframework.amqp.rabbit.core.RabbitTemplate;
+//import com.rabbitmq.client.Channel;
+//import com.rabbitmq.client.GetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,14 +36,14 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-
-    @Autowired
-    private Connection connection;
-
-    private Map<Long,Channel> map = new ConcurrentHashMap<>(2);
+//
+//    @Autowired
+//    private RabbitTemplate rabbitTemplate;
+//
+//    @Autowired
+//    private Connection connection;
+//
+//    private Map<Long,Channel> map = new ConcurrentHashMap<>(2);
 
 
     @PostMapping("/login")
