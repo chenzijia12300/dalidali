@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -220,5 +221,58 @@ public class VideoUtils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * @author czj
+     * 将通过爬虫下载获得的 视频资源，音频资源进行合并
+     * @date 2020/8/21 11:30
+     * @param [videoPath, audioPath, outputPath, countDownLatch]
+     * @return void
+     */
+    public static void mergeResource(String videoPath, String audioPath, String outputPath, CountDownLatch countDownLatch,CountDownLatch mainLatch){
+        new Thread(()->{
+            try {
+                countDownLatch.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("开始合并~");
+            merge(videoPath,audioPath,outputPath);
+            File videoFile = new File(videoPath);
+            File audioFile = new File(audioPath);
+            boolean videoFlag = videoFile.delete();
+            boolean audioFlag = audioFile.delete();
+            log.info("删除视频:{}",videoFlag);
+            log.info("删除音频:{}",audioFlag);
+            mainLatch.countDown();
+        }).start();
+    }
+
+    public static void merge(String videoPath, String audioPath,String outputPath) {
+        List<String> cutpic = new ArrayList<String>();
+        cutpic.add("ffmpeg");
+        cutpic.add("-i");
+        cutpic.add(videoPath);
+        cutpic.add("-i");
+        cutpic.add(audioPath);
+        cutpic.add("-codec");
+        cutpic.add("copy");
+        cutpic.add(outputPath);
+        ProcessBuilder builder = new ProcessBuilder();
+        try {
+
+            builder.command(cutpic);
+            builder.redirectErrorStream(true);
+            // 如果此属性为 true，则任何由通过此对象的 start() 方法启动的后续子进程生成的错误输出都将与标准输出合并，
+            // 因此两者均可使用 Process.getInputStream() 方法读取。这使得关联错误消息和相应的输出变得更容易
+            Process process =builder.start();
+            log.info("视频:[{}]---音频:[{}]开始合并",videoPath,audioPath);
+            process.waitFor();
+            log.info("生成[{}]成品视频",outputPath);
+        } catch (Exception e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
     }
 }

@@ -4,17 +4,23 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import pers.czj.common.CommonResult;
 import pers.czj.common.VideoBasicInfo;
 import pers.czj.constant.VideoPublishStateEnum;
@@ -31,6 +37,7 @@ import pers.czj.service.PlayNumTabService;
 import pers.czj.service.VideoLogService;
 import pers.czj.service.VideoService;
 import pers.czj.util.VideoUtils;
+import pers.czj.utils.GetVideoDataUtils;
 import pers.czj.utils.MinIOUtils;
 import pers.czj.utils.RedisUtils;
 
@@ -74,6 +81,8 @@ public class VideoController {
     @Autowired
     private PlayNumTabService playNumTabService;
 
+    @Autowired
+    private GetVideoDataUtils videoDataUtils;
 
     @Value("${redis.category-pre-key}")
     private String categoryTopKey;
@@ -84,6 +93,11 @@ public class VideoController {
     @Value("${redis.timed-task-key}")
     private String timedTaskKey;
 
+    @Value("${video.default-description}")
+    private String defaultDescription;
+
+    @Value("${video.default-tags}")
+    private String defaultTags;
 
 
     private String dir = System.getProperty("user.dir")+"/";
@@ -122,7 +136,7 @@ public class VideoController {
     }
 
     @PostMapping("/video/upload")
-    public CommonResult uploadVideo(HttpSession httpSession,@RequestParam("file") MultipartFile file) throws VideoException, UserException, IOException {
+    public CommonResult uploadVideo(HttpSession httpSession,@RequestParam long userId,@RequestParam("file") MultipartFile file) throws VideoException, UserException, IOException {
 /*        if (httpSession.isNew()){
             httpSession.invalidate();
             throw new UserException("请重新登录！");
@@ -227,6 +241,49 @@ public class VideoController {
         }
         return CommonResult.failed();
 
+    }
+
+    @GetMapping("/video/test")
+    public CommonResult testTopData(HttpSession httpSession) throws IOException, InterruptedException, VideoException, UserException {
+        List<Map<String,String>> maps = videoDataUtils.syncGetData();
+        MultipartFile multipartFile = null;
+
+        String outputPath = null;
+        for (Map<String,String> map:maps){
+            outputPath = videoDataUtils.syncDownload(map.get("title"),map.get("videoUrl"));
+            multipartFile = convertMulti(outputPath);
+            CommonResult commonResult = uploadVideo(httpSession,1,multipartFile);
+            VideoInputDto dto = createDefaultDto(map.get("title"),commonResult.getMessage());
+            addVideo(httpSession,1,dto);
+
+            break;
+        }
+        return CommonResult.success();
+    }
+
+    private MultipartFile convertMulti(String filePath){
+        try {
+            File file = new File(filePath);
+            FileInputStream fileInputStream = new FileInputStream(file);
+            MultipartFile multipartFile = new MockMultipartFile(file.getName(),file.getName(), ContentType.APPLICATION_OCTET_STREAM.toString(),fileInputStream);
+            return multipartFile;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public VideoInputDto createDefaultDto(String title,String url){
+        VideoInputDto dto = new VideoInputDto();
+        dto.setCategoryPId(1);
+        dto.setCategoryId(2);
+        dto.setDescription(defaultDescription);
+        dto.setTitle(title);
+        dto.setTags(defaultTags);
+        dto.setUrls(url);
+        return dto;
     }
 
 }
