@@ -4,12 +4,15 @@ import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import pers.czj.util.VideoUtils;
 
 import javax.validation.constraints.NotNull;
 import java.io.*;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,8 @@ import java.util.concurrent.CountDownLatch;
  */
 @Component
 public class GetVideoDataUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(GetVideoDataUtils.class);
 
     private static final String DEFAULT_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
 
@@ -57,19 +62,18 @@ public class GetVideoDataUtils {
 
         String videoPath = dirPath+title+"video.msv";
         String audioPath = dirPath+title+"audio.msv";
-        String productPath = dirPath+title+"成品.mp4";
+        String productPath = dirPath+title+".mp4";
         //下载视频
         HttpUtils.download(resource.getVideoUrl(), new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.out.println("下载失败");
+                log.error("下载{}失败",resource.getVideoUrl());
             }
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 download(response.body().byteStream(),videoPath,response.body().contentLength(),"VIDEO");
                 latch.countDown();
-                System.out.println("----");
             }
         });
         HttpUtils.download(resource.getAudioUrl(), new Callback() {
@@ -82,13 +86,12 @@ public class GetVideoDataUtils {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 download(response.body().byteStream(),audioPath,response.body().contentLength(),"AUDIO");
                 latch.countDown();
-                System.out.println("----");
             }
         });
         CountDownLatch mainLatch = new CountDownLatch(1);
         VideoUtils.mergeResource(videoPath,audioPath,productPath,latch,mainLatch);
         mainLatch.await();
-        System.out.println("下载完毕");
+        log.info("【{}】资源下载完毕",productPath);
         return productPath;
     }
     private  Request createRequest(){

@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: dalidali-video
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/dalidali?useUnicode=true&amp&useSSL=false&amp&characterEncoding=UTF-8&amp&serverTimezone=GMT%2B8&amp&allowPublicKeyRetrieval=true&amp&&autoReconnect=true
+    username: dalidali
+    password: root
+  redis:
+    password: root
+  servlet:
+    multipart:
+      max-request-size: 1GB
+      max-file-size: 1GB
+server:
+  port: 8081
+
+logging:
+  level:
+    root: ERROR
+    pers.czj: INFO
+  file:
+    path: C:\Program Files\video_log\
+minio:
+  accessKey: minioadmin
+  secretKey: minioadmin
+  url: http://127.0.0.1:9000/
+  download-url: http://127.0.0.1:9000/
+  bucket-name: dalidali
+
+redis:
+  category-list: CATEGORY_LIST
+  category-pre-key: CATEGORY_TOP_VIDEO_
+  play-key: PLAY_LOG_
+  timed-task-key: TIMED_TASK_LOCK
+mybatis-plus:
+  type-enums-package: pers.czj.constant
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.0.3:8100/eureka/
+cache:
+  type: redis
+
+recommend-page-size: 6
+
+
+video:
+  dir-path: C:/temp/
+  default-description: 该视频通过爬虫爬取下来，作为测试数据，如果侵权请联系我，我立马删~
+  default-tags: 测试,热门
+
+

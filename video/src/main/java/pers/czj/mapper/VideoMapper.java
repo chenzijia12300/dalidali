@@ -38,6 +38,8 @@ public interface VideoMapper extends BaseMapper<Video> {
     public List<VideoBasicOutputDto> listRandomByCategoryPId(long id);
 
 
+    public List<VideoBasicOutputDto> listRandomAll();
+
     /**
      * @author czj
      * 根据主键们获得视频的基本信息

@@ -23,6 +23,14 @@
         ORDER BY video.id ASC
     </select>
 
+    <select id="listRandomAll" resultType="pers.czj.dto.VideoBasicOutputDto">
+        SELECT
+        <include refid="basicFieldSql"/>
+        FROM video  JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
+        WHERE video.id >= t2.id AND user.id = video.uid
+        ORDER BY video.id ASC LIMIT 0,6
+    </select>
+
     <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">
         SELECT
         <include refid="basicFieldSql"/>

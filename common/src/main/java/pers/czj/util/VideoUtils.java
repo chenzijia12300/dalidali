@@ -83,14 +83,20 @@ public class VideoUtils {
         //获得视频时长
         String duration = jsonObject.getJSONObject("format").getString("duration");
         JSONObject streamObject = jsonObject.getJSONArray("streams").getJSONObject(0);
-        String width = streamObject.getString("width");
-        String height = streamObject.getString("height");
+        Integer widthInt = streamObject.getInteger("width");
+        Integer heightInt = streamObject.getInteger("height");
+        //处理小于最小值的情况
+        String width = widthInt<640?"640":String.valueOf(widthInt);
+        String height = heightInt<360?"360":String.valueOf(heightInt);
+
+
         VideoBasicInfo videoBasicInfo = new VideoBasicInfo();
         videoBasicInfo.setDuration((long) Double.parseDouble(duration));
         videoBasicInfo.setWidth(width);
         videoBasicInfo.setHeight(height);
         return videoBasicInfo;
     }
+
 
     private static String handlerInputStream(InputStream inputStream){
         try(
@@ -147,18 +153,18 @@ public class VideoUtils {
         list.add("-i");
         list.add(fileName);
         list.add("-vf");
-        list.add("scale="+height+":"+width);
+        list.add("scale="+width+":"+height);
         list.add(destFileName);
         list.add("-hide_banner");
         ProcessBuilder builder = new ProcessBuilder();
         try {
             builder.command(list);
             builder.redirectErrorStream(true);
-            log.info("尝试创建{}*{}分辨率的视频",height,width);
+            log.info("尝试创建{}*{}分辨率的视频",width,height);
             Process process = builder.start();
             InputStream inputStream = process.getInputStream();
-            String str = handlerInputStream(inputStream);
-            log.info("str:{}",str);
+            handlerInputStream(inputStream);
+            log.info("创建{}*{}分辨率的视频成功！",width,height);
             process.waitFor();
         }catch (IOException e){
             e.printStackTrace();
@@ -271,8 +277,7 @@ public class VideoUtils {
             process.waitFor();
             log.info("生成[{}]成品视频",outputPath);
         } catch (Exception e) {
-            System.out.println(e);
-            e.printStackTrace();
+            log.error("合并出错，重新尝试");
         }
     }
 }

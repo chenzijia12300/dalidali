@@ -5,6 +5,7 @@ import okhttp3.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 创建在 2020/5/17 21:46
@@ -40,7 +41,10 @@ public class HttpUtils {
      * @param videoUrl
      */
     public static void download(String videoUrl, Callback callback){
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient().newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(60,TimeUnit.SECONDS)
+                .build();
         Request request = new Request.Builder()
                 .url(videoUrl)
                 .addHeader("Connection","keep-alive")

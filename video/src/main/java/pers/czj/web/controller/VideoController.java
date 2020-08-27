@@ -37,6 +37,7 @@ import pers.czj.service.PlayNumTabService;
 import pers.czj.service.VideoLogService;
 import pers.czj.service.VideoService;
 import pers.czj.util.VideoUtils;
+import pers.czj.utils.FileUtils;
 import pers.czj.utils.GetVideoDataUtils;
 import pers.czj.utils.MinIOUtils;
 import pers.czj.utils.RedisUtils;
@@ -57,7 +58,7 @@ import java.util.*;
  */
 @CrossOrigin
 @RestController
-@Api("视频控制器")
+@Api(tags = "视频控制器")
 public class VideoController {
 
     private static final Logger log = LoggerFactory.getLogger(VideoController.class);
@@ -99,6 +100,9 @@ public class VideoController {
     @Value("${video.default-tags}")
     private String defaultTags;
 
+    @Value("${video.dir-path}")
+    private String dirPath;
+
 
     private String dir = System.getProperty("user.dir")+"/";
 
@@ -136,6 +140,7 @@ public class VideoController {
     }
 
     @PostMapping("/video/upload")
+    @ApiOperation("用户上传视频文件")
     public CommonResult uploadVideo(HttpSession httpSession,@RequestParam long userId,@RequestParam("file") MultipartFile file) throws VideoException, UserException, IOException {
 /*        if (httpSession.isNew()){
             httpSession.invalidate();
@@ -146,28 +151,35 @@ public class VideoController {
         String suffix = filename.substring(filename.lastIndexOf("."));
         log.info("文件名:{}\t文件后缀:{}",filename,suffix);
         String UUID = java.util.UUID.randomUUID().toString();
-        log.debug("随机生成的文件名为：{}",UUID);
+
         File temp = new File(dir,UUID+suffix);
         try {
             file.transferTo(temp);
+            log.info("文件:[{}]存储到临时文件夹成功！",temp.getPath());
         } catch (IOException e) {
             log.error("存储服务器本地出现问题:{}",file.getName());
             throw new VideoException("上传视频出现错误，请重新尝试");
         }
-        log.debug("文件存储路径:{}",temp.getAbsoluteFile());
 
         //获得视频处理后的基本信息
         VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(dir,temp.getName());
 
         //上传视频文件和图片文件到文件服务器
+        log.info("开始上传视频文件{}到OSS服务器",temp.getName());
         String url = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp));
         String coverLocalUrl = basicInfo.getCover();
+        log.info("开始上传封面文件到OSS服务器");
         String coverWebUrl = minIOUtils.uploadFile(coverLocalUrl.substring(coverLocalUrl.lastIndexOf("/")+1),new FileInputStream(coverLocalUrl));
         basicInfo.setCover(coverWebUrl);
         basicInfo.setUrl(url);
-        log.info("dir:{},name:{},coverWebUrl:{}",dir,temp.getName(),coverWebUrl);
         httpSession.setAttribute("VIDEO_INFO",basicInfo);
-        temp.delete();
+
+
+        //清除临时文件
+        FileUtils.deleteFile(temp,new File(coverLocalUrl));
+
+
+        log.info("{}上传完毕",filename);
         return CommonResult.success(url);
     }
 
@@ -197,7 +209,7 @@ public class VideoController {
      */
     @GetMapping("/video/setTop")
     @ApiOperation("手动调用定时任务（待删）")
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 0 */1 * * ?")
     public CommonResult setTopVideoData() throws CategoryException, ConnectException {
         //集群要上锁~
         if (redisUtils.setnx(timedTaskKey, TIMED_TASK_VALUE,10)) {
@@ -243,23 +255,44 @@ public class VideoController {
 
     }
 
+
+    @PostMapping("/video/test/upload")
+    @ApiOperation(value = "",hidden = true)
+    public CommonResult uploadVideo(HttpSession httpSession,@RequestBody Map<String,String> map) throws InterruptedException, VideoException, UserException, IOException {
+        handlerVideoResource(map.get("title"),map.get("videoUrl"),httpSession);
+        return CommonResult.success("操作成功~");
+    }
+
+
     @GetMapping("/video/test")
+    @ApiOperation(value = "",hidden = true)
     public CommonResult testTopData(HttpSession httpSession) throws IOException, InterruptedException, VideoException, UserException {
         List<Map<String,String>> maps = videoDataUtils.syncGetData();
         MultipartFile multipartFile = null;
 
-        String outputPath = null;
-        for (Map<String,String> map:maps){
-            outputPath = videoDataUtils.syncDownload(map.get("title"),map.get("videoUrl"));
-            multipartFile = convertMulti(outputPath);
-            CommonResult commonResult = uploadVideo(httpSession,1,multipartFile);
-            VideoInputDto dto = createDefaultDto(map.get("title"),commonResult.getMessage());
-            addVideo(httpSession,1,dto);
 
-            break;
+        String title = null;
+        for (Map<String,String> map:maps){
+            title = map.get("title");
+            if (isExist(title)){
+                log.info("视频已经存在");
+                continue;
+            }
+            handlerVideoResource(title,map.get("videoUrl"),httpSession);
         }
         return CommonResult.success();
     }
+
+    public void handlerVideoResource(String title,String videoUrl,HttpSession httpSession) throws InterruptedException, VideoException, IOException, UserException {
+        String outputPath = videoDataUtils.syncDownload(title,videoUrl);
+        MultipartFile multipartFile = convertMulti(outputPath);
+        CommonResult commonResult = uploadVideo(httpSession,1,multipartFile);
+        VideoInputDto dto = createDefaultDto(title,commonResult.getMessage());
+        addVideo(httpSession,1,dto);
+        log.info("搞完一个~");
+    }
+
+
 
     private MultipartFile convertMulti(String filePath){
         try {
@@ -284,6 +317,11 @@ public class VideoController {
         dto.setTags(defaultTags);
         dto.setUrls(url);
         return dto;
+    }
+
+    public boolean isExist(String filePath){
+        File file = new File(dirPath+filePath);
+        return file.exists();
     }
 
 }

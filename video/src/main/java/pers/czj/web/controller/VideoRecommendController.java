@@ -1,6 +1,9 @@
 package pers.czj.web.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +37,14 @@ public class VideoRecommendController {
     private VideoService videoService;
 
     @PostMapping("/video/recommend")
+    @ApiOperation(value = "",hidden = true)
     public CommonResult addRecommend(@RequestBody VideoRecommend recommend){
         recommendService.save(recommend);
         return CommonResult.success("添加推荐成功");
     }
 
     @GetMapping("/video/recommend/{type}/{pageNum}")
+    @ApiOperation(value = "",hidden = true)
     public CommonResult findRecommend(@PathVariable("pageNum")int pageNum, @PathVariable("type") RecommendLocation location){
 
         List<Long> ids = recommendService.findRecommendIdByLocation(pageNum,location);

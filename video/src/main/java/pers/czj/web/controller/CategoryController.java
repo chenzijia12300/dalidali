@@ -1,6 +1,8 @@
 package pers.czj.web.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,7 @@ import java.util.List;
  * 创建在 2020/7/11 14:19
  */
 @RestController
-@Api("视频分类接口")
+@Api(tags = "视频分类接口")
 @CrossOrigin
 public class CategoryController {
 
@@ -72,8 +74,17 @@ public class CategoryController {
 
     @GetMapping("/category/random/{pid}")
     @ApiOperation("获得顶级频道随机视频列表")
+    @ApiImplicitParams(
+            @ApiImplicitParam(name = "pid",paramType = "path",value = "顶级频道主键"))
     public CommonResult listRandomByPId(@PathVariable("pid") long pid) throws VideoException {
         List<VideoBasicOutputDto> list = videoService.listRandomByCategoryPId(pid);
+        return CommonResult.success(list);
+    }
+
+    @GetMapping("/category/random/all")
+    @ApiOperation("移动端【获得首页视频信息列表】接口")
+    public CommonResult listRandomAll(){
+        List<VideoBasicOutputDto> list = videoService.listRandomAll();
         return CommonResult.success(list);
     }
 }
