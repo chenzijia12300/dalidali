@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>admin</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>admin Maven Webapp</name>
     <!-- FIXME change it to the project's website -->

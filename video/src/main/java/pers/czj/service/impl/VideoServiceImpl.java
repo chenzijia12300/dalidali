@@ -19,8 +19,10 @@ import pers.czj.dto.CategoryOutputDto;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Video;
+import pers.czj.entity.VideoLog;
 import pers.czj.exception.VideoException;
 import pers.czj.mapper.CategoryMapper;
+import pers.czj.mapper.VideoLogMapper;
 import pers.czj.mapper.VideoMapper;
 import pers.czj.service.VideoService;
 import pers.czj.util.VideoUtils;
@@ -55,8 +57,17 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Autowired
     private CategoryMapper categoryMapper;
 
+    @Autowired
+    private VideoLogMapper logMapper;
+
     @Value("${redis.category-list}")
     private String categoryListKey;
+
+    @Value("${minio.url}")
+    private String minioUrl;
+
+    @Value("${minio.bucket-name}")
+    private String bucketName;
 
     @Override
     public VideoDetailsOutputDto findDetailsById(long id) throws VideoException {
@@ -64,6 +75,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         if (ObjectUtils.isEmpty(detailsOutputDto)){
             throw new VideoException("该视频走丢了~");
         }
+        detailsOutputDto.setLog(logMapper.selectOne(new QueryWrapper<VideoLog>().eq("vid",detailsOutputDto.getId())));
         return detailsOutputDto;
     }
 
@@ -75,6 +87,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             throw new VideoException("该频道下没有视频。。。");
         }
         return list;
+    }
+
+    @Override
+    public List<VideoBasicOutputDto> listRandomAll() {
+        return baseMapper.listRandomAll();
     }
 
     @Override
@@ -124,7 +141,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.info("newFileName:{}",newFileName);
             VideoUtils.createOtherResolutionVideo(dir+fileName,dir+newFileName,states[i].getWidth(),states[i].getHeight());
             minIOUtils.uploadFile(newFileName,new FileInputStream(new File(dir,newFileName)));
-            builder.append(dir+newFileName+",");
+            builder.append(minioUrl+bucketName+"/"+newFileName+",");
         }
 
         //生成预览图

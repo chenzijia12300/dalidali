@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: dalidali-admin
+  datasource:
+    url: jdbc:mysql://116.196.105.203:3306/dalidali?useUnicode=true&amp&useSSL=false&amp&characterEncoding=UTF-8&amp&serverTimezone=GMT%2B8&amp&allowPublicKeyRetrieval=true&amp&&autoReconnect=true
+    username: dalidali
+    password: CHENzijia12300
+  redis:
+    password: chenzijia12300
+  servlet:
+    multipart:
+      max-request-size: 1GB
+      max-file-size: 1GB
+server:
+  port: 8083
+logging:
+  level:
+    root: ERROR
+    pers.czj: DEBUG
+  file:
+    path: C:\Program Files\admin_log\
+eureka:
+  client:
+    service-url:
+      defaultZone: http://192.168.0.3:8100/eureka/
+feign:
+  hystrix:
+    enabled: false
+  httpclient:
+    connection-timeout: 60000

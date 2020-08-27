@@ -37,6 +37,16 @@ public interface VideoService extends IService<Video> {
 
     /**
      * @author czj
+     * 随机获得视频信息列表
+     * @date 2020/8/27 23:08
+     * @param []
+     * @return java.util.List<pers.czj.dto.VideoBasicOutputDto>
+     */
+    public List<VideoBasicOutputDto> listRandomAll();
+
+
+    /**
+     * @author czj
      * 根据主键们获得视频的基本信息
      * @date 2020/7/17 10:28
      * @param [ids]
