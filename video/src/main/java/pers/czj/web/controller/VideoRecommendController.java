@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @CrossOrigin
 @RestController
-@Api("视频推荐接口")
+@Api(value = "视频推荐接口",hidden = true)
 public class VideoRecommendController {
 
     private static final Logger log = LoggerFactory.getLogger(VideoRecommendController.class);

@@ -20,7 +20,7 @@ import java.util.List;
  * 创建在 2020/8/10 21:38
  */
 @RestController
-@Api("消息接口")
+@Api(tags = "消息接口")
 public class MessageController {
 
     private static final Logger log = LoggerFactory.getLogger(MessageController.class);

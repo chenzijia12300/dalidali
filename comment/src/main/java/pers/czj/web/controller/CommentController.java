@@ -1,6 +1,8 @@
 package pers.czj.web.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +29,7 @@ import static pers.czj.utils.MessageUtils.createMessage;
  */
 @CrossOrigin
 @RestController
-@Api("评论接口")
+@Api(tags = "评论接口")
 public class CommentController {
 
     private CommentService commentService;
@@ -60,31 +62,42 @@ public class CommentController {
     }
 
     @GetMapping("/comment/list/praise/{tableName}/{id}/{pageNum}/{pageSize}")
-    @ApiOperation("获得评论列表")
-    public CommonResult listPraiseComment(@RequestParam long userId, @PathVariable("tableName") TableNameEnum nameEnum,
+    @ApiOperation("获得热门评论列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tableName",defaultValue = "VIDEO",paramType = "path",value = "视频（VIDEO）/专栏（POST）"),
+            @ApiImplicitParam(name = "id",value = "对应主键",paramType = "path"),
+            @ApiImplicitParam(name = "pageNum",value = "第X页（X>=1）"),
+            @ApiImplicitParam(name = "pageSize",value = "获得条数")
+    })
+    public CommonResult listPraiseComment(@RequestParam long uid, @PathVariable("tableName") TableNameEnum nameEnum,
                                     @PathVariable("id") long id,
                                     @PathVariable("pageNum")int pageNum,
                                     @PathVariable("pageSize")int pageSize){
-        List<CommentOutputDto> dtoList = commentService.listComment(nameEnum,id,userId,pageNum,pageSize, OrderFieldEnum.PRAISE);
+        List<CommentOutputDto> dtoList = commentService.listComment(nameEnum,id,uid,pageNum,pageSize, OrderFieldEnum.PRAISE);
         return CommonResult.success(dtoList,"返回热门评论列表成功~");
     }
 
     @GetMapping("/comment/list/time/{tableName}/{id}/{pageNum}/{pageSize}")
-    @ApiOperation("获得评论列表")
-    public CommonResult listCreateTimeComment(@RequestParam long userId, @PathVariable("tableName") TableNameEnum nameEnum,
+    @ApiOperation("获得最新评论列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tableName",defaultValue = "VIDEO",paramType = "path",value = "视频（VIDEO）/专栏（POST）"),
+            @ApiImplicitParam(name = "id",value = "对应主键",paramType = "path"),
+            @ApiImplicitParam(name = "pageNum",value = "第X页（X>=1）"),
+            @ApiImplicitParam(name = "pageSize",value = "获得条数")
+    })
+    public CommonResult listCreateTimeComment(@RequestParam long uid, @PathVariable("tableName") TableNameEnum nameEnum,
                                     @PathVariable("id") long id,
                                     @PathVariable("pageNum")int pageNum,
                                     @PathVariable("pageSize")int pageSize){
-        List<CommentOutputDto> dtoList = commentService.listComment(nameEnum,id,userId,pageNum,pageSize, OrderFieldEnum.CREATE_TIME);
-        return CommonResult.success(dtoList,"返回热门评论列表成功~");
+        List<CommentOutputDto> dtoList = commentService.listComment(nameEnum,id,uid,pageNum,pageSize, OrderFieldEnum.CREATE_TIME);
+        return CommonResult.success(dtoList,"返回最新评论列表成功~");
     }
 
 
     @PostMapping("/comment/dynamic_like")
     @ApiOperation("操作点赞/取消赞的操作")
-    public CommonResult likeComment(HttpSession httpSession,@RequestBody CommonRequest request){
-        long userId = /*(long) httpSession.getAttribute("USER_ID");*/1;
-        commentService.dynamicHandlerLike(request.getName(),request.getId(),userId);
+    public CommonResult likeComment(@RequestParam long uid,@RequestBody CommonRequest request){
+        commentService.dynamicHandlerLike(request.getName(),request.getId(),uid);
         return CommonResult.success();
     }
 

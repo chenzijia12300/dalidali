@@ -14,6 +14,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -22,7 +23,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * 创建在 2020/7/11 14:50
  */
-@EnableSwagger2
+@EnableOpenApi
 @EnableScheduling
 @EnableFeignClients
 @EnableRedisHttpSession
@@ -39,7 +40,6 @@ public class VideoApplication {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("视频模块")
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())

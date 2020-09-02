@@ -16,8 +16,7 @@ import java.util.Map;
  * 创建在 2020/7/22 13:26
  */
 @RestController
-
-@Api("关注接口")
+@Api(tags = "关注接口")
 public class FollowController {
 
     @Autowired

@@ -1,0 +1,26 @@
+#spring:
+#  application:
+#    name: dalidali-video
+#  datasource:
+#    url: jdbc:mysql://127.0.0.1:3306/dalidali?useUnicode=true&amp&useSSL=false&amp&characterEncoding=UTF-8&amp&serverTimezone=GMT%2B8&amp&allowPublicKeyRetrieval=true&amp&&autoReconnect=true
+#    username: root
+#    password: root
+#  redis:
+#    password: chenzijia12300
+#  servlet:
+#    multipart:
+#      max-request-size: 1GB
+#      max-file-size: 1GB
+#server:
+#  port: 8081
+#logging:
+#  level:
+#    root: ERROR
+#    pers.czj: DEBUG
+#
+#
+#mybatis-plus:
+#  type-enums-package: pers.czj.constant
+spring:
+  profiles:
+    active: pro

@@ -2,6 +2,8 @@ package pers.czj.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 创建在 2020/7/10 16:00
  */
 @RestController
-@Api("用户基本接口")
+@Api(tags = "用户基本接口,web端/移动端关注这个接口就可以了")
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -48,7 +50,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ApiOperation("用户登录接口")
-    public CommonResult login(HttpSession httpSession,@RequestBody @Validated LoginUserInputDto inputDto) throws UserException {
+    public CommonResult login(HttpSession httpSession, @RequestBody @Validated LoginUserInputDto inputDto) throws UserException {
         log.info("account:{}\tpassword:{}",inputDto.getAccount(),inputDto.getPassword());
         User user = userService.login(inputDto.getAccount(),inputDto.getPassword());
         httpSession.setAttribute("USER_ID",user.getId());
@@ -73,48 +75,44 @@ public class UserController {
     }
 
     @GetMapping("/user/coin/{id}")
+    @ApiOperation(value = "",hidden = true)
     public long findCoinNumById(@PathVariable("id") long id){
         return userService.findCoinNumById(id);
     }
 
     @PostMapping("/user/coin")
+    @ApiOperation(value = "",hidden = true)
     public CommonResult incrCoinNumById(@RequestParam long id,@RequestParam int num){
         return CommonResult.success(userService.incrCoinNum(id,num));
     }
 
 
-/*    @PostMapping("/test/send")
-    public CommonResult testSend(@RequestBody String str){
-        rabbitTemplate.convertAndSend("dalidali-test-exchange","test",str);
-        return CommonResult.success();
-    }
-
-    @GetMapping("/test/receive")
-    public CommonResult testReceive(HttpSession session) throws IOException {
-        *//*
-            参数为是否支持事务
-            channel不是线程安全对象,因此每次都要new
-        *//*
-        Channel channel = connection.createChannel(false);
-        *//*
-            是否自动提交
-         *//*
-        GetResponse response = channel.basicGet("dalidali-test-queue",false);
-        log.info("message:{}",response);
-        long adminId = 1;*//*(long) session.getAttribute("ADMIN_ID");*//*
-        session.setAttribute("ADMIN_ID",adminId);
-        map.put(adminId,channel);
-        return CommonResult.success(response.getEnvelope().getDeliveryTag(),new String(response.getBody()));
-    }
-
-    @PostMapping("/test/ack")
-    public CommonResult testAck(HttpSession session,@RequestBody String str) throws IOException {
-        long adminId = (long) session.getAttribute("ADMIN_ID");
-        Channel channel = map.get(adminId);
-        channel.basicAck(JSON.parseObject(str).getLong("id"),false);
-        rabbitTemplate.convertAndSend("dalidali-video-exchange","video");
-        return CommonResult.success("审核成功！");
-    }*/
+//     @PostMapping("/test/send")
+//    public CommonResult testSend(@RequestBody String str){
+//        rabbitTemplate.convertAndSend("dalidali-test-exchange","test",str);
+//        return CommonResult.success();
+//    }
+//
+//    @GetMapping("/test/receive")
+//    public CommonResult testReceive(HttpSession session) throws IOException {
+//        Channel channel = connection.createChannel(false);
+//
+//        GetResponse response = channel.basicGet("dalidali-test-queue",false);
+//        log.info("message:{}",response);
+//        long adminId = 1;*//*(long) session.getAttribute("ADMIN_ID");*//*
+//        session.setAttribute("ADMIN_ID",adminId);
+//        map.put(adminId,channel);
+//        return CommonResult.success(response.getEnvelope().getDeliveryTag(),new String(response.getBody()));
+//    }
+//
+//    @PostMapping("/test/ack")
+//    public CommonResult testAck(HttpSession session,@RequestBody String str) throws IOException {
+//        long adminId = (long) session.getAttribute("ADMIN_ID");
+//        Channel channel = map.get(adminId);
+//        channel.basicAck(JSON.parseObject(str).getLong("id"),false);
+//        rabbitTemplate.convertAndSend("dalidali-video-exchange","video");
+//        return CommonResult.success("审核成功！");
+//    }
 
 
 }

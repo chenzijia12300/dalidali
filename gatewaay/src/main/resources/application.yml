@@ -5,11 +5,17 @@ spring:
     name: dalidali-gateway
   redis:
     password: chenzijia12300
+  mvc:
+    static-path-pattern: /*
+  resources:
+    static-locations: classpath:/static,classpath:/public,classpath:/resources,classpath:/META-INF/resources
 eureka:
   client:
     service-url:
       defaultZone: http://127.0.0.1:8100/eureka
 zuul:
+  sensitiveHeaders: Cookie,Set-Cookie
+  ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin, Access-Control-Allow-Methods
   routes:
     user-api:
       path: /userservice/**
@@ -27,4 +33,9 @@ zuul:
       sensitive-headers: "*"
       custom-sensitive-headers: true
   sensitive-headers: "*"
-  ignored-patterns: /login
+  ignored-patterns:
+              - /login
+              - /index.html
+
+time:
+  start: start_time
