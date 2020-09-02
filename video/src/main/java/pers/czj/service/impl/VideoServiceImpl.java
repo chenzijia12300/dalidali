@@ -123,7 +123,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         Video video = baseMapper.selectById(id);
         String baseUrl = video.getUrls();
         String fileName = baseUrl.substring(baseUrl.lastIndexOf("/"));
-        StringBuilder builder = new StringBuilder(baseUrl+",");
+        StringBuilder builder = new StringBuilder();
 
 
         //从文件服务器下载到本地，给FFMPEEG使用
@@ -143,6 +143,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             minIOUtils.uploadFile(newFileName,new FileInputStream(new File(dir,newFileName)));
             builder.append(minioUrl+bucketName+"/"+newFileName+",");
         }
+        builder.append(baseUrl);
 
         //生成预览图
         String previewImage = VideoUtils.createPreviewImage(dir,fileName,1.0/(video.getLength()/10));
@@ -150,7 +151,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         video.setPreviewUrl(webPreviewUrl);
         log.debug("预览图路径:{}",webPreviewUrl);
         //更新视频对应存储路径
-        video.setUrls(builder.substring(0,builder.length()-1));
+        video.setUrls(builder.toString());
         video.setUpdateTime(new Date());
         updateById(video);
 

@@ -19,7 +19,7 @@ import pers.czj.service.UserCollectionLogService;
  * 创建在 2020/7/20 22:43
  */
 @RestController
-@Api(tags = "用户收藏接口")
+@Api(tags = "用户收藏接口",hidden = true)
 public class UserCollectionLogController {
 
     private static final Logger log = LoggerFactory.getLogger(UserCollectionLogController.class);

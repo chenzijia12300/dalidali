@@ -1,6 +1,8 @@
 package pers.czj.web.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +30,7 @@ import static pers.czj.utils.MessageUtils.createMessage;
  */
 @CrossOrigin
 @RestController
-@Api("回复接口")
+@Api(tags = "回复接口")
 public class ReplyController {
 
     private static final Logger log = LoggerFactory.getLogger(ReplyController.class);
@@ -52,7 +54,6 @@ public class ReplyController {
         if (!flag){
             throw new ReplyException("添加回复失败，请重试");
         }
-
         //添加消息
         messageFeignClient.addMessage(createMessage(uid,reply.getRuid(),ActionType.REPLY,reply.getContent()));
         return CommonResult.success();
@@ -60,12 +61,17 @@ public class ReplyController {
 
     @GetMapping("/reply/list/{tableName}/{id}/{pageNum}/{pageSize}")
     @ApiOperation("获得回复列表")
-    public CommonResult listReply(HttpSession httpSession, @PathVariable("tableName") TableNameEnum nameEnum,
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tableName",paramType = "path",value = "视频（VIDEO）/专栏（POST）"),
+            @ApiImplicitParam(name = "id",value = "对应主键",paramType = "path"),
+            @ApiImplicitParam(name = "pageNum",value = "第X页（X>=1）"),
+            @ApiImplicitParam(name = "pageSize",value = "获得条数")
+    })
+    public CommonResult listReply(@RequestParam long uid, @PathVariable("tableName") TableNameEnum nameEnum,
                                   @PathVariable("id") long id,
                                   @PathVariable("pageNum")int pageNum,
                                   @PathVariable("pageSize")int pageSize){
-        long userId = 1/*(long) httpSession.getAttribute("USER_ID")*/;
-        List<ReplyOutputDto> replyOutputDtoList = replyService.listReply(nameEnum,id,userId,pageNum,pageSize);
+        List<ReplyOutputDto> replyOutputDtoList = replyService.listReply(nameEnum,id,uid,pageNum,pageSize);
         return CommonResult.success(replyOutputDtoList);
     }
 }

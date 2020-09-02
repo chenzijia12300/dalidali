@@ -1,6 +1,8 @@
 package pers.czj.web.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -11,6 +13,8 @@ import pers.czj.feign.VideoFeignClient;
 import pers.czj.service.DynamicService;
 import pers.czj.service.UserService;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +24,7 @@ import java.util.List;
  * 创建在 2020/8/9 22:43
  */
 @RestController
-@Api("个人动态接口")
+@Api(tags = "个人动态接口")
 public class DynamicController {
 
     private DynamicService dynamicService;
@@ -38,9 +42,14 @@ public class DynamicController {
 
     @GetMapping("/dynamic/list/{pageNum}/{pageSize}")
     @ApiOperation("获得动态列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "第X页（X>=1）", paramType = "path"),
+            @ApiImplicitParam(name = "pageSize", value = "X个数据（X<=8）", paramType = "path")
+    }
+    )
     public CommonResult listDynamic(@RequestParam long uid,
-                                    @PathVariable("pageNum") int pageNum,
-                                    @PathVariable("pageSize") int pageSize){
+                                    @PathVariable("pageNum")@Min(1) int pageNum,
+                                    @PathVariable("pageSize")@Max(8) int pageSize){
         /**
             查询相应动态,初始化所需参数
          */
