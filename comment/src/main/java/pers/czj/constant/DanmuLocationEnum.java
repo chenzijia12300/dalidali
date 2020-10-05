@@ -28,7 +28,6 @@ public enum DanmuLocationEnum implements IEnum<Integer> {
     @Override
     @JsonValue
     public String toString() {
-        System.out.println(name().toLowerCase());
         return name().toLowerCase();
     }
 

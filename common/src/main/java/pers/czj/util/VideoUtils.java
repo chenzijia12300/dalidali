@@ -1,5 +1,6 @@
 package pers.czj.util;
 
+import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.jsoup.Jsoup;
 import org.omg.PortableServer.POA;
@@ -30,7 +31,7 @@ public class VideoUtils {
 
     private static final String MERGE_IMAGE_SUFFIX="_preview.png";
 
-    public static VideoBasicInfo getVideoInfo(String filePath,String videoName){
+    public static VideoBasicInfo getVideoInfo(String filePath,String videoName,boolean needCover){
         List<String> commandList = new ArrayList<>();
         commandList.add("ffprobe");
         commandList.add("-select_streams");
@@ -57,11 +58,14 @@ public class VideoUtils {
             String str = handlerInputStream(process.getInputStream());
             JSONObject jsonObject = JSONObject.parseObject(str);
             VideoBasicInfo basicInfo = handlerJson(jsonObject);
-            //获得视频第一帧当封面
-            String imageName = videoName.substring(0,videoName.lastIndexOf(".")+1)+"jpg";
-            log.info("imageName:{}",imageName);
-            createFirstImage(filePath+videoName,filePath+imageName);
-            basicInfo.setCover(filePath+imageName);
+
+            if (needCover) {
+                //获得视频第一帧当封面
+                String imageName = videoName.substring(0, videoName.lastIndexOf(".") + 1) + "jpg";
+                log.info("imageName:{}", imageName);
+                createFirstImage(filePath + videoName, filePath + imageName);
+                basicInfo.setCover(filePath + imageName);
+            }
             return basicInfo;
         } catch (IOException e) {
             log.error("处理视频信息出现错误：{}",e.getMessage());
@@ -85,6 +89,8 @@ public class VideoUtils {
         JSONObject streamObject = jsonObject.getJSONArray("streams").getJSONObject(0);
         Integer widthInt = streamObject.getInteger("width");
         Integer heightInt = streamObject.getInteger("height");
+
+
         //处理小于最小值的情况
         String width = widthInt<640?"640":String.valueOf(widthInt);
         String height = heightInt<360?"360":String.valueOf(heightInt);
@@ -236,25 +242,31 @@ public class VideoUtils {
      * @param [videoPath, audioPath, outputPath, countDownLatch]
      * @return void
      */
-    public static void mergeResource(String videoPath, String audioPath, String outputPath, CountDownLatch countDownLatch,CountDownLatch mainLatch){
+    public static void mergeResource(String videoPath, String audioPath, String outputPath){
+        CountDownLatch mergeLatch = new CountDownLatch(1);
         new Thread(()->{
-            try {
-                countDownLatch.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("开始合并~");
             merge(videoPath,audioPath,outputPath);
-            File videoFile = new File(videoPath);
-            File audioFile = new File(audioPath);
-            boolean videoFlag = videoFile.delete();
-            boolean audioFlag = audioFile.delete();
+            boolean videoFlag = FileUtil.del(videoPath);
+            boolean audioFlag = FileUtil.del(audioPath);
             log.info("删除视频:{}",videoFlag);
             log.info("删除音频:{}",audioFlag);
-            mainLatch.countDown();
+            log.info("合并成功:{} + {}",videoPath,audioPath);
+            mergeLatch.countDown();
         }).start();
+        try {
+            mergeLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * 将视频和音频合并，都需绝对路径
+     * @author czj
+     * @date 2020/10/4 0:05
+     * @param [videoPath, audioPath, outputPath]
+     * @return void
+     */
     public static void merge(String videoPath, String audioPath,String outputPath) {
         List<String> cutpic = new ArrayList<String>();
         cutpic.add("ffmpeg");
@@ -272,12 +284,12 @@ public class VideoUtils {
             builder.redirectErrorStream(true);
             // 如果此属性为 true，则任何由通过此对象的 start() 方法启动的后续子进程生成的错误输出都将与标准输出合并，
             // 因此两者均可使用 Process.getInputStream() 方法读取。这使得关联错误消息和相应的输出变得更容易
-            Process process =builder.start();
+            Process process = builder.start();
             log.info("视频:[{}]---音频:[{}]开始合并",videoPath,audioPath);
             process.waitFor();
             log.info("生成[{}]成品视频",outputPath);
         } catch (Exception e) {
-            log.error("合并出错，重新尝试");
+            log.error("{}合并出错，重新尝试",outputPath);
         }
     }
 }

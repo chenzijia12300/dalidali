@@ -1,5 +1,10 @@
 package pers.czj.utils;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.lang.Pair;
+import cn.hutool.core.map.MapUtil;
+import cn.hutool.core.util.StrUtil;
 import okhttp3.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,10 +18,7 @@ import pers.czj.util.VideoUtils;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -34,6 +36,18 @@ public class GetVideoDataUtils {
 
     @Value("${video.dir-path}")
     private String dirPath;
+
+    @Value("${crawler.video-suffix:video.msv}")
+    private String videoSuffix;
+
+    @Value("${crawler.audio-suffix:audio.msv}")
+    private String audioSuffix;
+
+    @Value("${crawler.cover-suffix:.jpg}")
+    private String coverSuffix;
+
+    @Value("${crawler.product-suffix:.mp4}")
+    private String productSuffix;
 
     public  List<Map<String,String>> syncGetData() throws IOException, InterruptedException {
 
@@ -56,43 +70,46 @@ public class GetVideoDataUtils {
     }
 
 
-    public  String syncDownload(String title,String videoUrl) throws InterruptedException {
-        final  CountDownLatch latch =  new CountDownLatch(2);
-        HtmlUtils.Resource resource = HttpUtils.findVideoBaseUrl(videoUrl);
+    public Map<String,String> syncDownload(String title,String baseUrl) throws InterruptedException {
+        final  CountDownLatch latch =  new CountDownLatch(3);
+        HtmlUtils.Resource resource = HttpUtils.findVideoBaseUrl(baseUrl);
 
-        String videoPath = dirPath+title+"video.msv";
-        String audioPath = dirPath+title+"audio.msv";
-        String productPath = dirPath+title+".mp4";
-        //下载视频
-        HttpUtils.download(resource.getVideoUrl(), new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                log.error("下载{}失败",resource.getVideoUrl());
+        String videoPath = dirPath+title+videoSuffix;
+        String audioPath = dirPath+title+audioSuffix;
+        String productPath = dirPath+title+productSuffix;
+        String coverPath = dirPath+title+coverSuffix;
+        Map<String,String> map = new HashMap<String, String>(){
+            {
+                put(resource.getVideoUrl(),videoPath);
+                put(resource.getAudioUrl(),audioPath);
+                put(resource.getCoverUrl(),coverPath);
             }
+        };
+        //开始下载
+        map.forEach((key,value)->{
+            HttpUtils.download(key, new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    log.error("下载{}失败",key);
+                }
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                download(response.body().byteStream(),videoPath,response.body().contentLength(),"VIDEO");
-                latch.countDown();
-            }
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    download(response.body().byteStream(),value);
+                    latch.countDown();
+                }
+            });
         });
-        HttpUtils.download(resource.getAudioUrl(), new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                System.out.println("下载失败");
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                download(response.body().byteStream(),audioPath,response.body().contentLength(),"AUDIO");
-                latch.countDown();
-            }
-        });
-        CountDownLatch mainLatch = new CountDownLatch(1);
-        VideoUtils.mergeResource(videoPath,audioPath,productPath,latch,mainLatch);
-        mainLatch.await();
+        latch.await();
         log.info("【{}】资源下载完毕",productPath);
-        return productPath;
+        //开始合并
+        VideoUtils.mergeResource(videoPath,audioPath,productPath);
+        return new HashMap<String, String>(){
+            {
+                put("productUrl",productPath);
+                put("coverUrl",coverPath);
+            }
+        };
     }
     private  Request createRequest(){
         return new Request.Builder()
@@ -111,7 +128,7 @@ public class GetVideoDataUtils {
                 .build();
     }
 
-    private  void download(InputStream inputStream, String path, long fileSize, String name) throws IOException {
+    private  void download(InputStream inputStream, String path) throws IOException {
         OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(path));
         byte[] bytes = new byte[1024];
         int len = -1;

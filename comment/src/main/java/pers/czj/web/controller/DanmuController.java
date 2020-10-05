@@ -31,7 +31,10 @@ public class DanmuController {
     @ApiOperation("添加弹幕")
     public CommonResult addDanmu(@RequestParam long uid,@RequestBody Danmu danmu){
         danmu.setUid(uid);
-        boolean flag = danmuService.save(danmu);
+        danmuService.save(danmu);
+        /*
+            优化点：先写进消息队列，然后消息队列在写进数据库，【削峰】
+         */
         return CommonResult.success("添加弹幕成功！");
     }
 

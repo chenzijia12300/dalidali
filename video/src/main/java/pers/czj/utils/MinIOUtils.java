@@ -1,6 +1,7 @@
 package pers.czj.utils;
 
 
+import cn.hutool.core.util.StrUtil;
 import io.minio.MinioClient;
 import io.minio.errors.*;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xmlpull.v1.XmlPullParserException;
+import pers.czj.constant.HttpContentTypeEnum;
 
 import java.io.*;
 import java.security.InvalidKeyException;
@@ -26,8 +28,12 @@ public class MinIOUtils {
     private MinioClient minioClient;
 
 
-    @Value("${minio.bucket-name}")
-    private String bucketName;
+    @Value("${minio.bucket-video-name}")
+    private String bucketVideoName;
+
+    @Value("${minio.bucket-image-name}")
+    private String bucketImageName;
+
 
     @Value("${minio.download-url}")
     private String url;
@@ -39,10 +45,19 @@ public class MinIOUtils {
      * @param [fileName, inputStream]
      * @return java.lang.String
      */
-    public String uploadFile(String fileName, InputStream inputStream){
-        log.debug("将上传的视频名:{}",fileName);
+    public String uploadFile(String fileName, InputStream inputStream, HttpContentTypeEnum contentType){
+        log.debug("将上传的文件名:{}",fileName);
+        String bucketName = null;
+        switch (contentType){
+            case MP4:
+                bucketName = bucketVideoName;
+                break;
+            case JPEG:
+                bucketName = bucketImageName;
+                break;
+        }
         try {
-            minioClient.putObject(bucketName,fileName,inputStream,"video/mp4");
+            minioClient.putObject(bucketName,fileName,inputStream,contentType.getContentType());
         } catch (InvalidBucketNameException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -74,8 +89,8 @@ public class MinIOUtils {
      * @param [fileName]
      * @return
      */
-    public void saveLocalTemp(String fileName,String destPath){
-        try(BufferedInputStream bufferedInputStream = new BufferedInputStream(minioClient.getObject(bucketName,fileName));
+    public void saveVideoLocalTemp(String fileName,String destPath){
+        try(BufferedInputStream bufferedInputStream = new BufferedInputStream(minioClient.getObject(bucketVideoName,fileName));
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(destPath,fileName)))
         ){
             byte [] bytes = new byte[1024];

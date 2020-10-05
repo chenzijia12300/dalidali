@@ -28,6 +28,13 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <!-- 小而精的工具类       -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>5.4.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
