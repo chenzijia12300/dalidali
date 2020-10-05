@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Data
 public class VideoBasicInfo implements Serializable {
 
+
     private long duration;
 
     private String cover;

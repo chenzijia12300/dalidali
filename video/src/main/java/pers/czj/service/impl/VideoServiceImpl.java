@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pers.czj.constant.HttpContentTypeEnum;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
 import pers.czj.dto.CategoryOutputDto;
@@ -21,6 +22,7 @@ import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Video;
 import pers.czj.entity.VideoLog;
 import pers.czj.exception.VideoException;
+import pers.czj.feign.UserFeignClient;
 import pers.czj.mapper.CategoryMapper;
 import pers.czj.mapper.VideoLogMapper;
 import pers.czj.mapper.VideoMapper;
@@ -36,6 +38,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 创建在 2020/7/11 23:41
@@ -45,6 +48,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     private static final Logger log = LoggerFactory.getLogger(VideoServiceImpl.class);
 
+    private static final String VIDEO_CONTENT_TYPE = "video/mp4";
+
+    private static final String COVER_CONTENT_TYPE = "image/jpeg";
 
     private String dir = System.getProperty("user.dir");
 
@@ -53,6 +59,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private UserFeignClient userFeignClient;
 
     @Autowired
     private CategoryMapper categoryMapper;
@@ -66,8 +75,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Value("${minio.url}")
     private String minioUrl;
 
-    @Value("${minio.bucket-name}")
-    private String bucketName;
+    @Value("${minio.bucket-video-name}")
+    private String bucketVideoName;
 
     @Override
     public VideoDetailsOutputDto findDetailsById(long id) throws VideoException {
@@ -76,6 +85,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             throw new VideoException("该视频走丢了~");
         }
         detailsOutputDto.setLog(logMapper.selectOne(new QueryWrapper<VideoLog>().eq("vid",detailsOutputDto.getId())));
+        Map<String,Object> infoMap = userFeignClient.findBasicInfoById(detailsOutputDto.getUid());
+        detailsOutputDto.setUpImg((String) infoMap.get("uimg"));
+        detailsOutputDto.setUpName((String) infoMap.get("username"));
         return detailsOutputDto;
     }
 
@@ -127,7 +139,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
 
         //从文件服务器下载到本地，给FFMPEEG使用
-        minIOUtils.saveLocalTemp(fileName,dir);
+        minIOUtils.saveVideoLocalTemp(fileName,dir);
 
 
         /*
@@ -140,14 +152,14 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
             log.info("fileName:{}",fileName);
             log.info("newFileName:{}",newFileName);
             VideoUtils.createOtherResolutionVideo(dir+fileName,dir+newFileName,states[i].getWidth(),states[i].getHeight());
-            minIOUtils.uploadFile(newFileName,new FileInputStream(new File(dir,newFileName)));
-            builder.append(minioUrl+bucketName+"/"+newFileName+",");
+            minIOUtils.uploadFile(newFileName,new FileInputStream(new File(dir,newFileName)), HttpContentTypeEnum.MP4);
+            builder.append(minioUrl+bucketVideoName+"/"+newFileName+",");
         }
         builder.append(baseUrl);
 
         //生成预览图
         String previewImage = VideoUtils.createPreviewImage(dir,fileName,1.0/(video.getLength()/10));
-        String webPreviewUrl = minIOUtils.uploadFile(previewImage,new FileInputStream(new File(dir,previewImage)));
+        String webPreviewUrl = minIOUtils.uploadFile(previewImage,new FileInputStream(new File(dir,previewImage)),HttpContentTypeEnum.JPEG);
         video.setPreviewUrl(webPreviewUrl);
         log.debug("预览图路径:{}",webPreviewUrl);
         //更新视频对应存储路径

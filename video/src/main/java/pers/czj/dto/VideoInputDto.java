@@ -3,6 +3,7 @@ package pers.czj.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.beans.BeanUtils;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
@@ -13,7 +14,14 @@ import pers.czj.entity.Video;
  */
 @ApiModel("视频传输输入类")
 @Data
+@Accessors(chain = true)
 public class VideoInputDto {
+
+
+    public static final long DEFAULT_CATEGORY_PID=1;
+
+    public static final long DEFAULT_CATEGORY_ID = 2;
+
 
     @ApiModelProperty("视频的顶级（父）频道")
     private long categoryPId;
@@ -33,7 +41,16 @@ public class VideoInputDto {
     @ApiModelProperty("视频简介")
     private String description;
 
+    @ApiModelProperty(hidden = true)
     private long uid;
+
+    public static VideoInputDto createDefaultDto(){
+        VideoInputDto dto = new VideoInputDto();
+        dto.setCategoryId(DEFAULT_CATEGORY_ID);
+        dto.setCategoryPId(DEFAULT_CATEGORY_PID);
+        return dto;
+    }
+
 
 /*    @ApiModelProperty("视频的顶级频道（冗余）")
     private String categoryPName;
@@ -47,6 +64,12 @@ public class VideoInputDto {
         BeanUtils.copyProperties(this,video);
         video.setPublishState(VideoPublishStateEnum.AUDIT);
         video.setResolutionState(VideoResolutionEnum.P_1080);
+        return video;
+    }
+
+    public Video convert(long uid){
+        Video video = convert();
+        video.setUid(uid);
         return video;
     }
 }

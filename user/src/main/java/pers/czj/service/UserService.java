@@ -2,6 +2,7 @@ package pers.czj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import pers.czj.common.User;
+import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.exception.UserException;
 
 import java.util.Date;
@@ -53,4 +54,14 @@ public interface UserService extends IService<User> {
      * @return boolean
      */
     public boolean updateLastReadMessageTime(long uid, Date lastTime);
+
+
+    /**
+     * @author czj
+     * 根据用户主键获得用户基本信息
+     * @date 2020/9/6 12:11
+     * @param [uid]
+     * @return pers.czj.dto.BasicUserInfoOutputDto
+     */
+    public BasicUserInfoOutputDto findBasicUserInfoById(long uid);
 }

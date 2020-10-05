@@ -34,24 +34,35 @@ public class HtmlUtils {
      */
     public static Resource resolver(String html){
         Document document = Jsoup.parse(html);
-        Elements scriptElements = document.getElementsByTag("script");
-        Element resourceElement = scriptElements.get(DEFAULT_RESOURCE_INDEX);
-//        Element infoElement = scriptElements.get(DEFAULT_INFO_INDEX);
-        Resource resource = resolverResource(resourceElement);
+        Resource resource = resolverResource(document);
         return resource;
     }
 
+    private static String resolverInfo(Document document){
+        Element element = document.getElementsByAttributeValue("itemprop","image").get(0);
+        System.out.println(element);
+        return element.attr("content");
+    }
 
-    private static Resource resolverResource(Element element){
-        String text = element.toString();
-        System.out.println(text);
-        text = text.substring(text.indexOf("{"),text.lastIndexOf("}")+1);
+    /**
+     * 解析element获得视频相关信息
+     * @author czj
+     * @date 2020/10/3 22:57
+     * @param [element]
+     * @return pers.czj.utils.HtmlUtils.Resource
+     */
+    private static Resource resolverResource(Document document){
+        Elements scriptElements = document.getElementsByTag("script");
+        Element resourceElement = scriptElements.get(DEFAULT_RESOURCE_INDEX);
+        String resourceStr = resourceElement.toString();
+        resourceStr = resourceStr.substring(resourceStr.indexOf("{"),resourceStr.lastIndexOf("}")+1);
         //获取baseUrl
-        JSONObject jsonObject = JSONObject.parseObject(text);
+        JSONObject jsonObject = JSONObject.parseObject(resourceStr);
         JSONObject  dashObject = jsonObject.getJSONObject("data").getJSONObject("dash");
-        JSONArray videoArray = dashObject.getJSONArray("video").getJSONObject(0).getJSONArray("backupUrl");
-        JSONArray audioArray = dashObject.getJSONArray("audio").getJSONObject(0).getJSONArray("backupUrl");
-        return new Resource(videoArray.getString(0),audioArray.getString(0));
+        String videoUrl = dashObject.getJSONArray("video").getJSONObject(0).getJSONArray("backupUrl").getString(0);
+        String audioUrl = dashObject.getJSONArray("audio").getJSONObject(0).getJSONArray("backupUrl").getString(0);
+        String coverUrl = resolverInfo(document);
+        return new Resource(videoUrl,audioUrl,coverUrl);
     }
 
     public static List<Map<String,String>> resolverTop(String bodyStr){
@@ -87,10 +98,13 @@ public class HtmlUtils {
 
         private String audioUrl;
 
+        private String coverUrl;
 
-        public Resource(String videoUrl, String audioUrl) {
+
+        public Resource(String videoUrl, String audioUrl, String coverUrl) {
             this.videoUrl = videoUrl;
             this.audioUrl = audioUrl;
+            this.coverUrl = coverUrl;
         }
     }
 }

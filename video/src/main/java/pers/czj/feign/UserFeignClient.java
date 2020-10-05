@@ -31,4 +31,7 @@ public interface UserFeignClient {
 
     @PostMapping("/api/dynamic")
     public CommonResult addDynamic(@RequestBody Map<String,Object> map);
+
+    @GetMapping("/user/basic/{uid}")
+    public Map<String,Object> findBasicInfoById(@PathVariable("uid") long uid);
 }

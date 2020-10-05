@@ -25,7 +25,8 @@ minio:
   secretKey: minioadmin
   url: http://127.0.0.1:9000/
   download-url: http://127.0.0.1:9000/
-  bucket-name: dalidali
+  bucket-video-name: dalidali
+  bucket-image-name: dalidali-image
 
 redis:
   category-list: CATEGORY_LIST

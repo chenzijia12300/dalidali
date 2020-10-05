@@ -18,7 +18,8 @@ public class Danmu {
     private long vid;
 
     /**
-     * 弹幕显示在第几秒
+     * 废除：弹幕显示在第几秒
+     * 弹幕显示在多少毫秒
      */
     private long showSecond;
 

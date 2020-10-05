@@ -11,8 +11,13 @@ spring:
     multipart:
       max-request-size: 1GB
       max-file-size: 1GB
+
+  mvc:
+    static-path-pattern: /*
+  resources:
+    static-locations: classpath:/static,classpath:/public,classpath:/resources,classpath:/META-INF/resources,file:${apk.path-mapping}
 server:
-  port: 8083
+  port: 8183
 logging:
   level:
     root: ERROR
@@ -28,3 +33,14 @@ feign:
     enabled: false
   httpclient:
     connection-timeout: 60000
+
+apk:
+  path-mapping: /apk/
+
+
+minio:
+  accessKey: minioadmin
+  secretKey: minioadmin
+  url: http://127.0.0.1:9000/
+  download-url: http://127.0.0.1:9000/
+  bucket-name: dalidali-apk

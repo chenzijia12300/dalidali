@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import pers.czj.common.User;
+import pers.czj.dto.BasicUserInfoOutputDto;
 
 import java.util.Date;
 
@@ -31,5 +32,8 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT read_message_time FROM user WHERE id = #{uid}")
     public Date findLastReadMessageTime(long uid);
+
+    @Select("SELECT username,img as uimg FROM user WHERE id = #{id}")
+    public BasicUserInfoOutputDto findBasicUserInfoById(long id);
 
 }
