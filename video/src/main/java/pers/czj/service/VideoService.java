@@ -36,15 +36,23 @@ public interface VideoService extends IService<Video> {
 
 
     /**
+     * 随机返回8条连续数据，随机化不好，但效率快
      * @author czj
-     * 随机获得视频信息列表
-     * @date 2020/8/27 23:08
+     * @date 2020/10/6 12:02
      * @param []
      * @return java.util.List<pers.czj.dto.VideoBasicOutputDto>
      */
     public List<VideoBasicOutputDto> listRandomAll();
 
 
+    /**
+     * 随机返回8条数据，随机化好，但效率慢出屎
+     * @author czj
+     * @date 2020/10/6 13:16
+     * @param [pageNum, pageSize]
+     * @return java.util.List<pers.czj.dto.VideoBasicOutputDto>
+     */
+    public List<VideoBasicOutputDto> listSlowRandomAll(int pageSize);
     /**
      * @author czj
      * 根据主键们获得视频的基本信息

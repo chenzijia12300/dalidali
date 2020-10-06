@@ -22,6 +22,8 @@ import pers.czj.service.CategoryService;
 import pers.czj.service.VideoService;
 import pers.czj.utils.RedisUtils;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -30,6 +32,7 @@ import java.util.List;
 @RestController
 @Api(tags = "视频分类接口")
 @CrossOrigin
+@Validated
 public class CategoryController {
 
     private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
@@ -81,10 +84,10 @@ public class CategoryController {
         return CommonResult.success(list);
     }
 
-    @GetMapping("/category/random/all")
+    @GetMapping(value = {"/category/random/all/{pageSize}","/category/random/all"})
     @ApiOperation("移动端【获得首页视频信息列表】接口")
-    public CommonResult listRandomAll(){
-        List<VideoBasicOutputDto> list = videoService.listRandomAll();
+    public CommonResult listRandomAll(@Max(8) @PathVariable(value = "pageSize",required = false)Integer pageSize){
+        List<VideoBasicOutputDto> list = videoService.listSlowRandomAll(pageSize==null?8:pageSize);
         return CommonResult.success(list);
     }
 }
