@@ -103,6 +103,8 @@ public class VideoLogServiceImpl extends ServiceImpl<VideoLogMapper, VideoLog>im
         if (ObjectUtils.isEmpty(videoLog)){
             videoLog = new VideoLog().setVid(vid).setUid(uid).setIsCollection(true);
             save(videoLog);
+            log.info("用户{}对视频{}进行了收藏操作",uid,vid);
+
         }else {
             log.debug("isCollection:{}",videoLog.getIsCollection());
             videoLog.setIsCollection(!videoLog.getIsCollection());
@@ -112,6 +114,16 @@ public class VideoLogServiceImpl extends ServiceImpl<VideoLogMapper, VideoLog>im
         userFeignClient.dynamicCollection(dto);
         return true;
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+    @Override
+    public boolean allOperate(long vid, long uid) throws VideoException, UserException {
+        dynamicLike(vid,uid);
+        addCoins(vid,uid,2);
+        dynamicCollection(vid,uid);
+        return true;
+    }
+
 
     private VideoLog getVideo(long vid,long uid){
         QueryWrapper queryWrapper = new QueryWrapper();

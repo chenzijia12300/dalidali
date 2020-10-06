@@ -48,5 +48,10 @@ public class VideoInfoController {
         return CommonResult.success();
     }
 
+    @PostMapping("/video/all/operate")
+    public CommonResult allOperate(@RequestParam("uid") long userId,@RequestBody VideoIdDto dto) throws VideoException, UserException {
+        videoLogService.allOperate(dto.getVid(),userId);
+        return CommonResult.success();
+    }
 
 }

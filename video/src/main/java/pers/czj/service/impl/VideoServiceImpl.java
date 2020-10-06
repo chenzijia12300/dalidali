@@ -107,6 +107,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     }
 
     @Override
+    public List<VideoBasicOutputDto> listSlowRandomAll(int pageSize) {
+        PageHelper.startPage(1,pageSize);
+        return baseMapper.listSlowRandomAll();
+    }
+
+    @Override
     public List<VideoBasicOutputDto> listBasicInfoByIds(Collection<Long> ids) {
         return baseMapper.listBasicInfoByIds(ids);
     }

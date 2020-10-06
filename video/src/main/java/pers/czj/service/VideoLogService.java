@@ -47,4 +47,15 @@ public interface VideoLogService extends IService<VideoLog> {
      * @return boolean
      */
     public boolean dynamicCollection(long vid,long uid);
+
+
+    /**
+     * 一键三联
+     * @author czj
+     * @date 2020/10/6 14:14
+     * @param [vid, uid]
+     * @return boolean
+     */
+    public boolean allOperate(long vid,long uid) throws VideoException, UserException;
+
 }

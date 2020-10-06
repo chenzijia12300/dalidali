@@ -38,7 +38,11 @@ public interface VideoMapper extends BaseMapper<Video> {
     public List<VideoBasicOutputDto> listRandomByCategoryPId(long id);
 
 
+
     public List<VideoBasicOutputDto> listRandomAll();
+
+
+    public List<VideoBasicOutputDto> listSlowRandomAll();
 
     /**
      * @author czj
