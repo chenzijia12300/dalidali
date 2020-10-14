@@ -1,6 +1,7 @@
 package pers.czj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import pers.czj.dto.DynamicOutputDto;
 import pers.czj.entity.Dynamic;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface DynamicService extends IService<Dynamic> {
      * @param [uid, startPage, pageSize]
      * @return java.util.List<pers.czj.entity.Dynamic>
      */
-    public List<Dynamic> listDynamicByPage(long uid,int startPage,int pageSize);
+    public List<DynamicOutputDto> listDynamicByPage(long uid, int startPage, int pageSize);
 
 
     /**
@@ -26,4 +27,16 @@ public interface DynamicService extends IService<Dynamic> {
      * @return
      */
     public int findUnreadCount(long uid);
+
+
+    /**
+     * 处理点赞信息
+     * @author czj
+     * @date 2020/10/14 17:20
+     * @param [did, uid]
+     * @return int
+     */
+    public int handlerLike(long uid,Dynamic dynamic);
+
+
 }

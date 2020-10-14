@@ -66,5 +66,10 @@ public class VideoBasicOutputDto {
      */
     private String previewUrl;
 
+    /**
+     * 是否点赞了
+     */
+    private boolean isPraise;
+
 
 }

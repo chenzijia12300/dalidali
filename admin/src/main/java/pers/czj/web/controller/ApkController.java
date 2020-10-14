@@ -86,7 +86,7 @@ public class ApkController {
     @GetMapping("/apk")
     @ApiOperation("获得移动端最新版本信息")
     public CommonResult findNewestApkInfo(){
-        ApkInfo apkInfo = apkInfoService.getOne(new QueryWrapper<ApkInfo>().orderByDesc("create_time"));
+        ApkInfo apkInfo = apkInfoService.getOne(new QueryWrapper<ApkInfo>().orderByDesc("create_time").last("LIMIT 1"));
         return CommonResult.success(apkInfo);
     }
 

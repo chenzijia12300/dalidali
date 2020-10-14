@@ -19,8 +19,8 @@
 #    pers.czj: DEBUG
 #
 #
-#mybatis-plus:
+#mapper-plus:
 #  type-enums-package: pers.czj.constant
 spring:
   profiles:
-    active: pro
+    active: dev

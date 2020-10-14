@@ -22,11 +22,26 @@ public class Dynamic {
      */
     private long uid;
 
-
     /**
      * 对应事务(视频/专栏)的主键
      */
     private long oid;
+
+    /**
+     * 转发数
+     */
+    private long forwardNum;
+
+    /**
+     *  动态文字内容
+     */
+    private String content;
+
+    /**
+     * 图片列表
+     */
+    private String imgs;
+
 
     /**
      * 消息创建时间
@@ -38,5 +53,13 @@ public class Dynamic {
      */
     private DynamicType type;
 
+    /**
+     * 点赞数
+     */
+    private long praiseNum;
 
+    /**
+     * 评论数
+     */
+    private long commentNum;
 }

@@ -4,10 +4,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.scripting.xmltags.DynamicContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
+import pers.czj.context.DynamicPraiseContext;
+import pers.czj.dto.DynamicOutputDto;
 import pers.czj.entity.Dynamic;
 import pers.czj.feign.VideoFeignClient;
 import pers.czj.service.DynamicService;
@@ -19,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 创建在 2020/8/9 22:43
@@ -33,12 +37,17 @@ public class DynamicController {
 
     private UserService userService;
 
+    //策略模式
+    private DynamicPraiseContext praiseContext;
+
     @Autowired
-    public DynamicController(DynamicService dynamicService, VideoFeignClient videoFeignClient, UserService userService) {
+    public DynamicController(DynamicService dynamicService, VideoFeignClient videoFeignClient, UserService userService, DynamicPraiseContext praiseContext) {
         this.dynamicService = dynamicService;
         this.videoFeignClient = videoFeignClient;
         this.userService = userService;
+        this.praiseContext = praiseContext;
     }
+
 
     @GetMapping("/dynamic/list/{pageNum}/{pageSize}")
     @ApiOperation("获得动态列表")
@@ -53,7 +62,8 @@ public class DynamicController {
         /**
             查询相应动态,初始化所需参数
          */
-        List<Dynamic> dynamics = dynamicService.listDynamicByPage(uid,pageNum,pageSize);
+        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPage(uid,pageNum,pageSize);
+        List<DynamicOutputDto> videoDynamics = new ArrayList<>();
         List<Long> videoIds = new ArrayList<>();
         List<Long> postIds = new ArrayList<>();
         List videoList = null;
@@ -65,6 +75,7 @@ public class DynamicController {
             switch (dynamic.getType()){
                 case VIDEO:
                     videoIds.add(dynamic.getOid());
+                    videoDynamics.add(dynamic);
                     break;
                 case POST:
                     postIds.add(dynamic.getOid());
@@ -75,6 +86,9 @@ public class DynamicController {
         });
         if (!CollectionUtils.isEmpty(videoIds)) {
             videoList = videoFeignClient.listBasicVideoInfoByIds(videoIds);
+            for (int i = 0; i < videoIds.size(); i++) {
+                videoDynamics.get(i).setObject(videoList.get(i));
+            }
         }
 
         if (!CollectionUtils.isEmpty(postIds)){
@@ -82,12 +96,22 @@ public class DynamicController {
         }
         //更新最后阅读个人动态时间
         userService.updateLastReadDynamicTime(uid,new Date());
-        return CommonResult.success(videoList);
+        return CommonResult.success(dynamics);
     }
 
     @GetMapping("/dynamic/unread")
     @ApiOperation("获得个人动态未读总数")
     public CommonResult findUnreadDynamicCount(@RequestParam long uid){
         return CommonResult.success(dynamicService.findUnreadCount(uid));
+    }
+
+
+
+    @PostMapping("/dynamic/like")
+    public CommonResult dynamicLike(@RequestParam long uid, @RequestBody Map<String,Object> map){
+        int dynamicId = (int) map.get("dynamicId");
+        Dynamic dynamic = dynamicService.getById(dynamicId);
+        praiseContext.handlerPraise(uid,dynamic);
+        return CommonResult.success();
     }
 }
