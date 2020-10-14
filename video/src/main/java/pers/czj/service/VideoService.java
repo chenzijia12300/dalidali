@@ -62,6 +62,9 @@ public interface VideoService extends IService<Video> {
      */
     public List<VideoBasicOutputDto> listBasicInfoByIds(Collection<Long> ids);
 
+
+
+
     /**
      * @author czj
      * 自增视频播放量

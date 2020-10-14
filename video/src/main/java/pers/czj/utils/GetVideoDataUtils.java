@@ -32,6 +32,8 @@ public class GetVideoDataUtils {
 
     private static final String DEFAULT_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
 
+    private static final String DEFAULT_TOP_URL = "https://www.bilibili.com/ranking?spm_id_from=333.851.b_7072696d61727950616765546162.3";
+
     private static final String ORIGIN = "https://www.bilibili.com";
 
     @Value("${video.dir-path}")
@@ -49,16 +51,27 @@ public class GetVideoDataUtils {
     @Value("${crawler.product-suffix:.mp4}")
     private String productSuffix;
 
-    public  List<Map<String,String>> syncGetData() throws IOException, InterruptedException {
+    public  List<Map<String,String>> syncGetData(String url){
 
         //构建请求组件
         OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = createRequest();
+        Request request = createRequest(StrUtil.isEmpty(url)?DEFAULT_TOP_URL:url);
 
         //开始请求排行榜
-        Response response = okHttpClient.newCall(request).execute();
+        Response response = null;
+        try {
+            response = okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            log.error("解析排行榜信息出错Url:{}",request.url());
+            e.printStackTrace();
+        }
         ResponseBody body = response.body();
-        String bodyStr = body.string();
+        String bodyStr = null;
+        try {
+            bodyStr = body.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //开始解析
         List<Map<String,String>> maps = HtmlUtils.resolverTop(bodyStr);
@@ -111,9 +124,9 @@ public class GetVideoDataUtils {
             }
         };
     }
-    private  Request createRequest(){
+    private  Request createRequest(String url){
         return new Request.Builder()
-                .url("https://www.bilibili.com/ranking?spm_id_from=333.851.b_7072696d61727950616765546162.3")
+                .url(url)
                 .get()
                 .addHeader("Connection","keep-alive")
                 .addHeader("User-Agent",DEFAULT_USER_AGENT)

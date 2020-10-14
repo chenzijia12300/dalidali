@@ -10,8 +10,8 @@ import lombok.Getter;
 @Getter
 public enum DynamicType implements IEnum<Integer> {
 
-    // 视频   帖子      个人
-    VIDEO(0),POST(1),PERSONAL(2);
+    // 视频   帖子      个人         转发
+    VIDEO(0),POST(1),PERSONAL(2),forward(3);
 
     private int type;
 

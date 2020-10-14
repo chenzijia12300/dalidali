@@ -1,5 +1,7 @@
 package pers.czj.web.controller;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.IoUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,9 +23,16 @@ import pers.czj.exception.VideoException;
 import pers.czj.service.CategoryService;
 import pers.czj.service.VideoService;
 import pers.czj.utils.RedisUtils;
+import sun.nio.ch.IOUtil;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -89,5 +98,20 @@ public class CategoryController {
     public CommonResult listRandomAll(@Max(8) @PathVariable(value = "pageSize",required = false)Integer pageSize){
         List<VideoBasicOutputDto> list = videoService.listSlowRandomAll(pageSize==null?8:pageSize);
         return CommonResult.success(list);
+    }
+
+    public static void main(String[] args) throws IOException {
+        HttpsURLConnection connection = (HttpsURLConnection) new URL("https://p2.music.126.net/EaQwfojYMZ66xomdTrIRvA==/6006632022768749.jpg").openConnection();
+        connection.setDoInput(true);
+        connection.connect();
+        InputStream inputStream = connection.getInputStream();
+        FileOutputStream fileOutputStream = new FileOutputStream("C:\\Users\\ZJ\\Desktop\\qwe.jpg");
+        int len = -1;
+        byte [] bytes = new byte[1024];
+        while((len = inputStream.read(bytes))!=-1){
+            fileOutputStream.write(bytes,0,len);
+        }
+        fileOutputStream.close();
+        connection.disconnect();
     }
 }

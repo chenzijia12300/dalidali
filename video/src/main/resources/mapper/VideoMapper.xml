@@ -7,6 +7,20 @@
     <sql id="basicFieldSql">
         video.id,uid,play_num,danmu_num,title,length,cover,username as upName,preview_url,praise_num
     </sql>
+
+
+    <sql id="dynamicFieldSql">
+        video.id,video.uid,play_num,danmu_num,title,length,cover,username as upName,preview_url,praise_num,urls,video_log.is_praise
+    </sql>
+
+
+
+
+
+
+
+
+
     <select id="findDetailsById" parameterType="long" resultType="pers.czj.dto.VideoDetailsOutputDto">
         SELECT
             <include refid="detailsFieldSql"/>
@@ -40,14 +54,34 @@
     </select>
 
 
-    <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">
+<!--    <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">
         SELECT
         <include refid="basicFieldSql"/>
         FROM video,user where video.uid = user.id
         and
-        video.id in 
+        video.id in
         <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>-->
+
+
+    <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">
+        SELECT
+        <include refid="dynamicFieldSql"/>
+        FROM video INNER JOIN user
+        ON
+        video.uid = user.id
+        AND
+        video.id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        LEFT JOIN video_log
+        ON
+        video_log.uid = user.id
+        and
+        video_log.vid = video.id
+        ORDER BY video.id DESC
     </select>
 </mapper>
