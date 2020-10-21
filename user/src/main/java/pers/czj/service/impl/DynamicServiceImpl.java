@@ -1,5 +1,7 @@
 package pers.czj.service.impl;
 
+import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import pers.czj.dto.DynamicOutputDto;
 import pers.czj.entity.Dynamic;
+import pers.czj.entity.DynamicLog;
 import pers.czj.mapper.DynamicMapper;
 import pers.czj.mapper.FollowMapper;
 import pers.czj.mapper.UserMapper;
 import pers.czj.service.DynamicLogService;
+import pers.czj.service.DynamicPraiseService;
 import pers.czj.service.DynamicService;
 
 import java.util.Date;
@@ -21,8 +25,8 @@ import java.util.List;
 /**
  * 创建在 2020/8/9 22:40
  */
-@Service
-public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implements DynamicService {
+@Service("POST")
+public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implements DynamicService, DynamicPraiseService {
 
     public static final int POSITIVE_NUM = 1;
 
@@ -46,7 +50,7 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
     public List<DynamicOutputDto> listDynamicByPage(long uid, int startPage, int pageSize) {
         List<Long> ids = followMapper.findByFollowId(uid);
         PageHelper.startPage(startPage,pageSize);
-        return baseMapper.listNewDynamic(ids);
+        return baseMapper.listNewDynamic(uid,ids);
     }
 
     @Override
@@ -59,11 +63,24 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
         return count(queryWrapper);
     }
 
+
+
     @Override
-    public int handlerLike(long uid, Dynamic dynamic) {
-//        boolean hasPraise = logService.hasPraise(dynamic.getId(),uid);
-//        int row = baseMapper.incrPraiseNum(dynamic.getId(),hasPraise?
-//                NEGATIVE_NUM:POSITIVE_NUM);
-        return 0;
+    public boolean handlerPraise(long userId, Dynamic dynamic) {
+        long did = dynamic.getId();
+        DynamicLog dynamicLog = logService.getOne(new QueryWrapper<DynamicLog>()
+                .eq("did",did)
+                .eq("uid",userId));
+        if (ObjectUtil.isNull(dynamicLog)){
+            baseMapper.incrPraiseNum(did,POSITIVE_NUM);
+            dynamicLog = new DynamicLog().setDid(did).setUid(userId).setPraise(true);
+            logService.save(dynamicLog);
+        }else{
+            boolean isPraise = dynamicLog.isPraise();
+            baseMapper.incrPraiseNum(dynamic.getId(),isPraise?NEGATIVE_NUM:POSITIVE_NUM);
+            dynamicLog.setPraise(!isPraise);
+            logService.updateById(dynamicLog);
+        }
+        return true;
     }
 }

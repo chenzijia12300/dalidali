@@ -29,14 +29,6 @@ public interface DynamicService extends IService<Dynamic> {
     public int findUnreadCount(long uid);
 
 
-    /**
-     * 处理点赞信息
-     * @author czj
-     * @date 2020/10/14 17:20
-     * @param [did, uid]
-     * @return int
-     */
-    public int handlerLike(long uid,Dynamic dynamic);
 
 
 }

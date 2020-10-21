@@ -16,5 +16,9 @@ public interface DynamicLogService extends IService<DynamicLog> {
      * @param uid 用户主键
      * @return boolean
      */
+    @Deprecated
     boolean hasPraise(long did,long uid);
+
+
+
 }

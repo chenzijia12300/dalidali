@@ -50,4 +50,17 @@ public class DynamicOutputDto {
 
     @ApiModelProperty("对应主题对象")
     private Object object;
+
+    /**
+     * @author czj
+     * @date 2020/10/21 15:29
+     * @param
+     * @return
+     */
+
+    private boolean isPraise;
+
+    private boolean isForward;
+
+    private boolean isCollection;
 }
