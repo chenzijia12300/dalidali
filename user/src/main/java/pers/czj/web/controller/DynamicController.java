@@ -106,7 +106,6 @@ public class DynamicController {
     }
 
 
-
     @PostMapping("/dynamic/like")
     public CommonResult dynamicLike(@RequestParam long uid, @RequestBody Map<String,Object> map){
         int dynamicId = (int) map.get("dynamicId");

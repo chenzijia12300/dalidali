@@ -62,4 +62,6 @@ public class Dynamic {
      * 评论数
      */
     private long commentNum;
+
+
 }
