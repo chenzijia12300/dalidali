@@ -3,13 +3,12 @@ package pers.czj.web.api;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.entity.Dynamic;
 import pers.czj.service.DynamicService;
+
+import java.util.Map;
 
 /**
  * 创建在 2020/8/10 11:32
@@ -32,6 +31,14 @@ public class DynamicApi {
     public CommonResult addDynamic(@RequestBody Dynamic dynamic){
         dynamicService.save(dynamic);
         //消息队列来一波
+        return CommonResult.success();
+    }
+
+
+    @PutMapping("/dynamic")
+    @ApiOperation("更改动态")
+    public CommonResult updateDynamic(@RequestBody Dynamic dynamic){
+        dynamicService.updateById(dynamic);
         return CommonResult.success();
     }
 }

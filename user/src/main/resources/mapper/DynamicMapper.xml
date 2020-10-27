@@ -12,4 +12,17 @@
         ON dynamic_log.did = dynamic.id AND dynamic_log.uid =#{uid}
         ORDER BY dynamic.create_time DESC
     </select>
+
+
+    <select id="listNewVideoDynamic" parameterType="Long" resultType="pers.czj.dto.DynamicOutputDto">
+        SELECT dynamic.*,dynamic_log.is_praise,dynamic_log.is_forward,dynamic_log.is_collection,user.username as up_name,user.img as up_img  FROM dynamic INNER  JOIN user
+        ON uid IN
+        <foreach collection="ids" separator="," open="(" close=")" item="userId" index="index">
+            #{userId}
+        </foreach>
+        AND dynamic.uid = user.id AND dynamic.type = 0
+        LEFT JOIN dynamic_log
+        ON dynamic_log.did = dynamic.id AND dynamic_log.uid =#{uid}
+        ORDER BY dynamic.create_time DESC
+    </select>
 </mapper>

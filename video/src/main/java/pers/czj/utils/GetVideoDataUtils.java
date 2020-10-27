@@ -2,6 +2,7 @@ package pers.czj.utils;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Pair;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
@@ -19,7 +20,7 @@ import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.net.ConnectException;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.*;
 
 /**
  * 创建在 2020/8/21 11:48
@@ -32,7 +33,7 @@ public class GetVideoDataUtils {
 
     private static final String DEFAULT_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
 
-    private static final String DEFAULT_TOP_URL = "https://www.bilibili.com/ranking?spm_id_from=333.851.b_7072696d61727950616765546162.3";
+    private static final String DEFAULT_TOP_URL = "https://www.bilibili.com/v/popular/rank/all?spm_id_from=333.851.b_7072696d61727950616765546162.3";
 
     private static final String ORIGIN = "https://www.bilibili.com";
 
@@ -141,17 +142,31 @@ public class GetVideoDataUtils {
                 .build();
     }
 
-    private  void download(InputStream inputStream, String path) throws IOException {
-        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(path));
-        byte[] bytes = new byte[1024];
-        int len = -1;
-        double total = 0;
-        while((len=inputStream.read(bytes))!=-1){
-            outputStream.write(bytes,0,len);
-            total+=len;
+    private void download(InputStream inputStream, String path) throws IOException {
+            FutureTask futureTask = new FutureTask(()->{
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(path));
+            byte[] bytes = new byte[1024];
+            int len = -1;
+            double total = 0;
+            while((len=inputStream.read(bytes))!=-1){
+                outputStream.write(bytes,0,len);
+                total+=len;
+            }
+            outputStream.flush();
+            outputStream.close();
+            log.info("{}:下载完毕",path);
+            return null;
+        });
+        try {
+            futureTask.get(10, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            log.error("下载{}【超时】失败",path);
+            FileUtil.del(path);
         }
-        outputStream.flush();
-        outputStream.close();
-        System.out.println(path+"下载完毕");
+
     }
 }

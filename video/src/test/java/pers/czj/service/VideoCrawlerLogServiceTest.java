@@ -6,6 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * 创建在 2020/10/12 18:17
  */
 
-class VideoCrawlerLogServiceTest {
+public class VideoCrawlerLogServiceTest {
 
 }

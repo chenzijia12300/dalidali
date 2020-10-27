@@ -62,6 +62,11 @@ public class VideoBasicOutputDto {
     private String cover;
 
     /**
+     * 视频路径们
+     */
+    private String urls;
+
+    /**
      * 预览图
      */
     private String previewUrl;

@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.scripting.xmltags.DynamicContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,9 @@ import java.util.Map;
 @RestController
 @Api(tags = "个人动态接口")
 public class DynamicController {
+
+    private static final Logger log = LoggerFactory.getLogger(DynamicController.class);
+
 
     private DynamicService dynamicService;
 
@@ -62,7 +67,7 @@ public class DynamicController {
         /**
             查询相应动态,初始化所需参数
          */
-        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPage(uid,pageNum,pageSize);
+        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPageAndType(uid,pageNum,pageSize,true);
         List<DynamicOutputDto> videoDynamics = new ArrayList<>();
         List<Long> videoIds = new ArrayList<>();
         List<Long> postIds = new ArrayList<>();
@@ -98,6 +103,38 @@ public class DynamicController {
         userService.updateLastReadDynamicTime(uid,new Date());
         return CommonResult.success(dynamics);
     }
+
+
+
+    @GetMapping("/dynamic/list/video/{pageNum}/{pageSize}")
+    @ApiOperation("获得动态列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "第X页（X>=1）", paramType = "path"),
+            @ApiImplicitParam(name = "pageSize", value = "X个数据（X<=8）", paramType = "path")
+    }
+    )
+    public CommonResult listVideoDynamic(@RequestParam long uid,
+                                    @PathVariable("pageNum")@Min(1) int pageNum,
+                                    @PathVariable("pageSize")@Max(8) int pageSize){
+        /**
+         查询相应动态,初始化所需参数
+         */
+        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPageAndType(uid,pageNum,pageSize,false);
+        List<Long> videoIds = new ArrayList<>();
+        dynamics.forEach(dynamicOutputDto -> videoIds.add(dynamicOutputDto.getOid()));
+        List videoList = null;
+        log.info("ids:{}",videoIds);
+        if (!CollectionUtils.isEmpty(videoIds)) {
+            videoList = videoFeignClient.listBasicVideoInfoByIds(videoIds);
+            for (int i = 0; i < videoIds.size(); i++) {
+                dynamics.get(i).setObject(videoList.get(i));
+            }
+        }
+        //更新最后阅读个人动态时间
+        userService.updateLastReadDynamicTime(uid,new Date());
+        return CommonResult.success(dynamics);
+    }
+
 
     @GetMapping("/dynamic/unread")
     @ApiOperation("获得个人动态未读总数")
