@@ -47,10 +47,10 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
     }
 
     @Override
-    public List<DynamicOutputDto> listDynamicByPage(long uid, int startPage, int pageSize) {
+    public List<DynamicOutputDto> listDynamicByPageAndType(long uid, int startPage, int pageSize,boolean isAll) {
         List<Long> ids = followMapper.findByFollowId(uid);
         PageHelper.startPage(startPage,pageSize);
-        return baseMapper.listNewDynamic(uid,ids);
+        return isAll?baseMapper.listNewDynamic(uid,ids):baseMapper.listNewVideoDynamic(uid,ids);
     }
 
     @Override

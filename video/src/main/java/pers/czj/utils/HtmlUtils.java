@@ -73,7 +73,7 @@ public class HtmlUtils {
         for (Element element:elementList){
             Element infoElement = element.getElementsByClass("title").get(0);
             map.put("title",infoElement.text());
-            map.put("videoUrl",infoElement.attr("href"));
+            map.put("videoUrl","https:"+infoElement.attr("href"));
             maps.add(map);
             map = new HashMap<>();
         }

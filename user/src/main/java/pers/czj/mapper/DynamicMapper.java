@@ -25,6 +25,15 @@ public interface DynamicMapper extends BaseMapper<Dynamic> {
 
 
     /**
+     * 返回视频类型最新动态列表
+     * @author czj
+     * @date 2020/10/26 20:23
+     * @param [uid, ids]
+     * @return java.util.List<pers.czj.dto.DynamicOutputDto>
+     */
+    public List<DynamicOutputDto> listNewVideoDynamic(@Param("uid")long uid,@Param("ids") List<Long> ids);
+
+    /**
      * 添加/减少点赞数
      * @author czj
      * @date 2020/10/14 16:26

@@ -60,7 +60,7 @@ public class VideoCrawlerController {
 
     @GetMapping("/video/test")
     @ApiOperation(value = "",hidden = true)
-    public CommonResult testTopData(HttpSession httpSession, @RequestParam String url) throws InterruptedException, VideoException, UserException {
+    public CommonResult testTopData(HttpSession httpSession, @RequestParam(required = false) String url) throws InterruptedException, VideoException, UserException {
         List<Map<String,String>> maps = null;
         maps = videoDataUtils.syncGetData(url);
         MultipartFile multipartFile = null;
@@ -71,6 +71,7 @@ public class VideoCrawlerController {
             videoUrl = map.get("videoUrl");
             if (!crawlerLogService.exists(videoUrl)){
                 handlerVideoResource(title,videoUrl,httpSession);
+                log.debug("伪装下载:{}",map);
                 crawlerSendService.send(createCrawlerLog(title,videoUrl));
             }else{
                 log.info("{}已存在",videoUrl);

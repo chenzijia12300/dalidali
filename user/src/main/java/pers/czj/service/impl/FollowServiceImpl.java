@@ -49,6 +49,6 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow>implemen
 
     @Override
     public List<BasicUserInfoOutputDto> findByFollowBasicInfo(long uid) {
-        return findByFollowBasicInfo(uid);
+        return baseMapper.findByFollowBasicInfo(uid);
     }
 }

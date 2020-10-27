@@ -18,7 +18,7 @@ public interface DynamicService extends IService<Dynamic> {
      * @param [uid, startPage, pageSize]
      * @return java.util.List<pers.czj.entity.Dynamic>
      */
-    public List<DynamicOutputDto> listDynamicByPage(long uid, int startPage, int pageSize);
+    public List<DynamicOutputDto> listDynamicByPageAndType(long uid, int startPage, int pageSize,boolean isAll);
 
 
     /**

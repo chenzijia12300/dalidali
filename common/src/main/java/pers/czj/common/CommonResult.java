@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * 创建在 2020/6/6 22:08
  */
+
 public class CommonResult<T> {
 
     @ApiModelProperty(value = "状态码")
