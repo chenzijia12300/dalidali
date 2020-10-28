@@ -40,7 +40,6 @@ public class HtmlUtils {
 
     private static String resolverInfo(Document document){
         Element element = document.getElementsByAttributeValue("itemprop","image").get(0);
-        System.out.println(element);
         return element.attr("content");
     }
 
