@@ -37,6 +37,8 @@ public class GetVideoDataUtils {
 
     private static final String ORIGIN = "https://www.bilibili.com";
 
+    private ExecutorService executorService = Executors.newFixedThreadPool(3);
+
     @Value("${video.dir-path}")
     private String dirPath;
 
@@ -88,6 +90,7 @@ public class GetVideoDataUtils {
         final  CountDownLatch latch =  new CountDownLatch(3);
         HtmlUtils.Resource resource = HttpUtils.findVideoBaseUrl(baseUrl);
 
+        log.info("resource:{}",resource);
         String videoPath = dirPath+title+videoSuffix;
         String audioPath = dirPath+title+audioSuffix;
         String productPath = dirPath+title+productSuffix;
@@ -143,21 +146,23 @@ public class GetVideoDataUtils {
     }
 
     private void download(InputStream inputStream, String path) throws IOException {
+        log.info("开始下载:{}",path);
             FutureTask futureTask = new FutureTask(()->{
-            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(path));
-            byte[] bytes = new byte[1024];
-            int len = -1;
-            double total = 0;
-            while((len=inputStream.read(bytes))!=-1){
-                outputStream.write(bytes,0,len);
-                total+=len;
-            }
-            outputStream.flush();
-            outputStream.close();
-            log.info("{}:下载完毕",path);
-            return null;
-        });
+                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(path));
+                byte[] bytes = new byte[1024];
+                int len = -1;
+                double total = 0;
+                while((len=inputStream.read(bytes))!=-1){
+                    outputStream.write(bytes,0,len);
+                    total+=len;
+                }
+                outputStream.flush();
+                outputStream.close();
+                log.info("{}:下载完毕",path);
+                return null;
+            });
         try {
+            executorService.submit(futureTask);
             futureTask.get(10, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();

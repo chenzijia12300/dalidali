@@ -27,6 +27,11 @@ public class DynamicPraiseContext {
     }
 
     public boolean handlerPraise(long userId,Dynamic dynamic){
+        /**
+         * 这里还没有想好应该如何更好使用策略模式
+         */
+        String type = dynamic.getType().toString();
+        type = type.equals("VIDEO")?type:"POST";
         return map.get(dynamic.getType().toString()).handlerPraise(userId,dynamic);
     }
 }

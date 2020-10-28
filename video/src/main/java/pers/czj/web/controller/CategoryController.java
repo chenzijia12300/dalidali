@@ -55,6 +55,8 @@ public class CategoryController {
     @Autowired
     private RedisUtils redisUtils;
 
+
+
     @Value("${redis.category-list}")
     private String categoryListKey;
 
@@ -87,7 +89,8 @@ public class CategoryController {
     @GetMapping("/category/random/{pid}")
     @ApiOperation("获得顶级频道随机视频列表")
     @ApiImplicitParams(
-            @ApiImplicitParam(name = "pid",paramType = "path",value = "顶级频道主键"))
+            @ApiImplicitParam(name = "pid",paramType = "path",value = "顶级频道主键")
+    )
     public CommonResult listRandomByPId(@PathVariable("pid") long pid) throws VideoException {
         List<VideoBasicOutputDto> list = videoService.listRandomByCategoryPId(pid);
         return CommonResult.success(list);

@@ -31,11 +31,18 @@ import java.util.Map;
 
 /**
  * 创建在 2020/10/3 22:26
+ *
+ * ----------------------
+ * 重构于 2020/10/28 20:23
+ * ----------------------
  */
 @RestController
+@RequestMapping("/crawler/")
 public class VideoCrawlerController {
     
     private static final Logger log = LoggerFactory.getLogger(VideoCrawlerController.class);
+
+    public static final int DEFAULT_USER_ID = 1;
 
     @Autowired
     private GetVideoDataUtils videoDataUtils;
@@ -50,27 +57,32 @@ public class VideoCrawlerController {
     private VideoCrawlerLogService crawlerLogService;
 
 
-    @PostMapping("/video/test/upload")
-    @ApiOperation(value = "",hidden = true)
+    @PostMapping("/upload")
+    @ApiOperation(value = "指定单个视频爬虫信息",hidden = true)
     public CommonResult uploadVideo(HttpSession httpSession, @RequestBody UploadInputDto dto) throws InterruptedException, VideoException, UserException, IOException {
         handlerVideoResource(dto.getTitle(),dto.getVideoUrl(),httpSession);
         return CommonResult.success("操作成功~");
     }
 
 
-    @GetMapping("/video/test")
-    @ApiOperation(value = "",hidden = true)
+    @GetMapping("/top")
+    @ApiOperation(value = "爬取哔哩哔哩排行榜信息",hidden = true)
     public CommonResult testTopData(HttpSession httpSession, @RequestParam(required = false) String url) throws InterruptedException, VideoException, UserException {
         List<Map<String,String>> maps = null;
         maps = videoDataUtils.syncGetData(url);
-        MultipartFile multipartFile = null;
         String title = null;
         String videoUrl = null;
         for (Map<String,String> map:maps){
             title = map.get("title");
             videoUrl = map.get("videoUrl");
             if (!crawlerLogService.exists(videoUrl)){
-                handlerVideoResource(title,videoUrl,httpSession);
+                if (!log.isDebugEnabled()) {
+                    try {
+                        handlerVideoResource(title, videoUrl, httpSession);
+                    }catch (Exception e){
+                        log.error("下载视频抛出异常:{}",map);
+                    }
+                }
                 log.debug("伪装下载:{}",map);
                 crawlerSendService.send(createCrawlerLog(title,videoUrl));
             }else{
@@ -81,40 +93,62 @@ public class VideoCrawlerController {
     }
 
     public void handlerVideoResource(String title,String videoUrl,HttpSession httpSession) throws VideoException,UserException {
-        //下载视频资源，上传到服务器
+
+        /*
+                 下载视频资源
+         */
         Map<String,String> map = null;
         try {
             map = videoDataUtils.syncDownload(title,videoUrl);
         } catch (InterruptedException e) {
-            log.error("下载视频资源:{}失败",videoUrl);
-            e.printStackTrace();
+            log.error("下载视频资源:{}失败,退出系统",videoUrl);
+            return;
         }
         String productUrl = map.get("productUrl");
         String coverUrl = map.get("coverUrl");
         MultipartFile multipartFile = convertMulti(productUrl);
         CommonResult commonResult = null;
+
+        /*
+            上传视频资源
+         */
         try {
-            commonResult = videoController.uploadVideo(httpSession,1, StrUtil.isEmpty(coverUrl),multipartFile);
+            commonResult = videoController.uploadVideo(httpSession,DEFAULT_USER_ID,StrUtil.isEmpty(coverUrl),multipartFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("上传视频资源失败:{}",multipartFile.getName());
+            return;
         }
 
+        /*
+            判断封面是否为空，上传封面图
+         */
         if (StrUtil.isNotEmpty(coverUrl)){
             try {
                 videoController.uploadCover(httpSession,convertMulti(coverUrl));
             } catch (FileNotFoundException e) {
                 log.error("上传封面：{}失败",coverUrl);
-                e.printStackTrace();
+                return;
             }
         }
+
+
+
         //将视频相关信息，上传到服务器
         VideoInputDto dto = createDefaultDto(title,commonResult.getMessage());
-        videoController.addVideo(httpSession,1,dto);
+        videoController.addVideo(httpSession,DEFAULT_USER_ID,dto);
         log.info("{}上传完毕",title);
-        log.info("清理爬虫临时文件:{},{}",productUrl,coverUrl);
+
+        /*
+            清理临时文件
+         */
         FileUtil.del(productUrl);
         FileUtil.del(coverUrl);
+        log.info("清理爬虫临时文件:{},{}",productUrl,coverUrl);
     }
+
+    /*
+        一些封装方法
+     */
 
     public VideoCrawlerLog createCrawlerLog(String title,String url){
         VideoCrawlerLog crawlerLog = new VideoCrawlerLog();
@@ -148,7 +182,7 @@ public class VideoCrawlerController {
     }
 
 
-    @GetMapping("/crawler/test")
+/*    @GetMapping("/crawler/test")
     public CommonResult test(){
         VideoCrawlerLog videoCrawlerLog = new VideoCrawlerLog();
         videoCrawlerLog.setTime(System.currentTimeMillis());
@@ -156,6 +190,6 @@ public class VideoCrawlerController {
         videoCrawlerLog.setUrl("456");
         crawlerSendService.send(videoCrawlerLog);
         return CommonResult.success();
-    }
+    }*/
 
 }

@@ -58,9 +58,7 @@ public class HttpUtils {
                 .addHeader("Accept-Encoding","identity")
                 .addHeader("Accept-Language","zh-CN,zh;q=0.9")
                 .build();
-        System.out.println("开始下载");
         client.newCall(request).enqueue(callback);
-        System.out.println("下载中");
     }
 
 }
