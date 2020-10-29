@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Data;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
+import pers.czj.constant.VideoScreenTypeEnum;
 
 import java.util.Date;
 
@@ -65,6 +66,18 @@ public class Video {
     private long categoryId;
 
     /**
+     * 视频宽度
+     */
+    private int width;
+
+    /**
+     * 视频高度
+     */
+    private int height;
+
+
+
+    /**
      * 预览图片
      */
     private String previewUrl;
@@ -115,6 +128,11 @@ public class Video {
      * 视频发布状态
      */
     private VideoPublishStateEnum publishState;
+
+    /**
+     * 视频屏幕类型
+     */
+    private VideoScreenTypeEnum screenType;
 
     /**
      * 视频创建时间

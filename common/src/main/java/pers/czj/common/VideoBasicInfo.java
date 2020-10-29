@@ -11,13 +11,15 @@ import java.io.Serializable;
 public class VideoBasicInfo implements Serializable {
 
 
-    private long duration;
+    private Long duration;
 
     private String cover;
 
-    private String width;
+    private Integer width;
 
-    private String height;
+    private Integer height;
 
     private String url;
+
+
 }

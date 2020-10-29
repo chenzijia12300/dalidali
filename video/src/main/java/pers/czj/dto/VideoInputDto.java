@@ -63,7 +63,7 @@ public class VideoInputDto {
         Video video = new Video();
         BeanUtils.copyProperties(this,video);
         video.setPublishState(VideoPublishStateEnum.AUDIT);
-        video.setResolutionState(VideoResolutionEnum.P_1080);
+        video.setResolutionState(VideoResolutionEnum.LANDSCAPE_1080);
         return video;
     }
 
