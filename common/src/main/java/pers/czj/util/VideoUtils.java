@@ -91,15 +91,15 @@ public class VideoUtils {
         Integer heightInt = streamObject.getInteger("height");
 
 
-        //处理小于最小值的情况
+/*        //处理小于最小值的情况
         String width = widthInt<640?"640":String.valueOf(widthInt);
-        String height = heightInt<360?"360":String.valueOf(heightInt);
+        String height = heightInt<360?"360":String.valueOf(heightInt);*/
 
 
         VideoBasicInfo videoBasicInfo = new VideoBasicInfo();
         videoBasicInfo.setDuration((long) Double.parseDouble(duration));
-        videoBasicInfo.setWidth(width);
-        videoBasicInfo.setHeight(height);
+        videoBasicInfo.setWidth(widthInt);
+        videoBasicInfo.setHeight(heightInt);
         return videoBasicInfo;
     }
 

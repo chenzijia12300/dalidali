@@ -27,6 +27,7 @@ import pers.czj.common.VideoBasicInfo;
 import pers.czj.constant.HttpContentTypeEnum;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
+import pers.czj.constant.VideoScreenTypeEnum;
 import pers.czj.dto.*;
 import pers.czj.entity.Video;
 import pers.czj.entity.VideoLog;
@@ -117,9 +118,15 @@ public class VideoController {
     public CommonResult addVideo(HttpSession httpSession,@RequestParam long uid,@RequestBody @Validated VideoInputDto dto) throws VideoException {
         Video video = dto.convert(uid);
         VideoBasicInfo basicInfo = (VideoBasicInfo) httpSession.getAttribute("VIDEO_INFO");
+        int width = Integer.valueOf(basicInfo.getWidth());
+        int height = Integer.valueOf(basicInfo.getHeight());
         video.setLength(basicInfo.getDuration());
         video.setCover(basicInfo.getCover());
-        video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getHeight()));
+        video.setScreenType(width>height?VideoScreenTypeEnum.LANDSCAPE:VideoScreenTypeEnum.PORTRAIT);
+        video.setWidth(width);
+        video.setHeight(height);
+        //暂时废弃
+//       video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getHeight()));
         video.setUrls(basicInfo.getUrl());
         log.info("video:{}",video);
         boolean flag = videoService.save(video);
