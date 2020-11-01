@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
+import pers.czj.constant.VideoScreenTypeEnum;
 import pers.czj.entity.VideoLog;
 
 import java.util.Date;
@@ -64,6 +65,27 @@ public class VideoDetailsOutputDto {
      * 秒数
      */
     private long length;
+
+
+    /**
+     * 添加于:2020/11/1
+     * 视频宽度
+     */
+    private int width;
+
+
+    /**
+     * 添加于:2020/11/1
+     * 视频高度
+     */
+    private int height;
+
+    /**
+     * 添加于:2020/11/1
+     * 视频屏幕类型
+     */
+    private VideoScreenTypeEnum screenType;
+
 
     /**
      * up主头像

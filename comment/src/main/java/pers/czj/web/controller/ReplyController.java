@@ -18,7 +18,7 @@ import pers.czj.dto.ReplyInputDto;
 import pers.czj.dto.ReplyOutputDto;
 import pers.czj.entity.Reply;
 import pers.czj.exception.ReplyException;
-import pers.czj.feign.MessageFeignClient;
+import pers.czj.feign.UserFeignClient;
 import pers.czj.service.ReplyService;
 
 import javax.servlet.http.HttpSession;
@@ -37,12 +37,12 @@ public class ReplyController {
 
     private ReplyService replyService;
 
-    private MessageFeignClient messageFeignClient;
+    private UserFeignClient userFeignClient;
 
     @Autowired
-    public ReplyController(ReplyService replyService, MessageFeignClient messageFeignClient) {
+    public ReplyController(ReplyService replyService, UserFeignClient userFeignClient) {
         this.replyService = replyService;
-        this.messageFeignClient = messageFeignClient;
+        this.userFeignClient = userFeignClient;
     }
 
     @PostMapping("/reply")
@@ -55,7 +55,7 @@ public class ReplyController {
             throw new ReplyException("添加回复失败，请重试");
         }
         //添加消息
-        messageFeignClient.addMessage(createMessage(uid,reply.getRuid(),ActionType.REPLY,reply.getContent()));
+        userFeignClient.addMessage(createMessage(uid,reply.getRuid(),ActionType.REPLY,reply.getContent()));
         return CommonResult.success();
     }
 

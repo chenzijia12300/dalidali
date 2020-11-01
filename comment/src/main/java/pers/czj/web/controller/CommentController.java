@@ -14,7 +14,7 @@ import pers.czj.constant.TableNameEnum;
 import pers.czj.dto.*;
 import pers.czj.entity.Comment;
 import pers.czj.exception.CommentException;
-import pers.czj.feign.MessageFeignClient;
+import pers.czj.feign.UserFeignClient;
 import pers.czj.feign.VideoFeignClient;
 import pers.czj.service.CommentService;
 
@@ -36,14 +36,15 @@ public class CommentController {
 
     private VideoFeignClient videoFeignClient;
 
-    private MessageFeignClient messageFeignClient;
+    private UserFeignClient userFeignClient;
+
 
 
     @Autowired
-    public CommentController(CommentService commentService, VideoFeignClient videoFeignClient, MessageFeignClient messageFeignClient) {
+    public CommentController(CommentService commentService, VideoFeignClient videoFeignClient, UserFeignClient userFeignClient) {
         this.commentService = commentService;
         this.videoFeignClient = videoFeignClient;
-        this.messageFeignClient = messageFeignClient;
+        this.userFeignClient = userFeignClient;
     }
 
     @PostMapping("/comment")
@@ -55,9 +56,20 @@ public class CommentController {
         if (!flag){
             throw new CommentException("发表评论失败，请重试~");
         }
-        videoFeignClient.incrCommentNum(new NumberInputDto(comment.getPid(),1));
+
+        switch (dto.getTableNameEnum()){
+            case VIDEO:
+                videoFeignClient.incrCommentNum(new NumberInputDto(comment.getPid(),1));
+                break;
+            case DYNAMIC:
+                userFeignClient.incrCommentNum(new NumberInputDto(comment.getPid(),1));
+                break;
+            default:
+                throw new RuntimeException("评论模块暂未开发完整");
+        }
+
         //发送消息
-        messageFeignClient.addMessage(createMessage(uid,dto.getPuid(),ActionType.COMMENT,dto.getContent()));
+        userFeignClient.addMessage(createMessage(uid,dto.getPuid(),ActionType.COMMENT,dto.getContent()));
         return CommonResult.success("发表评论成功！");
     }
 

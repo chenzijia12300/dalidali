@@ -44,4 +44,11 @@ public class CommentOutputDto {
     @ApiModelProperty("点赞记录")
     private long flag;
 
+
+    /**
+     * 移动端要求传pageSize 2020/11/1
+     */
+
+    private int pageSize = 2;
+
 }
