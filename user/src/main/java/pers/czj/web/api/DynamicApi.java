@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
+import pers.czj.dto.NumberInputDto;
 import pers.czj.entity.Dynamic;
 import pers.czj.service.DynamicService;
 
@@ -39,6 +40,12 @@ public class DynamicApi {
     @ApiOperation("更改动态")
     public CommonResult updateDynamic(@RequestBody Dynamic dynamic){
         dynamicService.updateById(dynamic);
+        return CommonResult.success();
+    }
+
+    @PutMapping("/dynamic/comment")
+    public CommonResult incrCommentNum(@RequestBody NumberInputDto dto){
+        dynamicService.incrCommentNum(dto.getId(),dto.getNum());
         return CommonResult.success();
     }
 }

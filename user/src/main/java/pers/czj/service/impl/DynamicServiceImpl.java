@@ -63,6 +63,10 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
         return count(queryWrapper);
     }
 
+    @Override
+    public int incrCommentNum(long did, int num) {
+        return baseMapper.incrCommentNum(did,num);
+    }
 
 
     @Override

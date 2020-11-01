@@ -29,6 +29,13 @@ public interface DynamicService extends IService<Dynamic> {
     public int findUnreadCount(long uid);
 
 
-
+    /**
+     * 自增对应动态主键的评论数量
+     * @author czj
+     * @date 2020/11/1 14:35
+     * @param [did, num]
+     * @return int
+     */
+    public int incrCommentNum(long did,int num);
 
 }

@@ -11,8 +11,7 @@ import pers.czj.dto.NumberInputDto;
 /**
  * 创建在 2020/7/30 17:55
  */
-@FeignClient("dalidali-video")
-@RestController("/api")
+@FeignClient(value = "dalidali-video",url = "/api")
 public interface VideoFeignClient {
 
     @PutMapping("/video/comment")
