@@ -53,9 +53,9 @@ public class CommentController {
         Comment comment = dto.convert();
         comment.setUid(uid);
         boolean flag = commentService.save(comment);
-        if (!flag){
+/*        if (!flag){
             throw new CommentException("发表评论失败，请重试~");
-        }
+        }*/
 
         switch (dto.getTableNameEnum()){
             case VIDEO:

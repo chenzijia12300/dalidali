@@ -13,6 +13,7 @@ import pers.czj.entity.Danmu;
 import pers.czj.service.DanmuService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 创建在 2020/7/30 19:29
@@ -48,6 +49,14 @@ public class DanmuController {
         List<Danmu> danmus = danmuService.listDanmu(vid,second);
         log.debug("弹幕列表:{}",danmus);
         return CommonResult.success(danmus);
+    }
+
+
+    @DeleteMapping("/danmu")
+    public CommonResult delDanmu(@RequestParam long uid, @RequestBody Map<String,Object> map){
+        Integer id = (Integer) map.get("did");
+        danmuService.removeById(id);
+        return CommonResult.success("删除弹幕成功！");
     }
 
 
