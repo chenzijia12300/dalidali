@@ -41,7 +41,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id, long userId, int pageNum, int pageSize, OrderFieldEnum orderFieldEnum) {
 
-        log.debug("pageNum:{}\npageSize:{}",pageNum,pageSize);
+        log.debug("pageNum:{}\npageSize:{},id:{}",pageNum,pageSize,id);
         PageHelper.startPage(pageNum,pageSize);
         List<CommentOutputDto> dtos = baseMapper.listComment(nameEnum.getName(),id,userId,orderFieldEnum.getField());
         PageHelper.startPage(1,2);

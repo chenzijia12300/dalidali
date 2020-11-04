@@ -1,6 +1,7 @@
 package pers.czj.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;
 import pers.czj.dto.CommentOutputDto;
 import pers.czj.entity.Comment;
@@ -20,7 +21,7 @@ public interface CommentMapper extends BaseMapper<Comment> {
      * @param tableName, id, userId, orderField
      * @return pers.czj.dto.CommentOutputDto
      */
-    public List<CommentOutputDto> listComment(String tableName, long id,long userId,String orderField);
+    public List<CommentOutputDto> listComment(@Param("tableName") String tableName, @Param("pId") long id, @Param("userId") long userId, @Param("orderField") String orderField);
 
 
     /**
