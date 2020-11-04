@@ -23,4 +23,7 @@
 #  type-enums-package: pers.czj.constant
 spring:
   profiles:
-    active: pro
+    active: dev
+feign:
+  hystrix:
+    enabled: true
