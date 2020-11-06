@@ -3,6 +3,7 @@ package pers.czj.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import pers.czj.common.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
+import pers.czj.dto.DetailsUserInfoOutputDto;
 import pers.czj.exception.UserException;
 
 import java.util.Date;
@@ -64,4 +65,15 @@ public interface UserService extends IService<User> {
      * @return pers.czj.dto.BasicUserInfoOutputDto
      */
     public BasicUserInfoOutputDto findBasicUserInfoById(long uid);
+
+
+
+    /**
+     * 根据用户主键获得用户的详细信息
+     * @author czj
+     * @date 2020/11/6 23:27
+     * @param [uid]
+     * @return pers.czj.dto.DetailsUserInfoOutputDto
+     */
+    public DetailsUserInfoOutputDto findDetailsUserInfoById(long uid) throws UserException;
 }

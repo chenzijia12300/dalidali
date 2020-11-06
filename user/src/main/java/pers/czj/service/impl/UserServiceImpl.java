@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import pers.czj.common.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
+import pers.czj.dto.DetailsUserInfoOutputDto;
 import pers.czj.exception.UserException;
 import pers.czj.mapper.UserMapper;
 import pers.czj.service.UserService;
@@ -77,4 +79,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public BasicUserInfoOutputDto findBasicUserInfoById(long uid) {
         return baseMapper.findBasicUserInfoById(uid);
     }
+
+    @Override
+    public DetailsUserInfoOutputDto findDetailsUserInfoById(long uid) throws UserException {
+        DetailsUserInfoOutputDto dto =  baseMapper.findDetailsUserInfoById(uid);
+        if (ObjectUtils.isEmpty(dto)){
+            throw new UserException("该用户不存在");
+        }
+        return dto;
+    }
+
+
 }

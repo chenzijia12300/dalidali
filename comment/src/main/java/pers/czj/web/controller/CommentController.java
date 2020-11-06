@@ -26,6 +26,7 @@ import static pers.czj.utils.MessageUtils.createMessage;
 
 /**
  * 创建在 2020/7/15 21:12
+ * 重构于2020/11/06
  */
 @CrossOrigin
 @RestController
@@ -56,7 +57,9 @@ public class CommentController {
 /*        if (!flag){
             throw new CommentException("发表评论失败，请重试~");
         }*/
-
+        /**
+         *  通过前端传值选择评论添加的模块，参数是否被修改都无所谓可以接受（参考于B站）
+         */
         switch (dto.getTableNameEnum()){
             case VIDEO:
                 videoFeignClient.incrCommentNum(new NumberInputDto(comment.getPid(),1));
