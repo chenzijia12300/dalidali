@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 import pers.czj.common.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
+import pers.czj.dto.DetailsUserInfoOutputDto;
 
 import java.util.Date;
 
@@ -35,5 +36,9 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT username,img as uimg FROM user WHERE id = #{id}")
     public BasicUserInfoOutputDto findBasicUserInfoById(long id);
+
+
+    @Select("SELECT id,username,email,img,follow_num,fans_num,description,grade,coin_num FROM user WHERE id = #{uid}")
+    public DetailsUserInfoOutputDto findDetailsUserInfoById(long uid);
 
 }

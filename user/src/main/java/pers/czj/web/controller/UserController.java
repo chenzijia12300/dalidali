@@ -23,6 +23,7 @@ import pers.czj.exception.UserException;
 import pers.czj.service.UserService;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Min;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @RestController
 @Api(tags = "用户基本接口,web端/移动端关注这个接口就可以了")
+@Validated
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -84,6 +86,12 @@ public class UserController {
     @ApiOperation(value = "",hidden = true)
     public CommonResult incrCoinNumById(@RequestParam long id,@RequestParam int num){
         return CommonResult.success(userService.incrCoinNum(id,num));
+    }
+
+
+    @GetMapping("/user/details/{uid}")
+    public CommonResult findUserDetails(@PathVariable("uid") @Min(1) long uid) throws UserException {
+        return CommonResult.success(userService.findDetailsUserInfoById(uid));
     }
 
 
