@@ -13,5 +13,10 @@ public class BasicUserInfoOutputDto {
 
     private String username;
 
-    private String uimg;
+    private String img;
+
+    private boolean isFollow;
+
+
+
 }

@@ -3,6 +3,7 @@ package pers.czj.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Repository;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.entity.Follow;
 
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * 创建在 2020/7/22 13:24
  */
+@Repository
 public interface FollowMapper extends BaseMapper<Follow> {
 
     @Select("SELECT id FROM follow WHERE uid = #{uid} AND fuid = #{fuid}")

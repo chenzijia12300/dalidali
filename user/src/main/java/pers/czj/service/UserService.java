@@ -58,14 +58,25 @@ public interface UserService extends IService<User> {
 
 
     /**
-     * @author czj
      * 根据用户主键获得用户基本信息
+     * @author czj
      * @date 2020/9/6 12:11
      * @param [uid]
      * @return pers.czj.dto.BasicUserInfoOutputDto
      */
+    @Deprecated
     public BasicUserInfoOutputDto findBasicUserInfoById(long uid);
 
+
+    /**
+     * 根据用户主键获得用户基本信息
+     * @author czj
+     * @date 2020/9/6 12:11
+     * @param userId 用户主键
+     * @param followUserId 可能被关注的用户主键
+     * @return pers.czj.dto.BasicUserInfoOutputDto
+     */
+    public BasicUserInfoOutputDto findBasicUserInfoById(long userId,long followUserId);
 
 
     /**

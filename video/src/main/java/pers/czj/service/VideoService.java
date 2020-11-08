@@ -17,13 +17,25 @@ import java.util.Map;
  */
 public interface VideoService extends IService<Video> {
     /**
-     * @author czj
      * 根据id获得视频详细信息
+     * @author czj
      * @date 2020/7/13 19:32
      * @param [id]
      * @return pers.czj.dto.VideoDetailsOutputDto
      */
+    @Deprecated
     public VideoDetailsOutputDto findDetailsById(long id) throws VideoException;
+
+    /**
+     * 获得视频详细信息
+     * @author czj
+     * @date 2020/7/13 19:32
+     * @param uid 用户主键
+     * @param vid 视频主键
+     * @return pers.czj.dto.VideoDetailsOutputDto
+     */
+    public VideoDetailsOutputDto findDetailsById(long uid,long vid) throws VideoException;
+
 
     /**
      * @author czj
