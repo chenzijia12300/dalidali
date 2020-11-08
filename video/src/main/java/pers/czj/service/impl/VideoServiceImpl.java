@@ -80,7 +80,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
 
     @Override
     public VideoDetailsOutputDto findDetailsById(long id) throws VideoException {
-        VideoDetailsOutputDto detailsOutputDto = baseMapper.findDetailsById(id);
+/*        VideoDetailsOutputDto detailsOutputDto = baseMapper.findDetailsById(id);
         if (ObjectUtils.isEmpty(detailsOutputDto)){
             throw new VideoException("该视频走丢了~");
         }
@@ -88,6 +88,22 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         Map<String,Object> infoMap = userFeignClient.findBasicInfoById(detailsOutputDto.getUid());
         detailsOutputDto.setUpImg((String) infoMap.get("uimg"));
         detailsOutputDto.setUpName((String) infoMap.get("username"));
+        return detailsOutputDto;*/
+        throw new AssertionError("方法被废弃 ");
+    }
+
+    @Override
+    public VideoDetailsOutputDto findDetailsById(long uid, long vid) throws VideoException {
+        VideoDetailsOutputDto detailsOutputDto = baseMapper.findDetailsById(vid);
+        if (ObjectUtils.isEmpty(detailsOutputDto)){
+            throw new VideoException("该视频走丢了~");
+        }
+        detailsOutputDto.setLog(logMapper.selectOne(new QueryWrapper<VideoLog>().eq("vid",detailsOutputDto.getId())));
+        Map<String,Object> infoMap = userFeignClient.findBasicInfoById(uid,detailsOutputDto.getUid());
+        log.info("{}",infoMap);
+        detailsOutputDto.setUpImg((String) infoMap.get("uimg"));
+        detailsOutputDto.setUpName((String) infoMap.get("username"));
+        detailsOutputDto.setFollow((Boolean) infoMap.get("follow"));
         return detailsOutputDto;
     }
 

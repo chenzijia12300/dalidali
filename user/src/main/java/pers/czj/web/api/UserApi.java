@@ -21,8 +21,8 @@ public class UserApi {
         this.userService = userService;
     }
 
-    @GetMapping("/user/basic/{uid}")
-    public BasicUserInfoOutputDto findBasicUserInfoById(@PathVariable("uid") long uid){
-        return userService.findBasicUserInfoById(uid);
+    @GetMapping("/user/basic/{uid}/{followerUserId}")
+    public BasicUserInfoOutputDto findBasicUserInfoById(@PathVariable("uid") long uid,@PathVariable("followerUserId")long followerUserId){
+        return userService.findBasicUserInfoById(uid,followerUserId);
     }
 }

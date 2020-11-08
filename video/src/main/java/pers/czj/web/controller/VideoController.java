@@ -141,14 +141,13 @@ public class VideoController {
     @GetMapping("/video/{id}")
     @ApiOperation("获得视频的详细信息")
     public CommonResult findVideoById(@RequestParam long uid,@PathVariable("id")@Min(1) long id) throws VideoException {
-        VideoDetailsOutputDto detailsOutputDto = videoService.findDetailsById(id);
-        log.info("当前日期：{}",LocalDate.now());
+        VideoDetailsOutputDto detailsOutputDto = videoService.findDetailsById(uid,id);
+        log.debug("当前日期：{}",LocalDate.now());
         if(/*!redisUtils.getBit(playKey+id,userId)*/true){
             videoService.incrPlayNum(id,1);
             redisUtils.setBit(playKey+id,uid,true);
             redisUtils.zincrBy(LocalDate.now().toString()+"::"+detailsOutputDto.getCategoryId(),1, String.valueOf(detailsOutputDto.getId()));
         }
-
         return CommonResult.success(detailsOutputDto);
     }
 

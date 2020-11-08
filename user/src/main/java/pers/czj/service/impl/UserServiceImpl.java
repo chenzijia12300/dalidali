@@ -5,12 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import pers.czj.common.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.dto.DetailsUserInfoOutputDto;
 import pers.czj.exception.UserException;
+import pers.czj.mapper.FollowMapper;
 import pers.czj.mapper.UserMapper;
 import pers.czj.service.UserService;
 
@@ -24,7 +26,14 @@ import java.util.Objects;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
-    
+
+    private FollowMapper followMapper;
+
+    @Autowired
+    public UserServiceImpl(FollowMapper followMapper) {
+        this.followMapper = followMapper;
+    }
+
     @Override
     public User login(String account,String password) throws UserException {
         
@@ -77,7 +86,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public BasicUserInfoOutputDto findBasicUserInfoById(long uid) {
-        return baseMapper.findBasicUserInfoById(uid);
+//        BasicUserInfoOutputDto dto = baseMapper.findBasicUserInfoById(uid);
+//        followMapper.findFollowRelation();
+        throw new AssertionError("方法被废弃，请选择其他方法");
+    }
+
+    @Override
+    public BasicUserInfoOutputDto findBasicUserInfoById(long userId, long followUserId) {
+        BasicUserInfoOutputDto dto = baseMapper.findBasicUserInfoById(userId);
+        dto.setFollow(ObjectUtils.isEmpty(followMapper.findFollowRelation(userId,followUserId))?false:true);
+
+        return dto;
     }
 
     @Override

@@ -152,4 +152,10 @@ public class VideoDetailsOutputDto {
      * 用户记录
      */
     private VideoLog log;
+
+
+    /**
+     * 是否关注
+     */
+    private boolean isFollow;
 }

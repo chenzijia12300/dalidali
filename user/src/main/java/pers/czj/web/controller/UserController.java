@@ -95,6 +95,8 @@ public class UserController {
     }
 
 
+
+
 //     @PostMapping("/test/send")
 //    public CommonResult testSend(@RequestBody String str){
 //        rabbitTemplate.convertAndSend("dalidali-test-exchange","test",str);
