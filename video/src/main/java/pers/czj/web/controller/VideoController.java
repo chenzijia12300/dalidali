@@ -1,5 +1,6 @@
 package pers.czj.web.controller;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -41,10 +42,7 @@ import pers.czj.service.PlayNumTabService;
 import pers.czj.service.VideoLogService;
 import pers.czj.service.VideoService;
 import pers.czj.util.VideoUtils;
-import pers.czj.utils.FileUtils;
-import pers.czj.utils.GetVideoDataUtils;
-import pers.czj.utils.MinIOUtils;
-import pers.czj.utils.RedisUtils;
+import pers.czj.utils.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Max;
@@ -190,12 +188,18 @@ public class VideoController {
     }
 
 
-    public CommonResult uploadCover(HttpSession httpSession,@RequestParam("file") MultipartFile file) throws FileNotFoundException, VideoException {
+    public List<String> uploadCover(HttpSession httpSession, @RequestParam("file") MultipartFile file) throws FileNotFoundException, VideoException {
         File temp = FileUtils.saveLocalFile(file);
-        String coverWebUrl = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp), HttpContentTypeEnum.JPEG);
-        ((VideoBasicInfo) httpSession.getAttribute("VIDEO_INFO")).setCover(coverWebUrl);
+        File compressTemp = ImageUtils.compress(temp);
+        String imgWebUrl = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp), HttpContentTypeEnum.JPEG);
+        String imgWebCompressUrl = minIOUtils.uploadFile(compressTemp.getName(),new FileInputStream(compressTemp),HttpContentTypeEnum.JPEG);
+        VideoBasicInfo basicInfo = ((VideoBasicInfo) httpSession.getAttribute("VIDEO_INFO"));
+        basicInfo.setCover(imgWebUrl);
+        basicInfo.setCompressCover(imgWebCompressUrl);
         FileUtil.del(temp);
-        return CommonResult.success(coverWebUrl);
+        FileUtil.del(imgWebCompressUrl);
+        return ListUtil.of(imgWebCompressUrl,imgWebUrl);
+
     }
 
 
