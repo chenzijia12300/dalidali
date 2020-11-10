@@ -124,4 +124,33 @@ public interface VideoService extends IService<Video> {
      * @return pers.czj.entity.Video
      */
     public Video findNeedAuditVideo() throws VideoException;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

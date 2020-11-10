@@ -23,4 +23,4 @@
 #  type-enums-package: pers.czj.constant
 spring:
   profiles:
-    active: dev
+    active: pro

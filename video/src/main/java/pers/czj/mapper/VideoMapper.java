@@ -76,4 +76,15 @@ public interface VideoMapper extends BaseMapper<Video> {
     public int auditing(long id,VideoPublishStateEnum state);
 
 
+    /**
+     * 临时方法
+     */
+
+    /**
+     * 为旧数据生成压缩封面
+     * @return
+     */
+    @Select("SELECT id,cover FROM video WHERE compress_cover IS NULL")
+    public List<Video> listNoCompressCover();
+
 }
