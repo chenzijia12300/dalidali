@@ -83,14 +83,14 @@ public class MinIOUtils {
     }
 
     /**
-     * @author czj
      * 将文件保存到本地
+     * @author czj
      * @date 2020/7/23 19:08
-     * @param [fileName]
-     * @return
+     * @param fileName 文件名 例如 红莉栖.jpg
+     * @param destPath 保存路径 例如 C:\Users\ZJ\Desktop\
      */
     public void saveVideoLocalTemp(String fileName,String destPath){
-        try(BufferedInputStream bufferedInputStream = new BufferedInputStream(minioClient.getObject(bucketVideoName,fileName));
+        try(BufferedInputStream bufferedInputStream = new BufferedInputStream(minioClient.getObject(bucketImageName,fileName));
             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(destPath,fileName)))
         ){
             byte [] bytes = new byte[1024];
@@ -98,7 +98,6 @@ public class MinIOUtils {
             while((len = bufferedInputStream.read(bytes))!=-1){
                 bufferedOutputStream.write(bytes,0,len);
             }
-
         } catch (InvalidBucketNameException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
