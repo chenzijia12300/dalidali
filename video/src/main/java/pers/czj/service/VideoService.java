@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
+import pers.czj.dto.VideoHotOutputDto;
 import pers.czj.entity.Video;
 import pers.czj.exception.VideoException;
 
@@ -54,6 +55,7 @@ public interface VideoService extends IService<Video> {
      * @param []
      * @return java.util.List<pers.czj.dto.VideoBasicOutputDto>
      */
+    @Deprecated
     public List<VideoBasicOutputDto> listRandomAll();
 
 
@@ -65,14 +67,29 @@ public interface VideoService extends IService<Video> {
      * @return java.util.List<pers.czj.dto.VideoBasicOutputDto>
      */
     public List<VideoBasicOutputDto> listSlowRandomAll(int pageSize);
+
+
+
+
     /**
-     * @author czj
      * 根据主键们获得视频的基本信息
+     * @author czj
      * @date 2020/7/17 10:28
      * @param [ids]
      * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
      */
     public List<VideoBasicOutputDto> listBasicInfoByIds(Collection<Long> ids);
+
+
+
+    /**
+     * 根据主键们获得热门视频所需信息
+     * @author czj
+     * @date 2020/11/11 19:58
+     * @param [ids]
+     * @return java.util.List<pers.czj.dto.VideoHotOutputDto>
+     */
+    public List<VideoHotOutputDto> listHotInfoByIds(Collection<Long> ids);
 
 
 

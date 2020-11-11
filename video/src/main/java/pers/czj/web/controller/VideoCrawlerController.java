@@ -72,19 +72,20 @@ public class VideoCrawlerController {
         maps = videoDataUtils.syncGetData(url);
         String title = null;
         String videoUrl = null;
+        long startTime = -1L;
         for (Map<String,String> map:maps){
             title = map.get("title");
             videoUrl = map.get("videoUrl");
             if (!crawlerLogService.exists(videoUrl)){
                 if (!log.isDebugEnabled()) {
                     try {
+                        startTime = System.currentTimeMillis();
                         handlerVideoResource(title, videoUrl, httpSession);
+                        crawlerSendService.send(createCrawlerLog(title,videoUrl,System.currentTimeMillis()-startTime));
                     }catch (Exception e){
                         log.error("下载视频抛出异常:{}",map);
                     }
                 }
-                log.debug("伪装下载:{}",map);
-                crawlerSendService.send(createCrawlerLog(title,videoUrl));
             }else{
                 log.info("{}已存在",videoUrl);
             }
@@ -150,10 +151,11 @@ public class VideoCrawlerController {
         一些封装方法
      */
 
-    public VideoCrawlerLog createCrawlerLog(String title,String url){
+    public VideoCrawlerLog createCrawlerLog(String title,String url,long time){
         VideoCrawlerLog crawlerLog = new VideoCrawlerLog();
         crawlerLog.setUrl(url);
         crawlerLog.setTitle(title);
+        crawlerLog.setTime(time);
         return crawlerLog;
     }
 

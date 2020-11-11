@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
+import pers.czj.dto.VideoHotOutputDto;
 import pers.czj.entity.Video;
 
 import java.util.Collection;
@@ -16,42 +17,33 @@ import java.util.List;
 /**
  * 创建在 2020/7/11 23:40
  */
-@Repository
 public interface VideoMapper extends BaseMapper<Video> {
 
-    /**
-     * @author czj
-     * 根据id获得视频详细信息
-     * @date 2020/7/13 19:32
-     * @param [id]
-     * @return pers.czj.dto.VideoDetailsOutputDto
-     */
     public VideoDetailsOutputDto findDetailsById(long id);
 
-    /**
-     * @author czj
-     * 根据顶级频道主键获得视频信息
-     * @date 2020/7/13 21:57
-     * @param [id]
-     * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
-     */
     public List<VideoBasicOutputDto> listRandomByCategoryPId(long id);
-
-
 
     public List<VideoBasicOutputDto> listRandomAll();
 
-
     public List<VideoBasicOutputDto> listSlowRandomAll();
 
-    /**
-     * @author czj
-     * 根据主键们获得视频的基本信息
-     * @date 2020/7/17 10:28
-     * @param [ids]
-     * @return java.util.List<pers.czj.dto.VideoDetailsOutputDto>
-     */
     public List<VideoBasicOutputDto> listBasicInfoByIds(@Param("ids") Collection<Long> ids);
+
+    public List<VideoHotOutputDto> listHotInfoByIds(@Param("ids") Collection<Long> ids);
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * 简单SQL语句们
+     */
 
 
     @Update("UPDATE video SET praise_num=praise_num+#{num} WHERE id = #{vid}")
@@ -84,7 +76,7 @@ public interface VideoMapper extends BaseMapper<Video> {
      * 为旧数据生成压缩封面
      * @return
      */
-    @Select("SELECT id,cover FROM video WHERE compress_cover IS NULL")
+    @Select("SELECT * FROM video WHERE compress_cover IS NULL")
     public List<Video> listNoCompressCover();
 
 }

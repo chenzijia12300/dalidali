@@ -218,7 +218,12 @@ public class VideoController {
         Object object = redisUtils.get(categoryTopKey+categoryId+"_"+pageSize);
         if (ObjectUtils.isEmpty(object)){
             Set<Long> set = redisUtils.zRevRange(setKey, 0, pageSize, false);
-            object = videoService.listBasicInfoByIds(set);
+            List<VideoHotOutputDto> dtos = videoService.listHotInfoByIds(set);
+            dtos.forEach(videoBasicOutputDto -> {
+                long score = (videoBasicOutputDto.getPraiseNum()*12340)+videoBasicOutputDto.getPlayNum();
+                videoBasicOutputDto.setScore(score);
+            });
+            object = dtos;
             redisUtils.set(categoryTopKey+categoryId+"_"+pageSize,object,10);
         }
         return CommonResult.success(object);
@@ -255,13 +260,14 @@ public class VideoController {
                     long id = childDto.getId();
                     String key = date + "::" + id;
                     strings.add(key);
-
                 }
                 log.debug("strings:{}",strings);
                 //合并集合并获得全部数据
                 if (!CollectionUtils.isEmpty(strings)) {
                     redisUtils.unionZSet(strings, pCategoryName);
                 }
+
+                //删除该时段的缓存
                 redisUtils.delete(strings);
             }
             //合并全区总排行榜
