@@ -19,6 +19,7 @@ import pers.czj.constant.VideoResolutionEnum;
 import pers.czj.dto.CategoryOutputDto;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
+import pers.czj.dto.VideoHotOutputDto;
 import pers.czj.entity.Video;
 import pers.czj.entity.VideoLog;
 import pers.czj.exception.VideoException;
@@ -101,7 +102,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         detailsOutputDto.setLog(logMapper.selectOne(new QueryWrapper<VideoLog>().eq("vid",detailsOutputDto.getId())));
         Map<String,Object> infoMap = userFeignClient.findBasicInfoById(uid,detailsOutputDto.getUid());
         log.info("{}",infoMap);
-        detailsOutputDto.setUpImg((String) infoMap.get("uimg"));
+        detailsOutputDto.setUpImg((String) infoMap.get("img"));
         detailsOutputDto.setUpName((String) infoMap.get("username"));
         detailsOutputDto.setFollow((Boolean) infoMap.get("follow"));
         return detailsOutputDto;
@@ -131,6 +132,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Override
     public List<VideoBasicOutputDto> listBasicInfoByIds(Collection<Long> ids) {
         return baseMapper.listBasicInfoByIds(ids);
+    }
+
+    @Override
+    public List<VideoHotOutputDto> listHotInfoByIds(Collection<Long> ids) {
+        return baseMapper.listHotInfoByIds(ids);
     }
 
     @Override

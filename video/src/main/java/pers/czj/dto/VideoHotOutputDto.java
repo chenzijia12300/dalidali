@@ -4,12 +4,12 @@ import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 /**
- * 创建在 2020/7/17 10:38
- * 视频基本信息传输输出类
+ * 创建在 2020/11/11 19:56
  */
 @Data
-@ApiModel("视频基本信息传输输出类")
-public class VideoBasicOutputDto {
+@ApiModel("热门视频信息传输输出类")
+public class VideoHotOutputDto {
+
     /**
      * 视频自增主键
      */
@@ -39,6 +39,11 @@ public class VideoBasicOutputDto {
      * 时长
      */
     private long length;
+
+    /**
+     * 粉丝数
+     */
+    private long fansNum;
 
 
     /**
@@ -75,5 +80,10 @@ public class VideoBasicOutputDto {
      * 是否点赞了
      */
     private boolean isPraise;
+
+    /**
+     * 综合评分
+     */
+    private long score;
 
 }

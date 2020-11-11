@@ -10,7 +10,7 @@
 
 
     <sql id="dynamicFieldSql">
-        video.id,video.uid,play_num,danmu_num,title,length,cover,username as upName,preview_url,praise_num,urls,video_log.is_praise
+        video.id,video.uid,play_num,danmu_num,title,length,cover,username as upName,img as upImg,preview_url,praise_num,urls,video_log.is_praise
     </sql>
 
 
