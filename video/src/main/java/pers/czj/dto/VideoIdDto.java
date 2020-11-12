@@ -6,7 +6,7 @@ import lombok.Data;
  * 创建在 2020/8/31 20:50
  */
 @Data
-public class VideoIdDto {
+public class    VideoIdDto {
 
     private long vid;
 }

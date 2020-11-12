@@ -243,12 +243,18 @@ public class VideoController {
         //集群要上锁~
         if (redisUtils.setnx(timedTaskKey, TIMED_TASK_VALUE,10)) {
             log.info("开始启动视频排行榜定时任务");
+
+            /**
+             * 获得所有分类列表
+             */
             List<CategoryOutputDto> categoryOutputDtos = categoryService.listCategory();
             List<String> pCategoryNames = new ArrayList<>();
             String date = LocalDate.now().toString();
-        /*
-            获得分类列表，将基本分类组成顶级分类
-         */
+
+            /**
+             * 获得分类列表，将基本分类组成顶级分类
+             */
+
             for (CategoryOutputDto dto : categoryOutputDtos) {
                 List<String> strings = new ArrayList<>();
                 //获得顶级频道缓存名
@@ -262,11 +268,12 @@ public class VideoController {
                     strings.add(key);
                 }
                 log.debug("strings:{}",strings);
-                //合并集合并获得全部数据
+
+
                 if (!CollectionUtils.isEmpty(strings)) {
+                    //合并集合并获得全部数据
                     redisUtils.unionZSet(strings, pCategoryName);
                 }
-
                 //删除该时段的缓存
                 redisUtils.delete(strings);
             }
