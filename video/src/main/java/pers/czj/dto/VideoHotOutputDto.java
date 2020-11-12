@@ -3,6 +3,8 @@ package pers.czj.dto;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 创建在 2020/11/11 19:56
  */
@@ -47,11 +49,6 @@ public class VideoHotOutputDto {
 
 
     /**
-     * up主头像
-     */
-    private String upImg;
-
-    /**
      * up主名字
      */
     private String upName;
@@ -66,24 +63,15 @@ public class VideoHotOutputDto {
      */
     private String cover;
 
-    /**
-     * 视频路径们
-     */
-    private String urls;
-
-    /**
-     * 预览图
-     */
-    private String previewUrl;
-
-    /**
-     * 是否点赞了
-     */
-    private boolean isPraise;
 
     /**
      * 综合评分
      */
     private long score;
+
+    /**
+     * 发布时间
+     */
+    private Date publishTime;
 
 }

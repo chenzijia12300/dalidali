@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.czj.mapper.VideoMapper">
+
+    <!--视频详细字段-->
     <sql id="detailsFieldSql">
         video.id,uid,play_num,width,height,danmu_num, comment_num, praise_num, coin_num, category_p_id, category_id, c2.name as category_p_name, c1.name as category_name, title, urls, description, tags, resolution_state create_time, update_time,length,cover,preview_url,width,height,screen_type
     </sql>
+
+    <!--视频基本字段-->
     <sql id="basicFieldSql">
-        video.id,uid,play_num,danmu_num,title,length,cover,username as upName,preview_url,praise_num,screen_type
+        video.id,video.uid,play_num,danmu_num,title,length,compress_cover as cover,username as upName,img as upImg,preview_url,praise_num,screen_type
     </sql>
-
-
+    <!--热门视频基本字段-->
+    <sql id="hotFieldSql">
+        video.id,video.uid,play_num,danmu_num,title,length,compress_cover as cover,username as upName,preview_url,praise_num,screen_type,video.update_time as publishTime
+    </sql>
+    <!--动态视频基本字段-->
     <sql id="dynamicFieldSql">
         video.id,video.uid,play_num,danmu_num,title,length,cover,username as upName,img as upImg,preview_url,praise_num,urls,video_log.is_praise
     </sql>
@@ -19,7 +26,7 @@
 
 
 
-
+    <!--SELECT-->
 
     <select id="findDetailsById" parameterType="long" resultType="pers.czj.dto.VideoDetailsOutputDto">
         SELECT
@@ -84,4 +91,22 @@
         video_log.vid = video.id
         ORDER BY video.id DESC
     </select>
+
+
+    <select id="listHotInfoByIds" resultType="pers.czj.dto.VideoHotOutputDto">
+        SELECT
+        <include refid="hotFieldSql"/>
+        FROM video INNER JOIN user
+        ON
+        video.uid = user.id
+        AND
+        video.id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY video.id DESC
+    </select>
+
+
+
 </mapper>
