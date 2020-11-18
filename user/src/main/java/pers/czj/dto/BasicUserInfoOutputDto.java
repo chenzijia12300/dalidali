@@ -9,7 +9,6 @@ import lombok.Data;
 public class BasicUserInfoOutputDto {
 
 
-    private long uid;
 
     private String username;
 

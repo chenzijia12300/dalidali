@@ -54,6 +54,11 @@ public class VideoHotOutputDto {
     private String upName;
 
     /**
+     * up主头像
+     */
+    private String upImg;
+
+    /**
      * 视频标题
      */
     private String title;
