@@ -13,7 +13,7 @@
     </sql>
     <!--热门视频基本字段-->
     <sql id="hotFieldSql">
-        video.id,video.uid,play_num,danmu_num,title,length,compress_cover as cover,username as upName,preview_url,praise_num,screen_type,video.update_time as publishTime
+        video.id,video.uid,play_num,danmu_num,title,length,compress_cover as cover,username as upName,img as upImg,preview_url,praise_num,screen_type,video.update_time as publishTime
     </sql>
     <!--动态视频基本字段-->
     <sql id="dynamicFieldSql">

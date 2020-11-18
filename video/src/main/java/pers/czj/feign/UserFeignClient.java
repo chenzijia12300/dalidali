@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.common.User;
 import pers.czj.dto.UserCollectionLogInputDto;
+import pers.czj.feign.fallback.UserFallback;
 
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  * 创建在 2020/7/20 11:36
  */
 
-@FeignClient(name = "dalidali-user")
+@FeignClient(name = "dalidali-user",fallback = UserFallback.class)
 public interface UserFeignClient {
 
     @GetMapping("/user/coin/{id}")
@@ -31,6 +32,8 @@ public interface UserFeignClient {
 
     @PostMapping("/api/dynamic")
     public CommonResult addDynamic(@RequestBody Map<String,Object> map);
+
+
 
     @GetMapping("/user/basic/{uid}/{followerUserId}")
     public Map<String,Object> findBasicInfoById(@PathVariable("uid") long uid,@PathVariable("followerUserId")long followerUserId);
