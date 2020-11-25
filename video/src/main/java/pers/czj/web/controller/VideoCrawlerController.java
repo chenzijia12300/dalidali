@@ -11,6 +11,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pers.czj.common.CommonResult;
+import pers.czj.constant.VideoCoverTypeEnum;
 import pers.czj.dto.UploadInputDto;
 import pers.czj.dto.VideoInputDto;
 import pers.czj.entity.VideoCrawlerLog;
@@ -28,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 创建在 2020/10/3 22:26
@@ -56,6 +58,8 @@ public class VideoCrawlerController {
     @Autowired
     private VideoCrawlerLogService crawlerLogService;
 
+    private Random random = new Random();
+
 
     @PostMapping("/upload")
     @ApiOperation(value = "指定单个视频爬虫信息",hidden = true)
@@ -67,9 +71,10 @@ public class VideoCrawlerController {
 
     @GetMapping("/top")
     @ApiOperation(value = "爬取哔哩哔哩排行榜信息",hidden = true)
-    public CommonResult testTopData(HttpSession httpSession, @RequestParam(required = false) String url) throws InterruptedException, VideoException, UserException {
+    public CommonResult testTopData(HttpSession httpSession, @RequestParam(required = false) String url,@RequestParam(required = false,defaultValue = "150") Integer num) throws InterruptedException, VideoException, UserException {
         List<Map<String,String>> maps = null;
         maps = videoDataUtils.syncGetData(url);
+        int nowNum = 0;
         String title = null;
         String videoUrl = null;
         long startTime = -1L;
@@ -84,6 +89,10 @@ public class VideoCrawlerController {
                         crawlerSendService.send(createCrawlerLog(title,videoUrl,System.currentTimeMillis()-startTime));
                     }catch (Exception e){
                         log.error("下载视频抛出异常:{}",map);
+                    }
+                    if (nowNum++==num){
+                        log.info("下载视频已到所需条数:{}",num);
+                        break;
                     }
                 }
             }else{
@@ -111,10 +120,18 @@ public class VideoCrawlerController {
         CommonResult commonResult = null;
 
         /*
-            上传视频资源
+            生成随机数来随机生成GIF图
+         */
+        boolean needGif = true;/*random.nextInt(6)==0;*/
+        VideoCoverTypeEnum type = StrUtil.isEmpty(coverUrl)?
+                VideoCoverTypeEnum.EMPTY:
+                needGif?VideoCoverTypeEnum.GIF:VideoCoverTypeEnum.STANDARD;
+
+        /*
+            上传视频资源并且判断是否需要通过FFMPEG生成封面
          */
         try {
-            commonResult = videoController.uploadVideo(httpSession,DEFAULT_USER_ID,StrUtil.isEmpty(coverUrl),multipartFile);
+            commonResult = videoController.uploadVideo(httpSession,DEFAULT_USER_ID,type,multipartFile);
         } catch (IOException e) {
             log.error("上传视频资源失败:{}",multipartFile.getName());
             return;

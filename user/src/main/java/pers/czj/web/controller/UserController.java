@@ -68,6 +68,14 @@ public class UserController {
         return CommonResult.success("注册成功！",user.getAccount());
     }
 
+    @GetMapping("/user/self")
+    public CommonResult getSelfUserInfo(@RequestParam long uid) throws UserException {
+        return CommonResult.success(userService.findDetailsUserInfoById(uid));
+    }
+
+
+
+
     @GetMapping("/logout")
     @ApiOperation("注销接口")
     public CommonResult logout(HttpSession session){
