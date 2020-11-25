@@ -41,4 +41,5 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT id,username,email,img,follow_num,fans_num,description,grade,coin_num FROM user WHERE id = #{uid}")
     public DetailsUserInfoOutputDto findDetailsUserInfoById(long uid);
 
+
 }

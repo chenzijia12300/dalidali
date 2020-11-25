@@ -25,10 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import pers.czj.common.CommonResult;
 import pers.czj.common.VideoBasicInfo;
-import pers.czj.constant.HttpContentTypeEnum;
-import pers.czj.constant.VideoPublishStateEnum;
-import pers.czj.constant.VideoResolutionEnum;
-import pers.czj.constant.VideoScreenTypeEnum;
+import pers.czj.constant.*;
 import pers.czj.dto.*;
 import pers.czj.entity.Video;
 import pers.czj.entity.VideoLog;
@@ -47,10 +44,7 @@ import pers.czj.utils.*;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.ConnectException;
 import java.time.LocalDate;
 import java.util.*;
@@ -151,27 +145,40 @@ public class VideoController {
 
     @PostMapping("/video/upload")
     @ApiOperation("用户上传视频文件")
-    public CommonResult uploadVideo(HttpSession httpSession,@RequestParam long userId,@RequestParam(value = "cover",required = false) boolean needCover,@RequestParam("file") MultipartFile file) throws VideoException, UserException, IOException {
+    public CommonResult uploadVideo(HttpSession httpSession, @RequestParam long userId, @RequestParam VideoCoverTypeEnum coverTypeEnum, @RequestParam("file") MultipartFile file) throws VideoException, UserException, IOException {
 /*        if (httpSession.isNew()){
             httpSession.invalidate();
             throw new UserException("请重新登录！");
         }*/
         //视频存储到本地
         File temp = FileUtils.saveLocalFile(file);
-
+        //视频服务器路径
+        String url = null;
+        //封面本地临时路径
+        String coverLocalUrl = null;
         //获得视频处理后的基本信息
-        VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(dir,temp.getName(),needCover);
+        VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(dir,temp.getName(),coverTypeEnum);
 
-        //上传视频文件和图片文件到文件服务器
-        log.info("开始上传视频文件{}到OSS服务器",temp.getName());
-        String url = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp),HttpContentTypeEnum.MP4);
+        try(InputStream videoInputStream = new FileInputStream(temp)){
+            //上传视频文件和图片文件到文件服务器
+            log.info("开始上传视频文件{}到OSS服务器",temp.getName());
+            url = minIOUtils.uploadFile(temp.getName(),videoInputStream,HttpContentTypeEnum.MP4);
+        }
 
-        if (needCover) {
-            String coverLocalUrl = basicInfo.getCover();
-            log.info("开始上传封面文件到OSS服务器");
-            String coverWebUrl = minIOUtils.uploadFile(coverLocalUrl.substring(coverLocalUrl.lastIndexOf("/") + 1), new FileInputStream(coverLocalUrl),HttpContentTypeEnum.JPEG);
-            basicInfo.setCover(coverWebUrl);
-            FileUtil.del(coverLocalUrl);
+
+
+        /*
+            如果封面为FFMPEG生成则上传
+         */
+        if (VideoCoverTypeEnum.STANDARD!=coverTypeEnum) {
+            coverLocalUrl = basicInfo.getCover();
+            log.info("开始上传封面文件到OSS服务器:{}",coverLocalUrl);
+            try(InputStream coverInputStream =  new FileInputStream(coverLocalUrl)){
+                String coverWebUrl = minIOUtils.uploadFile(coverLocalUrl.substring(coverLocalUrl.lastIndexOf("/") + 1),coverInputStream,HttpContentTypeEnum.JPEG);
+                basicInfo.setCover(coverWebUrl);
+            }
+
+
         }
 
 
@@ -180,8 +187,8 @@ public class VideoController {
         httpSession.setAttribute("VIDEO_INFO",basicInfo);
 
         //清除临时文件
-        FileUtil.del(temp);
-
+        log.info("清除视频临时文件:{}",FileUtil.del(temp));
+        log.info("清除封面临时文件:{}",FileUtil.del(coverLocalUrl));
 
         log.info("{}上传完毕",temp.getName());
         return CommonResult.success(url);

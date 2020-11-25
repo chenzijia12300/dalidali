@@ -1,5 +1,6 @@
 package pers.czj.util;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.jsoup.Jsoup;
@@ -7,6 +8,7 @@ import org.omg.PortableServer.POA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pers.czj.common.VideoBasicInfo;
+import pers.czj.constant.VideoCoverTypeEnum;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class VideoUtils {
 
     private static final String MERGE_IMAGE_SUFFIX="_preview.png";
 
-    public static VideoBasicInfo getVideoInfo(String filePath,String videoName,boolean needCover){
+    public static VideoBasicInfo getVideoInfo(String filePath, String videoName, VideoCoverTypeEnum type){
         List<String> commandList = new ArrayList<>();
         commandList.add("ffprobe");
         commandList.add("-select_streams");
@@ -59,12 +61,22 @@ public class VideoUtils {
             JSONObject jsonObject = JSONObject.parseObject(str);
             VideoBasicInfo basicInfo = handlerJson(jsonObject);
 
-            if (needCover) {
-                //获得视频第一帧当封面
-                String imageName = videoName.substring(0, videoName.lastIndexOf(".") + 1) + "jpg";
-                log.info("imageName:{}", imageName);
-                createFirstImage(filePath + videoName, filePath + imageName);
-                basicInfo.setCover(filePath + imageName);
+
+            String coverName = null;
+            switch (type){
+                case GIF:
+                    coverName = videoName.substring(0, videoName.lastIndexOf(".") + 1) + "gif";
+                    log.info("coverName:{}", coverName);
+                    createGif(filePath+videoName,filePath+coverName);
+                    basicInfo.setCover(filePath+coverName);
+                    break;
+                case EMPTY:
+                    coverName = videoName.substring(0, videoName.lastIndexOf(".") + 1) + "jpg";
+                    log.info("coverName:{}", coverName);
+                    createFirstImage(filePath + videoName, filePath + coverName);
+                    basicInfo.setCover(filePath + coverName);
+                default:
+                    break;
             }
             return basicInfo;
         } catch (IOException e) {
@@ -146,6 +158,24 @@ public class VideoUtils {
         }
     }
 
+
+    public static void createGif(String filePath,String gifPath){
+        List<String> list = ListUtil.of("ffmpeg","-ss","00:00:05","-t","3","-i",filePath,"-r","15","-s","206*116",gifPath);
+        ProcessBuilder builder = new ProcessBuilder(list);
+        try {
+            Process process = builder.start();
+            process.waitFor();
+            log.info("生成视频封面动图完毕~");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
     /**
      * @author czj
      * 创建不同分辨率的视频
@@ -193,15 +223,15 @@ public class VideoUtils {
             每second秒生成一帧图片
          */
         int ch = videoName.lastIndexOf(".");
-        String imageName = videoName.substring(0,ch);
-        log.debug("imageName:{}",imageName);
+        String coverName = videoName.substring(0,ch);
+        log.debug("coverName:{}",coverName);
         List<String> list = new ArrayList<>();
         list.add("ffmpeg");
         list.add("-i");
         list.add(videoPath+videoName);
         list.add("-vf");
         list.add("fps="+second);
-        list.add(videoPath+imageName+VIDEO_IMAGE_SUFFIX);
+        list.add(videoPath+coverName+VIDEO_IMAGE_SUFFIX);
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(list);
         processBuilder.redirectErrorStream(true);
@@ -214,19 +244,19 @@ public class VideoUtils {
              */
             list.clear();
             list.add("montage");
-            list.add(videoPath+imageName+"*.png");
+            list.add(videoPath+coverName+"*.png");
             list.add("-tile");
             list.add("10");
             list.add("-geometry");
             list.add("206x116");
-            list.add(videoPath+imageName+MERGE_IMAGE_SUFFIX);
+            list.add(videoPath+coverName+MERGE_IMAGE_SUFFIX);
             ProcessBuilder builder = new ProcessBuilder();
             builder.redirectErrorStream(true);
             builder.command(list);
             Process process1 = builder.start();
             log.debug("合并输入流:{}",handlerInputStream(process1.getInputStream()));
             process1.waitFor();
-            return imageName+MERGE_IMAGE_SUFFIX;
+            return coverName+MERGE_IMAGE_SUFFIX;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
