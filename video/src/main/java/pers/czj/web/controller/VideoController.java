@@ -2,42 +2,34 @@ package pers.czj.web.controller;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import pers.czj.common.CommonResult;
 import pers.czj.common.VideoBasicInfo;
 import pers.czj.constant.*;
 import pers.czj.dto.*;
 import pers.czj.entity.Video;
-import pers.czj.entity.VideoLog;
 import pers.czj.exception.CategoryException;
 import pers.czj.exception.UserException;
 import pers.czj.exception.VideoException;
-import pers.czj.feign.DynamicFeignClient;
-import pers.czj.feign.UserFeignClient;
 import pers.czj.service.CategoryService;
 import pers.czj.service.PlayNumTabService;
 import pers.czj.service.VideoLogService;
 import pers.czj.service.VideoService;
+import pers.czj.util.ImageUtils;
 import pers.czj.util.VideoUtils;
 import pers.czj.utils.*;
 
@@ -61,6 +53,7 @@ public class VideoController {
 
     private static final String TIMED_TASK_VALUE="lock";
 
+    private static final Character SEPARATOR = '/';
 
 
     @Autowired
@@ -112,14 +105,13 @@ public class VideoController {
         VideoBasicInfo basicInfo = (VideoBasicInfo) httpSession.getAttribute("VIDEO_INFO");
         int width = Integer.valueOf(basicInfo.getWidth());
         int height = Integer.valueOf(basicInfo.getHeight());
+        BeanUtils.copyProperties(basicInfo,video);
         video.setLength(basicInfo.getDuration());
-        video.setCover(basicInfo.getCover());
         video.setScreenType(width>height?VideoScreenTypeEnum.LANDSCAPE:VideoScreenTypeEnum.PORTRAIT);
         video.setWidth(width);
         video.setHeight(height);
         //暂时废弃
 //       video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getHeight()));
-        video.setUrls(basicInfo.getUrl());
         log.info("video:{}",video);
         boolean flag = videoService.save(video);
         if (!flag){
@@ -156,14 +148,13 @@ public class VideoController {
         String url = null;
         //封面本地临时路径
         String coverLocalUrl = null;
+        String compressCoverUrl = null;
         //获得视频处理后的基本信息
         VideoBasicInfo basicInfo = VideoUtils.getVideoInfo(dir,temp.getName(),coverTypeEnum);
 
-        try(InputStream videoInputStream = new FileInputStream(temp)){
-            //上传视频文件和图片文件到文件服务器
-            log.info("开始上传视频文件{}到OSS服务器",temp.getName());
-            url = minIOUtils.uploadFile(temp.getName(),videoInputStream,HttpContentTypeEnum.MP4);
-        }
+        //上传视频文件和图片文件到文件服务器
+        log.info("开始上传视频文件{}到OSS服务器",temp.getName());
+        url = minIOUtils.uploadFile(temp.getName(),temp,HttpContentTypeEnum.MP4);
 
 
 
@@ -172,32 +163,40 @@ public class VideoController {
          */
         if (VideoCoverTypeEnum.STANDARD!=coverTypeEnum) {
             coverLocalUrl = basicInfo.getCover();
+            compressCoverUrl = basicInfo.getCompressCover();
             log.info("开始上传封面文件到OSS服务器:{}",coverLocalUrl);
-            try(InputStream coverInputStream =  new FileInputStream(coverLocalUrl)){
-                String coverWebUrl = minIOUtils.uploadFile(coverLocalUrl.substring(coverLocalUrl.lastIndexOf("/") + 1),coverInputStream,HttpContentTypeEnum.JPEG);
-                basicInfo.setCover(coverWebUrl);
+            String coverWebUrl = minIOUtils.uploadFile(StrUtil.subAfter(coverLocalUrl,SEPARATOR,true),new File(coverLocalUrl),HttpContentTypeEnum.JPEG);
+            basicInfo.setCover(coverWebUrl);
+
+            if (!StrUtil.equals(coverLocalUrl,compressCoverUrl)) {
+                String compressCoverWebUrl = minIOUtils.uploadFile(StrUtil.subAfter(compressCoverUrl, SEPARATOR, true), new File(compressCoverUrl), HttpContentTypeEnum.JPEG);
+                basicInfo.setCompressCover(compressCoverWebUrl);
+            }else {
+                basicInfo.setCompressCover(coverWebUrl);
             }
-
-
         }
 
 
 
-        basicInfo.setUrl(url);
+        basicInfo.setUrls(url);
         httpSession.setAttribute("VIDEO_INFO",basicInfo);
 
         //清除临时文件
         log.info("清除视频临时文件:{}",FileUtil.del(temp));
         log.info("清除封面临时文件:{}",FileUtil.del(coverLocalUrl));
-
+        log.info("清除压缩封面临时文件:{}",FileUtil.del(compressCoverUrl));
         log.info("{}上传完毕",temp.getName());
         return CommonResult.success(url);
     }
 
 
     public List<String> uploadCover(HttpSession httpSession, @RequestParam("file") MultipartFile file) throws FileNotFoundException, VideoException {
+
+        // 图片保存到本地
         File temp = FileUtils.saveLocalFile(file);
+        // 生成压缩的而图片并保存到本地
         File compressTemp = ImageUtils.compress(temp);
+
         String imgWebUrl = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp), HttpContentTypeEnum.JPEG);
         String imgWebCompressUrl = minIOUtils.uploadFile(compressTemp.getName(),new FileInputStream(compressTemp),HttpContentTypeEnum.JPEG);
         VideoBasicInfo basicInfo = ((VideoBasicInfo) httpSession.getAttribute("VIDEO_INFO"));
@@ -245,7 +244,7 @@ public class VideoController {
      */
     @GetMapping("/video/setTop")
     @ApiOperation("手动调用定时任务（待删）")
-    @Scheduled(cron = "0 0 */1 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public CommonResult setTopVideoData() throws CategoryException, ConnectException {
         //集群要上锁~
         if (redisUtils.setnx(timedTaskKey, TIMED_TASK_VALUE,10)) {

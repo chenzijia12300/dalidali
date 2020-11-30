@@ -69,11 +69,13 @@ public class VideoUtils {
                     log.info("coverName:{}", coverName);
                     createGif(filePath+videoName,filePath+coverName);
                     basicInfo.setCover(filePath+coverName);
+                    basicInfo.setCompressCover(filePath+coverName);
                     break;
                 case EMPTY:
                     coverName = videoName.substring(0, videoName.lastIndexOf(".") + 1) + "jpg";
                     log.info("coverName:{}", coverName);
                     createFirstImage(filePath + videoName, filePath + coverName);
+                    basicInfo.setCompressCover(ImageUtils.compress(filePath+coverName).getAbsolutePath());
                     basicInfo.setCover(filePath + coverName);
                 default:
                     break;

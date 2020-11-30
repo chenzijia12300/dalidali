@@ -38,14 +38,42 @@ public class MinIOUtils {
     @Value("${minio.download-url}")
     private String url;
 
+
+
     /**
+     * 上传资源到OSS服务器中,废弃原因：需要用户自己手动去closeIO流
      * @author czj
-     * 上传资源到minio中
      * @date 2020/7/16 14:32
      * @param [fileName, inputStream]
      * @return java.lang.String
      */
+    @Deprecated
     public String uploadFile(String fileName, InputStream inputStream, HttpContentTypeEnum contentType){
+        return uploadFileByMinIO(fileName,inputStream,contentType);
+    }
+
+    /**
+     * 上传文件到OSS服务器
+     * @author czj
+     * @date 2020/11/28 21:19
+     * @param fileName 文件名
+     * @param file 上传文件
+     * @param contentType 上传的文件类型
+     * @return java.lang.String
+     */
+    public String uploadFile(String fileName,File file,HttpContentTypeEnum contentType){
+        try(InputStream inputStream = new FileInputStream(file)){
+            return uploadFileByMinIO(fileName,inputStream,contentType);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private String uploadFileByMinIO(String fileName, InputStream inputStream, HttpContentTypeEnum contentType){
         log.debug("将上传的文件名:{}",fileName);
         String bucketName = null;
         switch (contentType){
@@ -81,6 +109,8 @@ public class MinIOUtils {
         }
         return url+bucketName+"/"+fileName;
     }
+
+
 
     /**
      * 将文件保存到本地

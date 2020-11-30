@@ -11,15 +11,24 @@ import java.io.Serializable;
 public class VideoBasicInfo implements Serializable {
 
 
+    // 视频时长，单位：秒
     private Long duration;
 
+    // 视频封面
     private String cover;
 
+    // 视频压缩封面
+    private String compressCover;
+
+    // 视频宽度
     private Integer width;
 
+    // 视频高度
     private Integer height;
 
-    private String url;
+    // 视频路径
+    private String urls;
+
 
 
 }

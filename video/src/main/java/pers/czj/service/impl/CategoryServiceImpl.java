@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import pers.czj.dto.CategoryOutputDto;
+import pers.czj.dto.CategoryTopOutputDto;
 import pers.czj.entity.Category;
 import pers.czj.exception.CategoryException;
 import pers.czj.mapper.CategoryMapper;
@@ -27,5 +28,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
             throw new CategoryException("视频分类列表为空！");
         }
         return categoryOutputDtos;
+    }
+
+    @Override
+    public List<CategoryTopOutputDto> listTopCategory() {
+        return baseMapper.findTopCategory();
     }
 }
