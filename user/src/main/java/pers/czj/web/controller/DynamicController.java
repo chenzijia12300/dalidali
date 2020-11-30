@@ -121,7 +121,20 @@ public class DynamicController {
          */
         List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPageAndType(uid,pageNum,pageSize,false);
         List<Long> videoIds = new ArrayList<>();
-        dynamics.forEach(dynamicOutputDto -> videoIds.add(dynamicOutputDto.getOid()));
+        dynamics.forEach(dynamicOutputDto -> {
+            switch (dynamicOutputDto.getType()){
+                case VIDEO:
+                    videoIds.add(dynamicOutputDto.getOid());
+                    break;
+                case STANDARD:
+                    //普通图文什么都不用做
+                    break;
+                case POST:
+                    // 暂未实现
+                    break;
+            }
+
+        });
         List videoList = null;
         log.info("ids:{}",videoIds);
         if (!CollectionUtils.isEmpty(videoIds)) {

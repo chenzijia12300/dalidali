@@ -21,6 +21,11 @@ public class Category {
     private String name;
 
     /**
+     * 频道logo
+     */
+    private String logo;
+
+    /**
      * 所属父频道主键（如果没有父类频道则为0）
      */
     private long pid;

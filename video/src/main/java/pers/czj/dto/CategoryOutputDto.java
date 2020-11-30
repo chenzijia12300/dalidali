@@ -18,6 +18,8 @@ public class CategoryOutputDto {
 
     private String name;
 
+    private String logo;
+
     private long proNum;
 
     private long dayProNum;

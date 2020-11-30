@@ -7,6 +7,7 @@
         <result property="pid" column="pid"/>
         <result property="proNum" column="pro_num"/>
         <result property="name" column="name"/>
+        <result property="logo" column="logo"/>
         <collection property="childList" column="id" select="pers.czj.mapper.CategoryMapper.findCategoryByPid">
             <id property="id" column="id"/>
             <result property="pid" column="pid"/>

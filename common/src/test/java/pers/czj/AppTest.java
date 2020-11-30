@@ -3,6 +3,7 @@ package pers.czj;
 import static org.junit.Assert.assertTrue;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -22,4 +23,13 @@ public class AppTest
         System.out.println(FileUtil.del("E:\\ideaProject\\dalidali\\925c71d9-fdfc-4ee8-b92e-e3baa55f1302.gif"));
         System.out.println(file.exists());
     }
+
+
+    @Test
+    public void testStrUtil(){
+        String s = "e:/file/text.txt";
+        System.out.println(StrUtil.subAfter(s,"/",false));
+    }
+
+
 }

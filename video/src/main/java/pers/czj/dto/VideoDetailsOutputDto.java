@@ -123,7 +123,6 @@ public class VideoDetailsOutputDto {
      */
     private String cover;
 
-
     /**
      * 视频简介
      */

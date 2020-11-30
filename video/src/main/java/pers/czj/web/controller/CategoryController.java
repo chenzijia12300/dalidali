@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.dto.CategoryOutputDto;
+import pers.czj.dto.CategoryTopOutputDto;
 import pers.czj.dto.VideoBasicOutputDto;
 import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Category;
@@ -86,6 +87,15 @@ public class CategoryController {
         return CommonResult.success(list);
     }
 
+
+    @GetMapping("/category/tops")
+    @ApiOperation("获得视频顶级频道们")
+    public CommonResult listTopCategory(){
+        List<CategoryTopOutputDto> dtos = categoryService.listTopCategory();
+        return CommonResult.success(dtos);
+    }
+
+
     @GetMapping("/category/random/{pid}")
     @ApiOperation("获得顶级频道随机视频列表")
     @ApiImplicitParams(
@@ -103,18 +113,18 @@ public class CategoryController {
         return CommonResult.success(list);
     }
 
-    public static void main(String[] args) throws IOException {
-        HttpsURLConnection connection = (HttpsURLConnection) new URL("https://p2.music.126.net/EaQwfojYMZ66xomdTrIRvA==/6006632022768749.jpg").openConnection();
-        connection.setDoInput(true);
-        connection.connect();
-        InputStream inputStream = connection.getInputStream();
-        FileOutputStream fileOutputStream = new FileOutputStream("C:\\Users\\ZJ\\Desktop\\qwe.jpg");
-        int len = -1;
-        byte [] bytes = new byte[1024];
-        while((len = inputStream.read(bytes))!=-1){
-            fileOutputStream.write(bytes,0,len);
-        }
-        fileOutputStream.close();
-        connection.disconnect();
-    }
+//    public static void main(String[] args) throws IOException {
+//        HttpsURLConnection connection = (HttpsURLConnection) new URL("https://p2.music.126.net/EaQwfojYMZ66xomdTrIRvA==/6006632022768749.jpg").openConnection();
+//        connection.setDoInput(true);
+//        connection.connect();
+//        InputStream inputStream = connection.getInputStream();
+//        FileOutputStream fileOutputStream = new FileOutputStream("C:\\Users\\ZJ\\Desktop\\qwe.jpg");
+//        int len = -1;
+//        byte [] bytes = new byte[1024];
+//        while((len = inputStream.read(bytes))!=-1){
+//            fileOutputStream.write(bytes,0,len);
+//        }
+//        fileOutputStream.close();
+//        connection.disconnect();
+//    }
 }
