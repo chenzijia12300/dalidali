@@ -100,7 +100,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         if (ObjectUtils.isEmpty(detailsOutputDto)){
             throw new VideoException("该视频走丢了~");
         }
-        detailsOutputDto.setLog(logMapper.selectOne(new QueryWrapper<VideoLog>().eq("vid",detailsOutputDto.getId())));
+        detailsOutputDto.setLog(logMapper.selectOne(new QueryWrapper<VideoLog>().eq("vid",detailsOutputDto.getId()).eq("uid",uid)));
         Map<String,Object> infoMap = userFeignClient.findBasicInfoById(uid,detailsOutputDto.getUid());
         log.info("{}",infoMap);
         detailsOutputDto.setUpImg((String) infoMap.get("img"));

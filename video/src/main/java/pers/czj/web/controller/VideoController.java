@@ -257,6 +257,16 @@ public class VideoController {
     }
 
 
+    @ApiOperation("获得该分类类型下的排行榜(兼容旧接口，待删除)")
+    @GetMapping("/video/top/{categoryStr}/{pageSize}")
+    public CommonResult findTopVideoByCategoryTemp(@PathVariable("categoryStr")String categoryStr,
+                                               @PathVariable("pageSize")
+                                               @Max(value = 100,message = "最大数目不能超过100") int pageSize
+    ) throws ConnectException {
+        return findTopVideoByCategory(categoryStr,1,pageSize);
+    }
+
+
 
 
 

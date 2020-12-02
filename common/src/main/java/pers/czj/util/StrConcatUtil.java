@@ -42,8 +42,4 @@ public class StrConcatUtil {
         return builder.substring(0,builder.length()-1);
     }
 
-    public static void main(String[] args) {
-        StrConcatUtil concatUtil = new StrConcatUtil("-");
-        System.out.println(concatUtil.concat(666,"123",'0'));
-    }
 }

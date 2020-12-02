@@ -20,6 +20,7 @@ import pers.czj.exception.VideoException;
 import pers.czj.mapper.VideoCrawlerLogMapper;
 import pers.czj.service.CrawlerSendService;
 import pers.czj.service.VideoCrawlerLogService;
+import pers.czj.service.VideoInfoCrawlerService;
 import pers.czj.utils.GetVideoDataUtils;
 
 import javax.servlet.http.HttpSession;
@@ -46,20 +47,27 @@ public class VideoCrawlerController {
 
     public static final int DEFAULT_USER_ID = 1;
 
-    @Autowired
     private GetVideoDataUtils videoDataUtils;
 
-    @Autowired
     private VideoController videoController;
 
-    @Autowired
     private CrawlerSendService crawlerSendService;
 
-    @Autowired
     private VideoCrawlerLogService crawlerLogService;
 
-    private Random random = new Random();
+    private VideoInfoCrawlerService videoInfoCrawlerService;
 
+    private Random random;
+
+    @Autowired
+    public VideoCrawlerController(GetVideoDataUtils videoDataUtils, VideoController videoController, CrawlerSendService crawlerSendService, VideoCrawlerLogService crawlerLogService, VideoInfoCrawlerService videoInfoCrawlerService) {
+        this.videoDataUtils = videoDataUtils;
+        this.videoController = videoController;
+        this.crawlerSendService = crawlerSendService;
+        this.crawlerLogService = crawlerLogService;
+        this.videoInfoCrawlerService = videoInfoCrawlerService;
+        this.random = new Random();
+    }
 
     @PostMapping("/upload")
     @ApiOperation(value = "指定单个视频爬虫信息",hidden = true)
@@ -81,6 +89,7 @@ public class VideoCrawlerController {
         for (Map<String,String> map:maps){
             title = map.get("title");
             videoUrl = map.get("videoUrl");
+            log.info("title:{},,videoUrl:{}",title,videoUrl);
             if (!crawlerLogService.exists(videoUrl)){
                 if (!log.isDebugEnabled()) {
                     try {
@@ -140,9 +149,10 @@ public class VideoCrawlerController {
         /*
             判断封面是否为空，上传封面图
          */
-        if (StrUtil.isNotEmpty(coverUrl)){
+        List urlList = null;
+        if (type==VideoCoverTypeEnum.STANDARD){
             try {
-                videoController.uploadCover(httpSession,convertMulti(coverUrl));
+                urlList = videoController.uploadCover(httpSession,convertMulti(coverUrl));
             } catch (FileNotFoundException e) {
                 log.error("上传封面：{}失败",coverUrl);
                 return;

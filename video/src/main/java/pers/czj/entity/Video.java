@@ -88,6 +88,11 @@ public class Video {
      */
     private String cover;
 
+    /**
+     * 视频压缩封面
+     */
+    private String compressCover;
+
 /*    *//**
      *  视频的顶级频道（冗余）
      *//*
