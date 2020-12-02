@@ -10,6 +10,8 @@ spring:
     static-path-pattern: /*
   resources:
     static-locations: classpath:/static,classpath:/public,classpath:/resources,classpath:/META-INF/resources,classpath:/
+  session:
+    timeout: 300
 eureka:
   client:
     service-url:

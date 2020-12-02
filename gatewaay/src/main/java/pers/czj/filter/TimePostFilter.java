@@ -1,5 +1,6 @@
 package pers.czj.filter;
 
+import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpRequest;
 import pers.czj.utils.IPUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 创建在 2020/8/31 21:28
