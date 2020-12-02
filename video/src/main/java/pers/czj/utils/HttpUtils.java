@@ -1,9 +1,13 @@
 package pers.czj.utils;
 
+import cn.hutool.core.collection.CollectionUtil;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -14,6 +18,10 @@ public class HttpUtils {
 
     //*用户标志
     private static final String DEFAULT_USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36";
+
+    private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+
+
     /**
      * 请求url路径解析视频路径在哪里
      * @param url
@@ -60,5 +68,35 @@ public class HttpUtils {
                 .build();
         client.newCall(request).enqueue(callback);
     }
+
+
+    public static String syncGetStr(String url, Map<String,String> headers){
+        Request.Builder builder = new Request.Builder()
+                .url(url)
+                .get();
+        if (CollectionUtil.isNotEmpty(headers)){
+            headers.forEach((key,value)->{
+                builder.addHeader(key,value);
+            });
+        }
+        OkHttpClient client = new OkHttpClient();
+        try {
+            Response response = client.newCall(builder.build()).execute();
+            if (response.code()!=200){
+                log.info("请求失败:{}\nmessage:{}",url,response.message());
+                return "";
+            }
+            return response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
+
+
+
+
 
 }

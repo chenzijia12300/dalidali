@@ -73,9 +73,6 @@ public class UserController {
         return CommonResult.success(userService.findDetailsUserInfoById(uid));
     }
 
-
-
-
     @GetMapping("/logout")
     @ApiOperation("注销接口")
     public CommonResult logout(HttpSession session){
