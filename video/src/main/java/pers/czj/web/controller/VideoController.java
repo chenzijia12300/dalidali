@@ -30,6 +30,7 @@ import pers.czj.service.PlayNumTabService;
 import pers.czj.service.VideoLogService;
 import pers.czj.service.VideoService;
 import pers.czj.util.ImageUtils;
+import pers.czj.util.StrConcatUtil;
 import pers.czj.util.VideoUtils;
 import pers.czj.utils.*;
 
@@ -55,27 +56,35 @@ public class VideoController {
 
     private static final Character SEPARATOR = '/';
 
+    private static final String CONNECTOR = "-";
 
-    @Autowired
+
     private VideoService videoService;
 
-    @Autowired
     private VideoLogService videoLogService;
 
-    @Autowired
     private CategoryService categoryService;
 
-    @Autowired
     private MinIOUtils minIOUtils;
 
-    @Autowired
     private RedisUtils redisUtils;
 
-    @Autowired
     private PlayNumTabService playNumTabService;
 
-    @Autowired
     private GetVideoDataUtils videoDataUtils;
+
+
+    @Autowired
+    public VideoController(VideoService videoService, VideoLogService videoLogService, CategoryService categoryService, MinIOUtils minIOUtils, RedisUtils redisUtils, PlayNumTabService playNumTabService, GetVideoDataUtils videoDataUtils) {
+        this.videoService = videoService;
+        this.videoLogService = videoLogService;
+        this.categoryService = categoryService;
+        this.minIOUtils = minIOUtils;
+        this.redisUtils = redisUtils;
+        this.playNumTabService = playNumTabService;
+        this.videoDataUtils = videoDataUtils;
+        this.strConcatUtil = new StrConcatUtil(CONNECTOR);
+    }
 
     @Value("${redis.category-pre-key}")
     private String categoryTopKey;
@@ -96,6 +105,8 @@ public class VideoController {
     private String dirPath;
 
     private String dir = System.getProperty("user.dir")+"/";
+
+    private StrConcatUtil strConcatUtil;
 
 
     @PostMapping("/video")
@@ -190,6 +201,7 @@ public class VideoController {
     }
 
 
+
     public List<String> uploadCover(HttpSession httpSession, @RequestParam("file") MultipartFile file) throws FileNotFoundException, VideoException {
 
         // 图片保存到本地
@@ -214,26 +226,39 @@ public class VideoController {
 
 
     @ApiOperation("获得该分类类型下的排行榜")
-    @GetMapping("/video/top/{categoryId}/{pageSize}")
-    public CommonResult findTopVideoByCategory(@PathVariable("categoryId")long categoryId,
-                                               @PathVariable("pageSize")@Max(value = 100,message = "最大数目不能超过100") int pageSize
+    @GetMapping("/video/top/{categoryStr}/{pageNum}/{pageSize}")
+    public CommonResult findTopVideoByCategory(@PathVariable("categoryStr")String categoryStr,
+                                               @PathVariable("pageNum")
+                                                @Min(1)
+                                                       int pageNum,
+                                               @PathVariable("pageSize")
+                                                @Max(value = 100,message = "最大数目不能超过100") int pageSize
     ) throws ConnectException {
+
+        categoryStr = categoryStr.toUpperCase();
         String date = LocalDate.now().toString();
-        String setKey = date+"::"+categoryId;
+        String setKey = date+"::"+categoryStr;
         log.debug("setKey:{}",setKey);
-        Object object = redisUtils.get(categoryTopKey+categoryId+"_"+pageSize);
+
+        //key：redis的分类key
+        String key = strConcatUtil.concat(categoryTopKey,categoryStr,pageNum,pageSize);
+        Object object = redisUtils.get(key);
         if (ObjectUtils.isEmpty(object)){
-            Set<Long> set = redisUtils.zRevRange(setKey, 0, pageSize, false);
+            Set<Long> set = redisUtils.zRevRange(setKey, (pageNum-1)*pageSize, pageSize, false);
             List<VideoHotOutputDto> dtos = videoService.listHotInfoByIds(set);
             dtos.forEach(videoBasicOutputDto -> {
                 long score = (videoBasicOutputDto.getPraiseNum()*12340)+videoBasicOutputDto.getPlayNum();
                 videoBasicOutputDto.setScore(score);
             });
             object = dtos;
-            redisUtils.set(categoryTopKey+categoryId+"_"+pageSize,object,10);
+            redisUtils.set(key,object,10);
         }
         return CommonResult.success(object);
     }
+
+
+
+
 
     /**
      * @author czj

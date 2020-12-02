@@ -14,7 +14,6 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8100/eureka
 zuul:
-  sensitiveHeaders: Cookie,Set-Cookie
   ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin, Access-Control-Allow-Methods
   routes:
     user-api:
@@ -34,7 +33,6 @@ zuul:
       custom-sensitive-headers: true
   sensitive-headers: "*"
   ignored-patterns:
-              - /login
               - /index.html
 
 time:

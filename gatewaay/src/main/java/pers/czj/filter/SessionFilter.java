@@ -1,6 +1,7 @@
 package pers.czj.filter;
 
 import com.google.common.collect.Lists;
+import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
@@ -43,6 +44,11 @@ public class SessionFilter extends ZuulFilter {
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
+        String requestUri = request.getRequestURI();
+        if (requestUri.contains("/login")){
+            log.info("进入登录接口");
+            return null;
+        }
         HttpSession httpSession = request.getSession();
         Object o= httpSession.getAttribute("USER_ID");
         if (ObjectUtils.isEmpty(o)){
@@ -58,6 +64,7 @@ public class SessionFilter extends ZuulFilter {
         }
         params.put("uid", Lists.newArrayList(userId));
         ctx.setRequestQueryParams(params);
+
         return null;
     }
 }
