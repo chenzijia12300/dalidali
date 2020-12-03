@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.czj.mapper.DynamicMapper">
+
+    <sql id="dynamicInfo">
+        dynamic.*,dynamic_log.is_praise,dynamic_log.is_forward,dynamic_log.is_collection,user.username as up_name,user.img as up_img
+    </sql>
+
+
     <select id="listNewDynamic" parameterType="Long" resultType="pers.czj.dto.DynamicOutputDto">
-        SELECT dynamic.*,dynamic_log.is_praise,dynamic_log.is_forward,dynamic_log.is_collection,user.username as up_name,user.img as up_img  FROM dynamic INNER  JOIN user
+        SELECT
+            <include refid="dynamicInfo"/>
+        FROM dynamic INNER  JOIN user
         ON uid IN
         <foreach collection="ids" separator="," open="(" close=")" item="userId" index="index">
             #{userId}
@@ -12,6 +20,16 @@
         ON dynamic_log.did = dynamic.id AND dynamic_log.uid =#{uid}
         ORDER BY dynamic.create_time DESC
     </select>
+
+    <select id="findDetailsById" resultType="pers.czj.dto.DynamicOutputDto">
+        SELECT
+            <include refid="dynamicInfo"/>
+        FROM dynamic INNER JOIN user
+        ON dynamic.id = #{did} AND dynamic.uid = user.id
+        LEFT JOIN dynamic_log
+        ON dynamic_log.did = dynamic.id AND dynamic_log.uid =#{uid}
+    </select>
+
 
 
     <select id="listNewVideoDynamic" parameterType="Long" resultType="pers.czj.dto.DynamicOutputDto">

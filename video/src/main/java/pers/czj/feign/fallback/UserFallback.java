@@ -54,4 +54,9 @@ public class UserFallback implements UserFeignClient {
     public Map<String, Object> findBasicInfoById(long uid, long followerUserId) {
         return tempUserInfoMap;
     }
+
+    @Override
+    public Long createUserIfNeeded(Map<String, String> map) {
+        return -1l;
+    }
 }

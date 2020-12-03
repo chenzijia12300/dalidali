@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
-import pers.czj.common.User;
+import pers.czj.entity.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.dto.DetailsUserInfoOutputDto;
 
@@ -36,7 +36,6 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Select("SELECT username,img FROM user WHERE id = #{id}")
     public BasicUserInfoOutputDto findBasicUserInfoById(long id);
-
 
     @Select("SELECT id,username,email,img,follow_num,fans_num,description,grade,coin_num FROM user WHERE id = #{uid}")
     public DetailsUserInfoOutputDto findDetailsUserInfoById(long uid);

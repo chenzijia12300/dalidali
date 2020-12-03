@@ -148,6 +148,12 @@ public class DynamicController {
         return CommonResult.success(dynamics);
     }
 
+    @GetMapping("/dynamic/{did}")
+    public CommonResult findDynamicDetails(@RequestParam("uid")long uid,@PathVariable("did") long did){
+        return CommonResult.success(dynamicService.findDetailsById(uid,did));
+    }
+
+
 
     @GetMapping("/dynamic/unread")
     @ApiOperation("获得个人动态未读总数")

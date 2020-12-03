@@ -24,6 +24,10 @@ public interface DynamicMapper extends BaseMapper<Dynamic> {
     public List<DynamicOutputDto> listNewDynamic(@Param("uid")long uid,@Param("ids") List<Long> ids);
 
 
+
+    public DynamicOutputDto findDetailsById(@Param("uid") long uid,@Param("did")long did);
+
+
     /**
      * 返回视频类型最新动态列表
      * @author czj

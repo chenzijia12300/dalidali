@@ -146,7 +146,7 @@ public class VideoController {
 
     @PostMapping("/video/upload")
     @ApiOperation("用户上传视频文件")
-    public CommonResult uploadVideo(HttpSession httpSession, @RequestParam long userId, @RequestParam VideoCoverTypeEnum coverTypeEnum, @RequestParam("file") MultipartFile file) throws VideoException, UserException, IOException {
+    public CommonResult uploadVideo(HttpSession httpSession, @RequestParam long userId, @RequestParam VideoCoverTypeEnum coverTypeEnum, @RequestParam("file") MultipartFile file) throws VideoException{
 /*        if (httpSession.isNew()){
             httpSession.invalidate();
             throw new UserException("请重新登录！");
