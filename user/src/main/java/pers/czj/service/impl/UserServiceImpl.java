@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import pers.czj.common.User;
+import pers.czj.entity.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.dto.DetailsUserInfoOutputDto;
 import pers.czj.exception.UserException;
@@ -50,12 +50,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public boolean register(User user) throws UserException {
+    public Long register(User user) throws UserException {
         int row = baseMapper.insert(user);
         if (row==0){
             throw new UserException("遇到未知原因，注册账户失败，请重试~");
         }
-        return true;
+        log.info("row:{},id:{}",row,user.getId());
+        return user.getId();
+    }
+
+    @Override
+    public boolean existsUserByName(String username) {
+        Integer count = baseMapper.selectCount(new QueryWrapper<User>().eq("username",username));
+        return ObjectUtils.isEmpty(count)?false:true;
     }
 
     @Override

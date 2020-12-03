@@ -1,5 +1,6 @@
 package pers.czj.web.controller;
 
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiOperation;
@@ -72,98 +73,97 @@ public class VideoCrawlerController {
     @PostMapping("/upload")
     @ApiOperation(value = "指定单个视频爬虫信息",hidden = true)
     public CommonResult uploadVideo(HttpSession httpSession, @RequestBody UploadInputDto dto) throws InterruptedException, VideoException, UserException, IOException {
-        handlerVideoResource(dto.getTitle(),dto.getVideoUrl(),httpSession);
+        handlerVideoResource(dto.getTitle(),dto.getVideoUrl(),httpSession,videoInfoCrawlerService.getVideoBasicInfo(dto.getVideoUrl()));
         return CommonResult.success("操作成功~");
     }
 
 
     @GetMapping("/top")
     @ApiOperation(value = "爬取哔哩哔哩排行榜信息",hidden = true)
-    public CommonResult testTopData(HttpSession httpSession, @RequestParam(required = false) String url,@RequestParam(required = false,defaultValue = "150") Integer num) throws InterruptedException, VideoException, UserException {
-        List<Map<String,String>> maps = null;
-        maps = videoDataUtils.syncGetData(url);
+    public CommonResult testTopData(HttpSession httpSession, @RequestParam(required = false) String url,@RequestParam(required = false,defaultValue = "150") Integer num){
+
+        log.info("爬取排行榜路径:{},条数:{}",url,num);
+
         int nowNum = 0;
-        String title = null;
-        String videoUrl = null;
-        long startTime = -1L;
+        long startTime;
+        String title,videoUrl;
+        List<Map<String,String>> maps  = videoDataUtils.syncGetData(url);
+
+
         for (Map<String,String> map:maps){
             title = map.get("title");
             videoUrl = map.get("videoUrl");
-            log.info("title:{},,videoUrl:{}",title,videoUrl);
-            if (!crawlerLogService.exists(videoUrl)){
-                if (!log.isDebugEnabled()) {
-                    try {
-                        startTime = System.currentTimeMillis();
-                        handlerVideoResource(title, videoUrl, httpSession);
-                        crawlerSendService.send(createCrawlerLog(title,videoUrl,System.currentTimeMillis()-startTime));
-                    }catch (Exception e){
-                        log.error("下载视频抛出异常:{}",map);
-                    }
-                    if (nowNum++==num){
-                        log.info("下载视频已到所需条数:{}",num);
-                        break;
-                    }
-                }
-            }else{
-                log.info("{}已存在",videoUrl);
+            log.info("title:{},videoUrl:{}",title,videoUrl);
+
+
+            if (nowNum++==num){
+                log.info("下载视频已到所需条数:{}",num);
+                break;
             }
+
+            if (crawlerLogService.exists(videoUrl)){
+                log.info("{}已存在",videoUrl);
+                continue;
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("开发环境,不真实爬取文件,退出~");
+                continue;
+            }
+
+            try {
+                startTime = System.currentTimeMillis();
+                handlerVideoResource(title,videoUrl, httpSession,videoInfoCrawlerService.getVideoBasicInfo(videoUrl));
+                crawlerSendService.send(createCrawlerLog(title,videoUrl,System.currentTimeMillis()-startTime));
+            }catch (Exception e){
+                log.error("下载视频抛出异常:{}",map);
+            }
+
+
+
+
+
         }
         return CommonResult.success();
     }
 
-    public void handlerVideoResource(String title,String videoUrl,HttpSession httpSession) throws VideoException,UserException {
+    public void handlerVideoResource(String title,String videoUrl,HttpSession httpSession,Map<String,String> videoInfoMap) throws VideoException,UserException {
 
         /*
                  下载视频资源
          */
-        Map<String,String> map = null;
+        Map<String,String> map;
         try {
-            map = videoDataUtils.syncDownload(title,videoUrl);
+             map = videoDataUtils.syncDownload(title,videoUrl);
         } catch (InterruptedException e) {
             log.error("下载视频资源:{}失败,退出系统",videoUrl);
             return;
         }
         String productUrl = map.get("productUrl");
         String coverUrl = map.get("coverUrl");
-        MultipartFile multipartFile = convertMulti(productUrl);
-        CommonResult commonResult = null;
+        long userId = Long.parseLong(videoInfoMap.get("userId"));
+        log.info("userId:{}",userId);
 
-        /*
-            生成随机数来随机生成GIF图
-         */
-        boolean needGif = true;/*random.nextInt(6)==0;*/
-        VideoCoverTypeEnum type = StrUtil.isEmpty(coverUrl)?
-                VideoCoverTypeEnum.EMPTY:
-                needGif?VideoCoverTypeEnum.GIF:VideoCoverTypeEnum.STANDARD;
+        // 生成随机数来随机生成GIF图
+        VideoCoverTypeEnum type = random.nextInt(6)==0?VideoCoverTypeEnum.GIF:VideoCoverTypeEnum.STANDARD;
 
-        /*
-            上传视频资源并且判断是否需要通过FFMPEG生成封面
-         */
-        try {
-            commonResult = videoController.uploadVideo(httpSession,DEFAULT_USER_ID,type,multipartFile);
-        } catch (IOException e) {
-            log.error("上传视频资源失败:{}",multipartFile.getName());
-            return;
-        }
 
-        /*
-            判断封面是否为空，上传封面图
-         */
-        List urlList = null;
-        if (type==VideoCoverTypeEnum.STANDARD){
-            try {
-                urlList = videoController.uploadCover(httpSession,convertMulti(coverUrl));
-            } catch (FileNotFoundException e) {
-                log.error("上传封面：{}失败",coverUrl);
-                return;
-            }
-        }
+        // 上传视频资源到OSS服务器，返回视频于服务器的URL地址
+        String videoServerUrl = uploadVideoToOss(httpSession,productUrl,userId,type);
 
+
+        // 判断封面是否为空，上传封面图
+        List<String> coverUrls = uploadCoverToOss(httpSession,coverUrl,type);
 
 
         //将视频相关信息，上传到服务器
-        VideoInputDto dto = createDefaultDto(title,commonResult.getMessage());
-        videoController.addVideo(httpSession,DEFAULT_USER_ID,dto);
+        VideoInputDto dto = new VideoInputDto()
+                .setTitle(title)
+                .setDescription(videoInfoMap.get("desc"))
+                .setTags(videoInfoMap.get("categoryName"))
+                .setUrls(videoServerUrl)
+                .setUid(userId);
+        videoController.addVideo(httpSession,userId,dto);
         log.info("{}上传完毕",title);
 
         /*
@@ -187,6 +187,9 @@ public class VideoCrawlerController {
     }
 
 
+
+
+
     private MultipartFile convertMulti(String filePath){
         try {
             File file = new File(filePath);
@@ -202,6 +205,34 @@ public class VideoCrawlerController {
         }
         return null;
     }
+
+
+
+    private String uploadVideoToOss(HttpSession session,String localVideoUrl,long userId,VideoCoverTypeEnum typeEnum){
+        try {
+            return videoController.uploadVideo(session,
+                    userId,
+                    typeEnum,
+                    convertMulti(localVideoUrl)).getMessage();
+        } catch (VideoException e) {
+            log.error("上传视频资源失败:{}",localVideoUrl);
+        }
+        return null;
+    }
+
+
+    private List<String> uploadCoverToOss(HttpSession session,String localCoverUrl,VideoCoverTypeEnum typeEnum){
+        if (typeEnum.equals(VideoCoverTypeEnum.STANDARD)) {
+            try {
+                return videoController.uploadCover(session,convertMulti(localCoverUrl));
+            } catch (Exception e){
+                log.error("上传封面：{}失败",localCoverUrl);
+            }
+        }
+        return ListUtil.empty();
+    }
+
+
 
     private VideoInputDto createDefaultDto(String title,String url){
         return VideoInputDto.createDefaultDto()

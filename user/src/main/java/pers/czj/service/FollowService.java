@@ -1,7 +1,6 @@
 package pers.czj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import pers.czj.common.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.entity.Follow;
 

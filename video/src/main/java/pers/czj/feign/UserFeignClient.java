@@ -3,7 +3,6 @@ package pers.czj.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
-import pers.czj.common.User;
 import pers.czj.dto.UserCollectionLogInputDto;
 import pers.czj.feign.fallback.UserFallback;
 
@@ -37,4 +36,7 @@ public interface UserFeignClient {
 
     @GetMapping("/user/basic/{uid}/{followerUserId}")
     public Map<String,Object> findBasicInfoById(@PathVariable("uid") long uid,@PathVariable("followerUserId")long followerUserId);
+
+    @PostMapping("/user/create")
+    public Long createUserIfNeeded(@RequestBody Map<String,String> map);
 }

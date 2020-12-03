@@ -1,9 +1,6 @@
 package pers.czj.web.controller;
 
-import com.alibaba.fastjson.JSON;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
 import pers.czj.dto.LoginUserInputDto;
 import pers.czj.dto.RegisterUserInputDto;
-import pers.czj.common.User;
+import pers.czj.entity.User;
 import pers.czj.exception.UserException;
 import pers.czj.service.UserService;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 创建在 2020/7/10 16:00

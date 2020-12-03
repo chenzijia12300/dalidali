@@ -28,27 +28,27 @@ public class UserInfoController {
         this.userInfoService = userInfoService;
     }
 
-    @GetMapping("/collect/{pageNum}/{pageSize}")
-    public CommonResult findCollectVideo(@RequestParam("uid")long uid,
+    @GetMapping("/collect/{uid}/{pageNum}/{pageSize}")
+    public CommonResult findCollectVideo(@PathVariable("uid") long uid,
                                          @PathVariable("pageNum")int pageNum, @PathVariable("pageSize")int pageSize){
         return CommonResult.success(userInfoService.findCollectVideoInfo(uid,pageNum,pageSize));
     }
 
 
-    @GetMapping("/publish/{pageNum}/{pageSize}")
-    public CommonResult findPublishVideo(@RequestParam("uid")long uid,
+    @GetMapping("/publish/{uid}/{pageNum}/{pageSize}")
+    public CommonResult findPublishVideo(@PathVariable("uid")long uid,
                                          @PathVariable("pageNum")int pageNum, @PathVariable("pageSize")int pageSize){
         return CommonResult.success(userInfoService.findPublishVideoInfo(uid,pageNum,pageSize));
     }
 
-    @GetMapping("/coin/{pageNum}/{pageSize}")
-    public CommonResult findHasCoinVideo(@RequestParam("uid")long uid,
+    @GetMapping("/coin/{uid}/{pageNum}/{pageSize}")
+    public CommonResult findHasCoinVideo(@PathVariable("uid")long uid,
                                          @PathVariable("pageNum")int pageNum, @PathVariable("pageSize")int pageSize){
         return CommonResult.success(userInfoService.findHasCoinVideoInfo(uid,pageNum,pageSize));
     }
 
-    @GetMapping("/praise/{pageNum}/{pageSize}")
-    public CommonResult findPraiseVideo(@RequestParam("uid")long uid,
+    @GetMapping("/praise/{uid}/{pageNum}/{pageSize}")
+    public CommonResult findPraiseVideo(@PathVariable("uid")long uid,
                                         @PathVariable("pageNum")int pageNum, @PathVariable("pageSize")int pageSize){
         return CommonResult.success(userInfoService.findPraiseCoinVideoInfo(uid,pageNum,pageSize));
     }

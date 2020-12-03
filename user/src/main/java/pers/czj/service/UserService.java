@@ -1,7 +1,7 @@
 package pers.czj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import pers.czj.common.User;
+import pers.czj.entity.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.dto.DetailsUserInfoOutputDto;
 import pers.czj.exception.UserException;
@@ -15,7 +15,9 @@ public interface UserService extends IService<User> {
 
     public User login(String account,String password) throws UserException;
 
-    public boolean register(User user) throws UserException;
+    public Long register(User user) throws UserException;
+
+    public boolean existsUserByName(String username);
 
     /**
      * @author czj

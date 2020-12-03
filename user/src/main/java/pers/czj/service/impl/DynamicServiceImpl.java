@@ -54,6 +54,11 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
     }
 
     @Override
+    public DynamicOutputDto findDetailsById(long uid, long did) {
+        return baseMapper.findDetailsById(uid,did);
+    }
+
+    @Override
     public int findUnreadCount(long uid) {
         Date lastReadTime = userMapper.findLastReadDynamicTime(uid);
         List<Long> ids = followMapper.findByFollowId(uid);

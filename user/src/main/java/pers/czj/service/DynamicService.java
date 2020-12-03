@@ -22,6 +22,16 @@ public interface DynamicService extends IService<Dynamic> {
 
 
     /**
+     * @author czj
+     * @date 2020/12/3 19:59
+     * @param [uid, did]
+     * @return pers.czj.dto.DynamicOutputDto
+     */
+    public DynamicOutputDto findDetailsById(long uid,long did);
+
+
+
+    /**
      * 获得用户未读动态的总数
      * @param uid
      * @return

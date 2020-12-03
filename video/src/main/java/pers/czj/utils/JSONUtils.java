@@ -1,6 +1,7 @@
 package pers.czj.utils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -15,5 +16,8 @@ public class JSONUtils {
 
     public static JSONObject get(JSONObject jsonObject,String key){
         return jsonObject.getJSONObject(key);
+    }
+    public static JSONArray getArr(JSONObject jsonObject, String key){
+        return jsonObject.getJSONArray(key);
     }
 }
