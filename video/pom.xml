@@ -91,6 +91,10 @@
         </dependency>
 
 
+
+
+
+
         <!--rabbitmq-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

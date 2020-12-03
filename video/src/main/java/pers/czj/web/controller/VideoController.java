@@ -119,8 +119,6 @@ public class VideoController {
         BeanUtils.copyProperties(basicInfo,video);
         video.setLength(basicInfo.getDuration());
         video.setScreenType(width>height?VideoScreenTypeEnum.LANDSCAPE:VideoScreenTypeEnum.PORTRAIT);
-        video.setWidth(width);
-        video.setHeight(height);
         //暂时废弃
 //       video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getHeight()));
         log.info("video:{}",video);
