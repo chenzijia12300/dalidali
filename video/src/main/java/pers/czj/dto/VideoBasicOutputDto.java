@@ -76,4 +76,14 @@ public class VideoBasicOutputDto {
      */
     private boolean isPraise;
 
+    /**
+     * 频道
+     */
+    private String categoryName;
+
+    /**
+     * 分区
+     */
+    private String categoryPName;
+
 }

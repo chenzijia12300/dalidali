@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * 创建在 2020/7/11 23:40
  */
+@Repository
 public interface VideoMapper extends BaseMapper<Video> {
 
     public VideoDetailsOutputDto findDetailsById(long id);

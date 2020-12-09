@@ -21,7 +21,7 @@ public class BannerUtils {
 
     public List<Map<?,?>> getWebBanner(){
         List<Map<?,?>> list = new ArrayList<>();
-        String bodyStr = HttpUtils.syncGetStr(bannerRequestUri,null);
+        String bodyStr = HttpUtils.syncGetStr(bannerRequestUri,null,null);
         JSONObject jsonObject = JSONUtils.get(bodyStr,"data").getJSONArray("items").getJSONObject(0);
         JSONArray banners = JSONUtils.getArr(jsonObject,"banner_item");
 

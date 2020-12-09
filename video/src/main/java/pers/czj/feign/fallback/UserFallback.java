@@ -57,6 +57,6 @@ public class UserFallback implements UserFeignClient {
 
     @Override
     public Long createUserIfNeeded(Map<String, String> map) {
-        return -1l;
+        return -999l;
     }
 }

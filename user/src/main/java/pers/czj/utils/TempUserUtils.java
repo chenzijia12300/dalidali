@@ -27,10 +27,10 @@ public class TempUserUtils {
     }
 
     public Long createUserIfNeeded(String username, String img){
-        boolean needCreate = userService.existsUserByName(username);
-        if (!needCreate){
+        long userId = userService.existsUserByName(username);
+        if (userId != -1l){
             log.info("已存在该用户：{}",username);
-            return -1l;
+            return userId;
         }
         User user = createRandomUser(username,img);
         try {

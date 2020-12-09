@@ -121,14 +121,14 @@ public class VideoController {
         video.setScreenType(width>height?VideoScreenTypeEnum.LANDSCAPE:VideoScreenTypeEnum.PORTRAIT);
         //暂时废弃
 //       video.setResolutionState(VideoResolutionEnum.valueOf("P_"+basicInfo.getHeight()));
-        log.info("video:{}",video);
         boolean flag = videoService.save(video);
+        log.info("video:{}",video);
         if (!flag){
             throw new VideoException("添加视频失败，请重试尝试");
         }
         //这里应该要有个消息队列
         log.info("用户{}上传视频{}成功!",uid,video.getUrls());
-        return CommonResult.success("你滴视频提交成功~，等待管理员的审核把");
+        return CommonResult.success(video.getId(),"你滴视频提交成功~，等待管理员的审核把");
     }
 
     @GetMapping("/video/{id}")

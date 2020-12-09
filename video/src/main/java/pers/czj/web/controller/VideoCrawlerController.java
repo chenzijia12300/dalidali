@@ -2,6 +2,8 @@ package pers.czj.web.controller;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import io.swagger.annotations.ApiOperation;
 import org.apache.http.entity.ContentType;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pers.czj.common.CommonResult;
@@ -18,10 +21,12 @@ import pers.czj.dto.VideoInputDto;
 import pers.czj.entity.VideoCrawlerLog;
 import pers.czj.exception.UserException;
 import pers.czj.exception.VideoException;
+import pers.czj.feign.CommentFeignClient;
 import pers.czj.mapper.VideoCrawlerLogMapper;
 import pers.czj.service.CrawlerSendService;
 import pers.czj.service.VideoCrawlerLogService;
 import pers.czj.service.VideoInfoCrawlerService;
+import pers.czj.service.VideoService;
 import pers.czj.utils.GetVideoDataUtils;
 
 import javax.servlet.http.HttpSession;
@@ -54,19 +59,29 @@ public class VideoCrawlerController {
 
     private CrawlerSendService crawlerSendService;
 
+    private VideoService videoService;
+
     private VideoCrawlerLogService crawlerLogService;
 
     private VideoInfoCrawlerService videoInfoCrawlerService;
 
+    private CommentFeignClient commentFeignClient;
+
     private Random random;
 
+
     @Autowired
-    public VideoCrawlerController(GetVideoDataUtils videoDataUtils, VideoController videoController, CrawlerSendService crawlerSendService, VideoCrawlerLogService crawlerLogService, VideoInfoCrawlerService videoInfoCrawlerService) {
+    public VideoCrawlerController(GetVideoDataUtils videoDataUtils, VideoController videoController,
+                                  CrawlerSendService crawlerSendService, VideoCrawlerLogService crawlerLogService,
+                                  VideoInfoCrawlerService videoInfoCrawlerService,CommentFeignClient commentFeignClient,
+                                  VideoService videoService) {
         this.videoDataUtils = videoDataUtils;
         this.videoController = videoController;
         this.crawlerSendService = crawlerSendService;
         this.crawlerLogService = crawlerLogService;
         this.videoInfoCrawlerService = videoInfoCrawlerService;
+        this.commentFeignClient = commentFeignClient;
+        this.videoService = videoService;
         this.random = new Random();
     }
 
@@ -89,7 +104,6 @@ public class VideoCrawlerController {
         String title,videoUrl;
         List<Map<String,String>> maps  = videoDataUtils.syncGetData(url);
 
-
         for (Map<String,String> map:maps){
             title = map.get("title");
             videoUrl = map.get("videoUrl");
@@ -106,6 +120,8 @@ public class VideoCrawlerController {
                 continue;
             }
 
+            log.info("map:{}",videoInfoCrawlerService.getVideoBasicInfo(videoUrl));
+
             if (log.isDebugEnabled()) {
                 log.debug("开发环境,不真实爬取文件,退出~");
                 continue;
@@ -116,19 +132,67 @@ public class VideoCrawlerController {
                 handlerVideoResource(title,videoUrl, httpSession,videoInfoCrawlerService.getVideoBasicInfo(videoUrl));
                 crawlerSendService.send(createCrawlerLog(title,videoUrl,System.currentTimeMillis()-startTime));
             }catch (Exception e){
-                log.error("下载视频抛出异常:{}",map);
+                log.error("下载视频抛出异常:{}\n异常:{}",map,e.getMessage());
             }
 
-
-
+/*            try {
+                log.info("休眠两秒~防止被400");
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
 
 
         }
         return CommonResult.success();
     }
 
-    public void handlerVideoResource(String title,String videoUrl,HttpSession httpSession,Map<String,String> videoInfoMap) throws VideoException,UserException {
 
+
+    @GetMapping("/recommend/channel/{rid}/{cid}/{cpid}")
+    public CommonResult crawlerChannelRecommend(HttpSession session,@PathVariable("rid") int rid,
+                                                @PathVariable(value = "cid",required = false)String cid,
+                                                @PathVariable(value = "cpid",required = false)String cpid
+                                                ){
+
+        List<Map<String,String>> maps = videoInfoCrawlerService.getChannelRecommendVideo(rid);
+        maps.forEach(map -> {
+            String title = map.get("title");
+            String videoUrl = map.get("videoUrl");
+            Map<String,String> videoInfoMap = videoInfoCrawlerService.getVideoBasicInfo(videoUrl);
+
+            if (ObjectUtil.isNotNull(cid)){
+                videoInfoMap.put("categoryId", cid);
+            }
+            if (ObjectUtil.isNotNull(cpid)){
+                videoInfoMap.put("categoryPId",cpid);
+            }
+
+            try {
+                handlerVideoResource(title,videoUrl,session,videoInfoMap);
+            } catch (VideoException e) {
+                log.info("处理视频:{}--{}出错\n{}",title,videoUrl,e);
+            }
+        });
+
+        return CommonResult.success();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    public void handlerVideoResource(String title,String videoUrl,HttpSession httpSession,Map<String,String> videoInfoMap) throws VideoException {
+
+
+        log.info("videoInfoMap:{}",videoInfoMap);
         /*
                  下载视频资源
          */
@@ -162,9 +226,17 @@ public class VideoCrawlerController {
                 .setDescription(videoInfoMap.get("desc"))
                 .setTags(videoInfoMap.get("categoryName"))
                 .setUrls(videoServerUrl)
-                .setUid(userId);
-        videoController.addVideo(httpSession,userId,dto);
+                .setUid(userId)
+                .setCategoryId(videoInfoMap.get("categoryId")==null?44: Long.parseLong(videoInfoMap.get("categoryId")))
+                .setCategoryPId(videoInfoMap.get("categoryPId")==null?11: Long.parseLong(videoInfoMap.get("categoryPId")));
+        long vid = (long) videoController.addVideo(httpSession,userId,dto).getData();
         log.info("{}上传完毕",title);
+
+        /*
+            爬取视频对应弹幕
+         */
+        Integer danmuSize = commentFeignClient.crawlerDanmuList(Long.parseLong(videoInfoMap.get("cid")),vid);
+        videoService.incrDanmuNum(vid,danmuSize);
 
         /*
             清理临时文件

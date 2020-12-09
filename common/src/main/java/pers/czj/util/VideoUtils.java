@@ -67,7 +67,7 @@ public class VideoUtils {
                 case GIF:
                     coverName = videoName.substring(0, videoName.lastIndexOf(".") + 1) + "gif";
                     log.info("coverName:{}", coverName);
-                    createGif(filePath+videoName,filePath+coverName);
+                    createGif(filePath+videoName,filePath+coverName,basicInfo.getWidth()<basicInfo.getHeight());
                     basicInfo.setCover(filePath+coverName);
                     basicInfo.setCompressCover(filePath+coverName);
                     break;
@@ -161,8 +161,8 @@ public class VideoUtils {
     }
 
 
-    public static void createGif(String filePath,String gifPath){
-        List<String> list = ListUtil.of("ffmpeg","-ss","00:00:05","-t","3","-i",filePath,"-r","15","-s","206*116",gifPath);
+    public static void createGif(String filePath,String gifPath,boolean isPortrait){
+        List<String> list = ListUtil.of("ffmpeg","-ss","00:00:05","-t","3","-i",filePath,"-r","15","-s",isPortrait?"116*206":"206*116",gifPath);
         ProcessBuilder builder = new ProcessBuilder(list);
         try {
             Process process = builder.start();

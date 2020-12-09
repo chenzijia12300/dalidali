@@ -19,6 +19,10 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT coin_num FROM user WHERE id = #{id}")
     public int findCoinNumById(long id);
 
+
+    @Select("SELECT id FROM user WHERE username = #{username}")
+    public Long getIdByName(String username);
+
     @Update("UPDATE user SET coin_num=coin_num+#{num} WHERE id = #{id}")
     public int incrCoinNum(long id,int num);
 
