@@ -1,6 +1,7 @@
 package pers.czj.utils;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +71,26 @@ public class HttpUtils {
     }
 
 
-    public static String syncGetStr(String url, Map<String,String> headers){
+    public static String syncGetStr(String url, Map<String,String> headers,Map<String,String>paramMap){
+
+        if (StrUtil.isEmpty(url)){
+            return "";
+        }
+
+
+        if (CollectionUtil.isNotEmpty(paramMap)){
+            StringBuilder stringBuilder = new StringBuilder(url);
+            stringBuilder.append("?");
+            paramMap.forEach((key,value)->{
+                stringBuilder.append(key)
+                        .append("=")
+                        .append(value)
+                        .append("&");
+            });
+            url = stringBuilder.substring(0,stringBuilder.length()-1);
+        }
+
+
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .get();
@@ -79,6 +99,7 @@ public class HttpUtils {
                 builder.addHeader(key,value);
             });
         }
+        builder.addHeader("user-agent",DEFAULT_USER_AGENT);
         OkHttpClient client = new OkHttpClient();
         try {
             Response response = client.newCall(builder.build()).execute();
@@ -86,7 +107,9 @@ public class HttpUtils {
                 log.info("请求失败:{}\nmessage:{}",url,response.message());
                 return "";
             }
-            return response.body().string();
+            String bodyStr = response.body().string();
+            response.close();
+            return bodyStr;
         } catch (IOException e) {
             e.printStackTrace();
         }

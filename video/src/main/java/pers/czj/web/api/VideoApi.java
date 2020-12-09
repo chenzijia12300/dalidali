@@ -1,5 +1,7 @@
 package pers.czj.web.api;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
@@ -69,6 +71,9 @@ public class VideoApi {
     @GetMapping("/video/list")
     @ApiOperation("根据视频主键返回视频基本信息列表")
     public List listBasicVideoInfoByIds(@RequestParam Collection<Long> ids){
+        if (CollectionUtil.isEmpty(ids)){
+            return ListUtil.empty();
+        }
         List<VideoBasicOutputDto> videoBasicOutputDtos = videoService.listBasicInfoByIds(ids);
         return videoBasicOutputDtos;
     }

@@ -1,5 +1,6 @@
 package pers.czj.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,4 +18,13 @@ public interface VideoInfoCrawlerService {
      */
     public Map<String,String> getVideoBasicInfo(String url);
 
+
+    /**
+     * 通过访问B站API，获得频道下推荐视频列表
+     * @author czj
+     * @date 2020/12/7 15:09
+     * @param [rid]
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.String>>
+     */
+    public List<Map<String,String>> getChannelRecommendVideo(int rid);
 }

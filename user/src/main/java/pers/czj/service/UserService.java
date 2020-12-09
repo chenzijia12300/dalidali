@@ -17,7 +17,7 @@ public interface UserService extends IService<User> {
 
     public Long register(User user) throws UserException;
 
-    public boolean existsUserByName(String username);
+    public Long existsUserByName(String username);
 
     /**
      * @author czj

@@ -1,5 +1,7 @@
 package pers.czj.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -49,6 +51,9 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
     @Override
     public List<DynamicOutputDto> listDynamicByPageAndType(long uid, int startPage, int pageSize,boolean isAll) {
         List<Long> ids = followMapper.findByFollowId(uid);
+        if (CollectionUtil.isEmpty(ids)){
+            return ListUtil.empty();
+        }
         PageHelper.startPage(startPage,pageSize);
         return isAll?baseMapper.listNewDynamic(uid,ids):baseMapper.listNewVideoDynamic(uid,ids);
     }

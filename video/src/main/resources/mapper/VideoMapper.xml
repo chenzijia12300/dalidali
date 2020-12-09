@@ -9,7 +9,7 @@
 
     <!--视频基本字段-->
     <sql id="basicFieldSql">
-        video.id,video.uid,play_num,danmu_num,title,length,compress_cover as cover,username as upName,img as upImg,preview_url,praise_num,screen_type
+        video.id,video.uid,play_num,danmu_num,title,length,compress_cover as cover,username as upName,img as upImg,preview_url,praise_num,screen_type,c2.name as category_p_name, c1.name as category_name
     </sql>
     <!--热门视频基本字段-->
     <sql id="hotFieldSql">
@@ -49,14 +49,17 @@
         <include refid="basicFieldSql"/>
         FROM video  JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
         WHERE video.id >= t2.id AND user.id = video.uid
+
         ORDER BY video.id ASC LIMIT 2
     </select>
 
     <select id="listSlowRandomAll" resultType="pers.czj.dto.VideoBasicOutputDto">
         SELECT
         <include refid="basicFieldSql"/>
-        FROM video JOIN user
+        FROM video,category as c1,category as c2 JOIN user
         WHERE user.id = video.uid
+        AND c1.id = video.category_id
+        AND c2.id = video.category_p_id
         order by rand()
     </select>
 

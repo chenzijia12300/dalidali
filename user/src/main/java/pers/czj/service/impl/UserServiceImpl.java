@@ -60,9 +60,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public boolean existsUserByName(String username) {
-        Integer count = baseMapper.selectCount(new QueryWrapper<User>().eq("username",username));
-        return ObjectUtils.isEmpty(count)?false:true;
+    public Long existsUserByName(String username) {
+        Long id = baseMapper.getIdByName(username);
+        return ObjectUtils.isEmpty(id)?-1l:id;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public BasicUserInfoOutputDto findBasicUserInfoById(long userId, long followUserId) {
-        BasicUserInfoOutputDto dto = baseMapper.findBasicUserInfoById(userId);
+        BasicUserInfoOutputDto dto = baseMapper.findBasicUserInfoById(followUserId);
         dto.setFollow(ObjectUtils.isEmpty(followMapper.findFollowRelation(userId,followUserId))?false:true);
 
         return dto;
