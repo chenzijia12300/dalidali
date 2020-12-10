@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +44,11 @@ public class XmlUtils {
                 Danmu danmu = new Danmu();
                 danmu.setColor("#"+Integer.toHexString(Integer.parseInt(attributes[3])));
                 danmu.setLocation(attributes[1].equals("5")?DanmuLocationEnum.TOP:DanmuLocationEnum.STANDARD);
-                danmu.setContent(element.getText());
+                try {
+                    danmu.setContent(new String(element.getText().getBytes(),"UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 danmu.setVid(vid);
                 danmu.setShowSecond((long) (Double.parseDouble(attributes[0])*1000));
                 list.add(danmu);
