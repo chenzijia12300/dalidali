@@ -18,6 +18,11 @@ public class CommonResult<T> {
     public CommonResult() {
     }
 
+    public CommonResult(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
     private CommonResult(int code, T data, String message) {
         this.code = code;
         this.data = data;

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 @EnableSwagger2
 @EnableFeignClients
 @SpringBootApplication
-@EnableRedisHttpSession
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 604800)
 @EnableEurekaClient
 @MapperScan("pers.czj.mapper")
 public class UserApplication {
