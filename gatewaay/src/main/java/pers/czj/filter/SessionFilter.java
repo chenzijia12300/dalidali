@@ -1,5 +1,6 @@
 package pers.czj.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.netflix.util.Pair;
 import com.netflix.zuul.ZuulFilter;
@@ -11,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import pers.czj.common.CommonResult;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,8 @@ import java.util.Map;
 public class SessionFilter extends ZuulFilter {
 
     private static final Logger log = LoggerFactory.getLogger(SessionFilter.class);
+
+
 
     @Override
     public String filterType() {
@@ -44,6 +49,7 @@ public class SessionFilter extends ZuulFilter {
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
         HttpServletRequest request = ctx.getRequest();
+        HttpServletResponse response = ctx.getResponse();
         String requestUri = request.getRequestURI();
         if (requestUri.contains("/login")){
             log.info("进入登录接口");
@@ -52,9 +58,22 @@ public class SessionFilter extends ZuulFilter {
         HttpSession httpSession = request.getSession();
         Object o= httpSession.getAttribute("USER_ID");
         if (ObjectUtils.isEmpty(o)){
-            log.info("没有登录记录");
-            /*return null;*/
-            o = "1";
+            //过滤该请求，不对其进行路由操作
+            ctx.setSendZuulResponse(false);
+            response.setHeader("Content-type","application/json; charset=utf-8");
+            try {
+                response.getWriter().write(JSON.toJSONString(new CommonResult<>(403,"登录已过期，请重新登录~")));
+                ctx.setResponse(response);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            try {
+//                response.getWriter().write(JSON.toJSONString(new CommonResult<>(403,"登录已过期，请重新登录~")));
+//                return null;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            return null;
         }
         String userId = o.toString();
         log.info("userId:{}",userId);

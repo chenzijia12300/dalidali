@@ -37,7 +37,6 @@ public class DanmuCrawlerController {
     @GetMapping("/{cid}/{vid}")
     public Integer crawlerDanmuList(@PathVariable("cid") long cid,@PathVariable("vid") long vid){
         List<Danmu> webDanmuList = crawlerDanmuService.getWebDanmuList(cid, vid);
-        log.info("list:{}",webDanmuList);
         danmuService.saveBatch(webDanmuList);
         return webDanmuList.size();
     }

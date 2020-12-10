@@ -19,7 +19,7 @@ public interface UserInfoMapper {
     @Select("SELECT vid FROM video_log WHERE uid = #{uid} AND is_collection = 1 ORDER BY id DESC")
     public List<Long> findCollectVideoByUid(@Param("uid")long uid);
 
-    @Select("SELECT vid FROM video_log WHERE uid = #{uid} AND coin_num = 1 or coin_num = 2 ORDER BY id DESC")
+    @Select("SELECT vid FROM video_log WHERE uid = #{uid} AND (coin_num = 1 or coin_num = 2) ORDER BY id DESC")
     public List<Long> findHasCoinVideoByUid(@Param("uid")long uid);
 
     @Select("SELECT vid FROM video_log WHERE uid = #{uid} AND is_praise = 1 ORDER BY id DESC")

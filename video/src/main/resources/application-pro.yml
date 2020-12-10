@@ -56,3 +56,10 @@ video:
   default-tags: 测试,热门
 
 
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+
