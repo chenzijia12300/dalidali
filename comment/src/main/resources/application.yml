@@ -21,9 +21,6 @@
 #
 #mapper-plus:
 #  type-enums-package: pers.czj.constant
-spring:
-  profiles:
-    active: dev
 feign:
   hystrix:
     enabled: true

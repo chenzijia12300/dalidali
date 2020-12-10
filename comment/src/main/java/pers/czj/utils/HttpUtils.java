@@ -54,10 +54,8 @@ public class HttpUtils {
         OkHttpClient client = new OkHttpClient();
         try {
             Request request = builder.build();
-            log.info("request:{}", request);
             Response response = client.newCall(request).execute();
             if (response.header("Content-type").equals("text/xml")) {
-                log.info("header:{}", response.headers());
                 return new String(decompress(response.body().bytes()));
 //                ObjectInputStream inputStream = new ObjectInputStream(response.body().byteStream());
 //                String str = null;

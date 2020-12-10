@@ -35,12 +35,7 @@ public class CrawlerDanmuServiceImpl implements CrawlerDanmuService {
     public List<Danmu> getWebDanmuList(long cid, long vid) {
         String bodyStr = HttpUtils.syncGetStr(StrUtil.concat(false,GET_DANMU_XML_URL,String.valueOf(cid),DANMU_SUFFIX),null,null);
         List<Danmu> parse = XmlUtils.parse(bodyStr, vid);
-        log.info("list:{}",parse);
+        log.info("list:{}",parse.size());
         return parse;
-    }
-
-    public static void main(String[] args) {
-        CrawlerDanmuService danmuService = new CrawlerDanmuServiceImpl();
-        danmuService.getWebDanmuList(263558795,666);
     }
 }
