@@ -9,9 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>gatewaay</artifactId>
+    <version>1.0.0</version>
+    <description>哒理哒理的网关服务，对外接口</description>
+    <artifactId>gateway</artifactId>
+    <name>gateway</name>
 
-    <name>gatewaay</name>
+
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>
 

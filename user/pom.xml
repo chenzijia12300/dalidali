@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <version>1.0.0</version>
     <artifactId>user</artifactId>
-
+    <description>dalidali用户模块</description>
     <name>user</name>
     <!-- FIXME change it to the project's website -->
     <url>http://www.example.com</url>

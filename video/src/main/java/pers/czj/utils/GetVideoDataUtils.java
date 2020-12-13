@@ -89,12 +89,12 @@ public class GetVideoDataUtils {
     public Map<String,String> syncDownload(String title,String baseUrl) throws InterruptedException {
         final  CountDownLatch latch =  new CountDownLatch(3);
         HtmlUtils.Resource resource = HttpUtils.findVideoBaseUrl(baseUrl);
-
+        String uuid = UUID.randomUUID().toString();
         log.info("resource:{}",resource);
-        String videoPath = dirPath+title+videoSuffix;
-        String audioPath = dirPath+title+audioSuffix;
-        String productPath = dirPath+title+productSuffix;
-        String coverPath = dirPath+title+coverSuffix;
+        String videoPath = dirPath+uuid+videoSuffix;
+        String audioPath = dirPath+uuid+audioSuffix;
+        String productPath = dirPath+uuid+productSuffix;
+        String coverPath = dirPath+uuid+coverSuffix;
         Map<String,String> map = new HashMap<String, String>(){
             {
                 put(resource.getVideoUrl(),videoPath);
