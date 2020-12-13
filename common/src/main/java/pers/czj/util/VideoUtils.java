@@ -2,6 +2,7 @@ package pers.czj.util;
 
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.jsoup.Jsoup;
 import org.omg.PortableServer.POA;
@@ -25,8 +26,6 @@ import java.util.regex.Pattern;
  */
 public class VideoUtils {
 
-
-
     private static final Logger log = LoggerFactory.getLogger(VideoUtils.class);
 
     private static final String VIDEO_IMAGE_SUFFIX="%d.png";
@@ -34,6 +33,7 @@ public class VideoUtils {
     private static final String MERGE_IMAGE_SUFFIX="_preview.png";
 
     public static VideoBasicInfo getVideoInfo(String filePath, String videoName, VideoCoverTypeEnum type){
+        long startTime = System.currentTimeMillis();
         List<String> commandList = new ArrayList<>();
         commandList.add("ffprobe");
         commandList.add("-select_streams");
@@ -52,12 +52,11 @@ public class VideoUtils {
         ProcessBuilder processBuilder = new ProcessBuilder();
         try {
             processBuilder.command(commandList);
-            processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
-            process.waitFor();
             log.debug("{}视频处理中",filePath+videoName);
             //获得视频基本信息
             String str = handlerInputStream(process.getInputStream());
+            process.waitFor();
             JSONObject jsonObject = JSONObject.parseObject(str);
             VideoBasicInfo basicInfo = handlerJson(jsonObject);
 
@@ -86,6 +85,8 @@ public class VideoUtils {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }finally {
+            log.info("处理并返回所需视频信息共耗费{}秒",(System.currentTimeMillis()-startTime)/1000.0);
         }
         return null;
     }
@@ -119,20 +120,17 @@ public class VideoUtils {
 
 
     private static String handlerInputStream(InputStream inputStream){
-        try(
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
-        ){
+        try(BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))){
             StringBuilder stringBuilder = new StringBuilder();
-            int len = 0;
             String str = null;
             while((str=bufferedReader.readLine())!=null){
                 stringBuilder.append(str);
             }
             return stringBuilder.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("读取IO流出现异常:{}",e);
         }
-        return null;
+        return "";
     }
 
     public static void createFirstImage(String filePath,String imagePath){
@@ -197,17 +195,15 @@ public class VideoUtils {
         ProcessBuilder builder = new ProcessBuilder();
         try {
             builder.command(list);
-            builder.redirectErrorStream(true);
             log.info("尝试创建{}*{}分辨率的视频",width,height);
             Process process = builder.start();
-            InputStream inputStream = process.getInputStream();
-            handlerInputStream(inputStream);
             log.info("创建{}*{}分辨率的视频成功！",width,height);
             process.waitFor();
         }catch (IOException e){
-            e.printStackTrace();
+            log.info("创建{}*{}分辨率的视频失败，出现IO异常",width,height);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.info("中断生成失败操作");
+            FileUtil.del(destFileName);
         }
     }
 
@@ -236,10 +232,8 @@ public class VideoUtils {
         list.add(videoPath+coverName+VIDEO_IMAGE_SUFFIX);
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(list);
-        processBuilder.redirectErrorStream(true);
         try {
             Process process = processBuilder.start();
-            log.debug("输入流:{}",handlerInputStream(process.getInputStream()));
             process.waitFor();
             /*
                 合并图片,并删除本地图片
@@ -250,13 +244,13 @@ public class VideoUtils {
             list.add("-tile");
             list.add("10");
             list.add("-geometry");
+
+            //设置预览图的大小，后面需要修改。
             list.add("206x116");
             list.add(videoPath+coverName+MERGE_IMAGE_SUFFIX);
             ProcessBuilder builder = new ProcessBuilder();
-            builder.redirectErrorStream(true);
             builder.command(list);
             Process process1 = builder.start();
-            log.debug("合并输入流:{}",handlerInputStream(process1.getInputStream()));
             process1.waitFor();
             return coverName+MERGE_IMAGE_SUFFIX;
         } catch (IOException e) {
@@ -268,14 +262,30 @@ public class VideoUtils {
     }
 
     /**
-     * @author czj
      * 将通过爬虫下载获得的 视频资源，音频资源进行合并
+     * @author czj
      * @date 2020/8/21 11:30
      * @param [videoPath, audioPath, outputPath, countDownLatch]
      * @return void
      */
     public static void mergeResource(String videoPath, String audioPath, String outputPath){
-        CountDownLatch mergeLatch = new CountDownLatch(1);
+
+        if (!FileUtil.exist(videoPath)||!FileUtil.exist(audioPath)){
+            log.info("合并文件不存在");
+            return;
+        }
+
+
+        merge(videoPath,audioPath,outputPath);
+        boolean videoFlag = FileUtil.del(videoPath);
+        boolean audioFlag = FileUtil.del(audioPath);
+        log.info("删除视频:{}",videoFlag);
+        log.info("删除音频:{}",audioFlag);
+        log.info("合并成功:{} + {}",videoPath,audioPath);
+
+
+        //没必要使用new一个线程然后wait它
+/*        CountDownLatch mergeLatch = new CountDownLatch(1);
         new Thread(()->{
             merge(videoPath,audioPath,outputPath);
             boolean videoFlag = FileUtil.del(videoPath);
@@ -289,7 +299,7 @@ public class VideoUtils {
             mergeLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     /**
@@ -313,7 +323,6 @@ public class VideoUtils {
         try {
 
             builder.command(cutpic);
-            builder.redirectErrorStream(true);
             // 如果此属性为 true，则任何由通过此对象的 start() 方法启动的后续子进程生成的错误输出都将与标准输出合并，
             // 因此两者均可使用 Process.getInputStream() 方法读取。这使得关联错误消息和相应的输出变得更容易
             Process process = builder.start();
@@ -324,4 +333,15 @@ public class VideoUtils {
             log.error("{}合并出错，重新尝试",outputPath);
         }
     }
+
+
+    public static class DealProcessStream implements Runnable{
+
+        @Override
+        public void run() {
+
+        }
+    }
+
+
 }

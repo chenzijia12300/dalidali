@@ -76,9 +76,24 @@ public class ApkController {
     }
 
 
-    @RequestMapping(value = "/apk",method = {RequestMethod.PUT,RequestMethod.POST})
+/*    @RequestMapping(value = "/apk",method = {RequestMethod.PUT,RequestMethod.POST})
     public CommonResult addOrUpdateApkInfo(@RequestBody ApkInfo apkInfo){
         boolean flag = apkInfoService.saveOrUpdate(apkInfo,new UpdateWrapper<ApkInfo>().eq("version",apkInfo.getVersion()));
+        log.info("添加/更新版本:[{}]移动端信息成功！",apkInfo.getVersion());
+        return CommonResult.success(StrUtil.format("添加/更新版本:[{}]移动端信息成功！",apkInfo.getVersion()));
+    }*/
+
+
+    @RequestMapping(value = "/apk",method = {RequestMethod.PUT,RequestMethod.POST})
+    public CommonResult addOrUpdateApkInfo(@RequestParam String version,@RequestParam String description,@RequestParam MultipartFile file) throws IOException {
+
+
+        String fileName = version+".apk";
+        ApkInfo apkInfo = new ApkInfo();
+        apkInfo.setUrl(minIOUtils.uploadAPK(fileName,file.getInputStream()));
+        apkInfo.setVersion(version);
+        apkInfo.setDescription(description);
+        apkInfoService.saveOrUpdate(apkInfo,new UpdateWrapper<ApkInfo>().eq("version",apkInfo.getVersion()));
         log.info("添加/更新版本:[{}]移动端信息成功！",apkInfo.getVersion());
         return CommonResult.success(StrUtil.format("添加/更新版本:[{}]移动端信息成功！",apkInfo.getVersion()));
     }

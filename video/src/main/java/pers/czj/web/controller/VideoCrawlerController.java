@@ -156,6 +156,7 @@ public class VideoCrawlerController {
                                                 ){
 
         List<Map<String,String>> maps = videoInfoCrawlerService.getChannelRecommendVideo(rid);
+
         maps.forEach(map -> {
             String title = map.get("title");
             String videoUrl = map.get("videoUrl");
@@ -169,7 +170,10 @@ public class VideoCrawlerController {
             }
 
             try {
+                long startTime = System.currentTimeMillis();
                 handlerVideoResource(title,videoUrl,session,videoInfoMap);
+                crawlerSendService.send(createCrawlerLog(title,videoUrl,System.currentTimeMillis()-startTime));
+
             } catch (VideoException e) {
                 log.info("处理视频:{}--{}出错\n{}",title,videoUrl,e);
             }
@@ -214,6 +218,13 @@ public class VideoCrawlerController {
 
         // 上传视频资源到OSS服务器，返回视频于服务器的URL地址
         String videoServerUrl = uploadVideoToOss(httpSession,productUrl,userId,type);
+
+        if (StrUtil.isEmpty(videoServerUrl)){
+            log.error("上传文件到OSS服务器出现问题，提前退出");
+            FileUtil.del(productUrl);
+            FileUtil.del(coverUrl);
+            return;
+        }
 
 
         // 判断封面是否为空，上传封面图
@@ -262,18 +273,15 @@ public class VideoCrawlerController {
 
 
 
-    private MultipartFile convertMulti(String filePath){
+    private MultipartFile convertMulti(String filePath) throws FileNotFoundException {
         try {
             File file = new File(filePath);
             FileInputStream fileInputStream = new FileInputStream(file);
             MultipartFile multipartFile = new MockMultipartFile(file.getName(),file.getName(), ContentType.APPLICATION_OCTET_STREAM.toString(),fileInputStream);
             return multipartFile;
-        } catch (FileNotFoundException e) {
-            log.error("{}没有发现",filePath);
-            e.printStackTrace();
         } catch (IOException e) {
             log.error("{}转换成Multi失败",filePath);
-            e.printStackTrace();
+
         }
         return null;
     }
@@ -288,6 +296,8 @@ public class VideoCrawlerController {
                     convertMulti(localVideoUrl)).getMessage();
         } catch (VideoException e) {
             log.error("上传视频资源失败:{}",localVideoUrl);
+        } catch (FileNotFoundException e) {
+            log.error("没有发现文件:{}",localVideoUrl);
         }
         return null;
     }

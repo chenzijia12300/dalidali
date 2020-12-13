@@ -32,4 +32,9 @@ public class AppTest
     }
 
 
+    @Test
+    public void testFileUtil(){
+        System.out.println(FileUtil.exist("D:/temp/response1.json"));
+    }
+
 }
