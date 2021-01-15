@@ -54,3 +54,9 @@ dalidali是一个模仿哔哩哔哩(bilibili)视频网站的后端系统，在�
 ![页面截图2](https://github.com/chenzijia12300/dalidali/blob/master/2.png)
 
 ![页面截图3](https://github.com/chenzijia12300/dalidali/blob/master/3.png)
+
+
+![页面动图1](https://github.com/chenzijia12300/dalidali/blob/master/2021-01-16-00-04-00.gif)
+
+
+![页面动图2](https://github.com/chenzijia12300/dalidali/blob/master/2021-01-16-00-06-16.gif)
