@@ -46,3 +46,11 @@ dalidali是一个模仿哔哩哔哩(bilibili)视频网站的后端系统，在�
 |RabbitMQ|消息队列|
 |MySQL|关系型数据库管理系统|
 |lombok|实用工具|
+
+### 页面截图
+
+![页面截图1](https://github.com/chenzijia12300/dalidali/blob/master/1.png)
+
+![页面截图2](https://github.com/chenzijia12300/dalidali/blob/master/2.png)
+
+![页面截图3](https://github.com/chenzijia12300/dalidali/blob/master/3.png)
