@@ -28,6 +28,7 @@ import javax.validation.constraints.Min;
 @RestController
 @Api(tags = "用户基本接口,web端/移动端关注这个接口就可以了")
 @Validated
+@CrossOrigin
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);

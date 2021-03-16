@@ -81,7 +81,7 @@ public class HttpUtils {
         Inflater inflater = new Inflater(true);
         inflater.reset();
         inflater.setInput(data);
-        try(ByteArrayOutputStream o = new ByteArrayOutputStream(data.length);){
+        try(ByteArrayOutputStream o = new ByteArrayOutputStream(data.length)){
             byte[] buf = new byte[1024];
             while (!inflater.finished()) {
                 int i = inflater.inflate(buf);
