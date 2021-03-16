@@ -7,7 +7,7 @@
         <module>common</module>
         <module>user</module>
         <module>video</module>
-        <module>gatewaay</module>
+        <module>gateway</module>
         <module>comment</module>
         <module>admin</module>
     </modules>

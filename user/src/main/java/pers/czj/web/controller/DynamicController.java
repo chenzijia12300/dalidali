@@ -29,6 +29,7 @@ import java.util.Map;
 /**
  * 创建在 2020/8/9 22:43
  */
+@CrossOrigin
 @RestController
 @Api(tags = "个人动态接口")
 public class DynamicController {

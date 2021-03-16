@@ -18,6 +18,7 @@ import pers.czj.service.UserCollectionLogService;
 /**
  * 创建在 2020/7/20 22:43
  */
+@CrossOrigin
 @RestController
 @Api(tags = "用户收藏接口",hidden = true)
 public class UserCollectionLogController {

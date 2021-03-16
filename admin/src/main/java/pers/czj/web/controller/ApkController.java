@@ -7,6 +7,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.spi.LoggerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ import java.io.IOException;
 public class ApkController {
 
     private static final Logger log = LoggerFactory.getLogger(ApkController.class);
+
+
 
     private String dir;
 
@@ -102,7 +106,14 @@ public class ApkController {
     @ApiOperation("获得移动端最新版本信息")
     public CommonResult findNewestApkInfo(){
         ApkInfo apkInfo = apkInfoService.getOne(new QueryWrapper<ApkInfo>().orderByDesc("create_time").last("LIMIT 1"));
+        log.debug("测试DEBUG");
         return CommonResult.success(apkInfo);
+    }
+
+
+    @GetMapping("/apk/{level}")
+    public CommonResult updateLogLevel(@PathVariable("level") String level){
+        LoggerContext context = LogManager.getContext(false);
     }
 
 }

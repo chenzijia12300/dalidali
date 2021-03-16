@@ -12,6 +12,7 @@ import pers.czj.service.UserInfoService;
 /**
  * 创建在 2020/12/2 11:21
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/user/info")
 @Api(tags = "用户个人信息接口")

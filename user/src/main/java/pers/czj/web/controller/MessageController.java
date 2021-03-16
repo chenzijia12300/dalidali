@@ -19,6 +19,7 @@ import java.util.List;
 /**
  * 创建在 2020/8/10 21:38
  */
+@CrossOrigin
 @RestController
 @Api(tags = "消息接口")
 public class MessageController {

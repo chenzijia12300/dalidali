@@ -4,9 +4,12 @@
 [![](https://img.shields.io/badge/vue-dalidali-前端项目-green.svg)](https://github.com/chenzijia12300/vue-dalidali)
 [![](https://img.shields.io/badge/个人博客-学习笔记-green.svg)](https://chenzijia12300.github.io)
 ![](https://img.shields.io/badge/QQ号-771240658-green.svg)
+
 ### 项目介绍
 dalidali是一个模仿哔哩哔哩(bilibili)视频网站的后端系统，在技术上选择了Spring Boot,Spring Cloud,Mybatis Plus,Docker,RabbitMQ,Elasticsearch等基本技术。
 
+### 关联项目
+[Android](https://github.com/brokes6/D-BiliBili)
 ### 项目结构图
 ![dalidali项目结构图](https://github.com/chenzijia12300/dalidali/blob/master/%E5%93%92%E7%90%86%E5%93%92%E7%90%86%E7%BB%93%E6%9E%84%E5%9B%BE.jpg)
 
