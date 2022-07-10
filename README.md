@@ -1,8 +1,8 @@
-# dalidali（开发中）
+# dalidali（🕊了）
 
 [![](https://img.shields.io/badge/dalidali-后端项目-green.svg)](https://github.com/chenzijia12300/dalidali)
 [![](https://img.shields.io/badge/vue-dalidali-前端项目-green.svg)](https://github.com/chenzijia12300/vue-dalidali)
-[![](https://img.shields.io/badge/个人博客-学习笔记-green.svg)](https://chenzijia12300.github.io)
+[![](https://img.shields.io/badge/个人博客-学习笔记-green.svg)](http://blog.kingdreamstudio.com/)
 ![](https://img.shields.io/badge/QQ号-771240658-green.svg)
 
 ### 项目介绍
@@ -63,3 +63,10 @@ dalidali是一个模仿哔哩哔哩(bilibili)视频网站的后端系统，在�
 
 
 ![页面动图2](https://github.com/chenzijia12300/dalidali/blob/master/2021-01-16-00-06-16.gif)
+
+
+### 项目后续
+正在被社会毒打，暂时没时间更新，后面有可能加一些新的组件把，例如
+- Prometheus埋点？
+- 从Maven改为Gradle？
+- 优化一下文档？
