@@ -1,7 +1,5 @@
 package pers.czj.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
@@ -41,28 +39,28 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id, long userId, int pageNum, int pageSize, OrderFieldEnum orderFieldEnum) {
 
-        log.debug("pageNum:{}\npageSize:{},id:{}",pageNum,pageSize,id);
-        PageHelper.startPage(pageNum,pageSize);
-        List<CommentOutputDto> dtos = baseMapper.listComment(nameEnum.getName(),id,userId,orderFieldEnum.getField());
-        PageHelper.startPage(1,2);
-        for (CommentOutputDto dto:dtos){
-            dto.setReplyList(replyMapper.listReply(nameEnum.getName(),dto.getId(),userId));
+        log.debug("pageNum:{}\npageSize:{},id:{}", pageNum, pageSize, id);
+        PageHelper.startPage(pageNum, pageSize);
+        List<CommentOutputDto> dtos = baseMapper.listComment(nameEnum.getName(), id, userId, orderFieldEnum.getField());
+        PageHelper.startPage(1, 2);
+        for (CommentOutputDto dto : dtos) {
+            dto.setReplyList(replyMapper.listReply(nameEnum.getName(), dto.getId(), userId));
         }
         return dtos;
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public boolean dynamicHandlerLike(TableNameEnum tableNameEnum, long id, long userId) {
-        Long logId = commentLogMapper.select(tableNameEnum.getName(),id,userId);
-        if (ObjectUtils.isEmpty(logId)||logId==0){
-            log.info("用户{}对评论{}点了个赞",userId,id);
-            baseMapper.incrPraiseNum(tableNameEnum.getName(),id,1);
-            CommentLog commentLog = new CommentLog(tableNameEnum.getName(),id,userId);
-            commentLogMapper.addLog(tableNameEnum.getName(),commentLog);
-        }else {
-            commentLogMapper.deleteLog(tableNameEnum.getName(),logId);
-            log.info("用户{}取消对评论{}的点赞",userId,id);
+        Long logId = commentLogMapper.select(tableNameEnum.getName(), id, userId);
+        if (ObjectUtils.isEmpty(logId) || logId == 0) {
+            log.info("用户{}对评论{}点了个赞", userId, id);
+            baseMapper.incrPraiseNum(tableNameEnum.getName(), id, 1);
+            CommentLog commentLog = new CommentLog(tableNameEnum.getName(), id, userId);
+            commentLogMapper.addLog(tableNameEnum.getName(), commentLog);
+        } else {
+            commentLogMapper.deleteLog(tableNameEnum.getName(), logId);
+            log.info("用户{}取消对评论{}的点赞", userId, id);
         }
         return true;
     }

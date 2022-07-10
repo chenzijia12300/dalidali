@@ -1,6 +1,5 @@
 package pers.czj.service.impl;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +15,7 @@ import java.util.List;
  * 创建在 2020/7/26 13:48
  */
 @Service
-public class VideoRecommendServiceImpl extends ServiceImpl<VideoRecommendMapper, VideoRecommend>implements VideoRecommendService {
+public class VideoRecommendServiceImpl extends ServiceImpl<VideoRecommendMapper, VideoRecommend> implements VideoRecommendService {
 
     @Value("${recommend-page-size}")
     private int pageSize;
@@ -24,7 +23,7 @@ public class VideoRecommendServiceImpl extends ServiceImpl<VideoRecommendMapper,
 
     @Override
     public List<Long> findRecommendIdByLocation(int pageNum, RecommendLocation location) {
-        PageHelper.startPage(pageNum,pageSize);
+        PageHelper.startPage(pageNum, pageSize);
         List<Long> ids = baseMapper.findRecommendIdByLocation(location);
         return ids;
     }

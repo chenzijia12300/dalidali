@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum ResultCode {
 
-    SUCCESS(200,"操作成功！"),FAILED(500,"服务器出现故障，操作失败！");
+    SUCCESS(200, "操作成功！"), FAILED(500, "服务器出现故障，操作失败！");
 
     private int code;
 

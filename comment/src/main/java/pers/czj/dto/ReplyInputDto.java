@@ -26,9 +26,9 @@ public class ReplyInputDto {
 
     private TableNameEnum tableNameEnum;
 
-    public Reply convert(){
+    public Reply convert() {
         Reply reply = new Reply();
-        BeanUtils.copyProperties(this,reply);
+        BeanUtils.copyProperties(this, reply);
         reply.setTableName(tableNameEnum.getName());
         return reply;
     }

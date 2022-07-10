@@ -11,9 +11,9 @@ import org.hibernate.validator.constraints.Length;
 @ApiModel
 public class LoginUserInputDto {
 
-    @Length(min = 6,max = 12)
+    @Length(min = 6, max = 12)
     private String account;
 
-    @Length(min = 6,max = 12)
+    @Length(min = 6, max = 12)
     private String password;
 }

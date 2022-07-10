@@ -13,17 +13,18 @@ public interface MessageService extends IService<Message> {
 
 
     /**
+     * @param [uid, type, pageNum, pageSize]
+     * @return java.util.List<pers.czj.entity.Message>
      * @author czj
      * 查询对应type的消息列表
      * @date 2020/8/10 21:46
-     * @param [uid, type, pageNum, pageSize]
-     * @return java.util.List<pers.czj.entity.Message>
      */
-    public List<Message> listMessageByType(long uid, ActionType type,int pageNum,int pageSize);
+    public List<Message> listMessageByType(long uid, ActionType type, int pageNum, int pageSize);
 
 
     /**
      * 获得用户未读动态的总数
+     *
      * @param uid
      * @return
      */

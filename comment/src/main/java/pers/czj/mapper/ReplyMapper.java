@@ -12,10 +12,10 @@ import java.util.List;
 public interface ReplyMapper extends BaseMapper<Reply> {
 
     /**
-     * @author czj
-     * @date 2020/7/15 18:37
      * @param [tableName, id, userId]
      * @return java.util.List<pers.czj.dto.ReplyOutputDto>
+     * @author czj
+     * @date 2020/7/15 18:37
      */
-    public List<ReplyOutputDto> listReply(String tableName,long cid,long userId);
+    public List<ReplyOutputDto> listReply(String tableName, long cid, long userId);
 }

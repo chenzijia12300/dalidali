@@ -1,7 +1,6 @@
 package pers.czj.config;
 
 import cn.hutool.core.util.StrUtil;
-import feign.Body;
 import feign.Response;
 import feign.Util;
 import feign.codec.ErrorDecoder;
@@ -29,14 +28,14 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
     @Override
     public Exception decode(String s, Response response) {
-        log.info("s:{},response:{}",s,response);
+        log.info("s:{},response:{}", s, response);
         Response.Body body = response.body();
         String bodyStr = null;
-        if (!ObjectUtils.isEmpty(body)){
+        if (!ObjectUtils.isEmpty(body)) {
             try {
                 bodyStr = Util.toString(body.asReader(Charset.forName("UTF-8")));
-                log.info("bodyStr:{}",bodyStr);
-                if (StrUtil.isNotBlank(bodyStr)){
+                log.info("bodyStr:{}", bodyStr);
+                if (StrUtil.isNotBlank(bodyStr)) {
                     // DO SOME THING
                 }
 

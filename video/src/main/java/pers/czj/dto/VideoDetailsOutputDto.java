@@ -2,7 +2,6 @@ package pers.czj.dto;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-import pers.czj.constant.VideoPublishStateEnum;
 import pers.czj.constant.VideoResolutionEnum;
 import pers.czj.constant.VideoScreenTypeEnum;
 import pers.czj.entity.VideoLog;
@@ -99,7 +98,7 @@ public class VideoDetailsOutputDto {
 
 
     /**
-     *  视频的顶级频道（冗余）
+     * 视频的顶级频道（冗余）
      */
     private String categoryPName;
 
@@ -132,8 +131,6 @@ public class VideoDetailsOutputDto {
      * 标签字符串（用,分割）
      */
     private String tags;
-
-
 
 
     /**

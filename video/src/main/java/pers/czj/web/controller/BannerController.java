@@ -21,7 +21,7 @@ public class BannerController {
     }
 
     @GetMapping("/banner/list")
-    public CommonResult findBanner(){
+    public CommonResult findBanner() {
         return CommonResult.success(bannerUtils.getWebBanner());
     }
 

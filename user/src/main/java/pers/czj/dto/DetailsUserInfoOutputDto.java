@@ -14,7 +14,6 @@ public class DetailsUserInfoOutputDto {
     private long id;
 
 
-
     /**
      * 用户名字
      */

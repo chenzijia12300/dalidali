@@ -11,20 +11,22 @@ public interface VideoInfoCrawlerService {
 
     /**
      * 通过访问B站API,获取视频的基本信息
+     *
+     * @param url 视频路径
+     * @return java.util.Map<java.lang.String, java.lang.String>
      * @author czj
      * @date 2020/12/2 20:20
-     * @param url 视频路径
-     * @return java.util.Map<java.lang.String,java.lang.String>
      */
-    public Map<String,String> getVideoBasicInfo(String url);
+    public Map<String, String> getVideoBasicInfo(String url);
 
 
     /**
      * 通过访问B站API，获得频道下推荐视频列表
+     *
+     * @param [rid]
+     * @return java.util.List<java.util.Map < java.lang.String, java.lang.String>>
      * @author czj
      * @date 2020/12/7 15:09
-     * @param [rid]
-     * @return java.util.List<java.util.Map<java.lang.String,java.lang.String>>
      */
-    public List<Map<String,String>> getChannelRecommendVideo(int rid);
+    public List<Map<String, String>> getChannelRecommendVideo(int rid);
 }

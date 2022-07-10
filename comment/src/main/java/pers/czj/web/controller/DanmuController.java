@@ -39,37 +39,35 @@ public class DanmuController {
 
     @PostMapping("/danmu")
     @ApiOperation("添加弹幕")
-    public CommonResult addDanmu(@RequestParam long uid,@RequestBody Danmu danmu){
+    public CommonResult addDanmu(@RequestParam long uid, @RequestBody Danmu danmu) {
         danmu.setUid(uid);
         danmuService.save(danmu);
         /*
             优化点：先写进消息队列，然后消息队列在写进数据库，【削峰】
          */
-        videoFeignClient.incrDanmuNum(new NumberInputDto(danmu.getVid(),1));
+        videoFeignClient.incrDanmuNum(new NumberInputDto(danmu.getVid(), 1));
         return CommonResult.success("添加弹幕成功！");
     }
 
     @GetMapping("/danmu/{vid}/{second}")
     @ApiOperation("返回第【second】秒到【second+10】的弹幕列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "vid",value = "视频主键",paramType = "path"),
-            @ApiImplicitParam(name = "second",value = "秒数",paramType = "path")
+            @ApiImplicitParam(name = "vid", value = "视频主键", paramType = "path"),
+            @ApiImplicitParam(name = "second", value = "秒数", paramType = "path")
     })
-    public CommonResult listDanmu(@PathVariable("vid") long vid,@PathVariable("second")long second){
-        List<Danmu> danmus = danmuService.listDanmu(vid,second);
-        log.debug("弹幕列表:{}",danmus);
+    public CommonResult listDanmu(@PathVariable("vid") long vid, @PathVariable("second") long second) {
+        List<Danmu> danmus = danmuService.listDanmu(vid, second);
+        log.debug("弹幕列表:{}", danmus);
         return CommonResult.success(danmus);
     }
 
 
     @DeleteMapping("/danmu")
-    public CommonResult delDanmu(@RequestParam long uid, @RequestBody Map<String,Object> map){
+    public CommonResult delDanmu(@RequestParam long uid, @RequestBody Map<String, Object> map) {
         Integer id = (Integer) map.get("did");
         danmuService.removeById(id);
         return CommonResult.success("删除弹幕成功！");
     }
-
-
 
 
 }

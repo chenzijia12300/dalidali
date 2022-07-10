@@ -28,16 +28,16 @@ public class PlayNumTabServiceImpl extends ServiceImpl<PlayNumTabMapper, PlayNum
         ZSetOperations.TypedTuple typedTuple = null;
         PlayNumTab playNumTab = null;
         int len = 0;
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             typedTuple = iterator.next();
-            playNumTab = new PlayNumTab(Long.parseLong(typedTuple.getValue().toString()),typedTuple.getScore().longValue());
+            playNumTab = new PlayNumTab(Long.parseLong(typedTuple.getValue().toString()), typedTuple.getScore().longValue());
             playNumTabs.add(playNumTab);
-            if (playNumTabs.size()==100){
+            if (playNumTabs.size() == 100) {
                 saveBatch(playNumTabs);
                 playNumTabs.clear();
             }
         }
-        if (!CollectionUtils.isEmpty(playNumTabs)){
+        if (!CollectionUtils.isEmpty(playNumTabs)) {
             saveBatch(playNumTabs);
         }
         return true;

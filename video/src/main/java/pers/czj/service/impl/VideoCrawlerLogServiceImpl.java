@@ -17,8 +17,8 @@ public class VideoCrawlerLogServiceImpl extends ServiceImpl<VideoCrawlerLogMappe
     @Override
     public boolean exists(String url) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("url",url);
+        wrapper.eq("url", url);
         Integer row = baseMapper.selectCount(wrapper);
-        return row>=1?true:false;
+        return row >= 1 ? true : false;
     }
 }

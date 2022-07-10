@@ -17,12 +17,12 @@ public class URLConfig implements WebMvcConfigurer {
 
 
     public URLConfig(@Value("${apk.path-mapping}") String apkPathMapping) {
-        this.dir = System.getProperty("user.dir")+apkPathMapping;
+        this.dir = System.getProperty("user.dir") + apkPathMapping;
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(apkPathMapping+"**").addResourceLocations("file:"+dir);
+        registry.addResourceHandler(apkPathMapping + "**").addResourceLocations("file:" + dir);
     }
 
 }

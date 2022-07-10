@@ -2,15 +2,12 @@ package pers.czj.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import pers.czj.dto.DynamicOutputDto;
 import pers.czj.entity.Dynamic;
 import pers.czj.entity.DynamicLog;
@@ -28,7 +25,7 @@ import java.util.List;
  * 创建在 2020/8/9 22:40
  */
 @Service("POST")
-public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implements DynamicService, DynamicPraiseService {
+public class DynamicServiceImpl extends ServiceImpl<DynamicMapper, Dynamic> implements DynamicService, DynamicPraiseService {
 
     public static final int POSITIVE_NUM = 1;
 
@@ -49,18 +46,18 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
     }
 
     @Override
-    public List<DynamicOutputDto> listDynamicByPageAndType(long uid, int startPage, int pageSize,boolean isAll) {
+    public List<DynamicOutputDto> listDynamicByPageAndType(long uid, int startPage, int pageSize, boolean isAll) {
         List<Long> ids = followMapper.findByFollowId(uid);
-        if (CollectionUtil.isEmpty(ids)){
+        if (CollectionUtil.isEmpty(ids)) {
             return ListUtil.empty();
         }
-        PageHelper.startPage(startPage,pageSize);
-        return isAll?baseMapper.listNewDynamic(uid,ids):baseMapper.listNewVideoDynamic(uid,ids);
+        PageHelper.startPage(startPage, pageSize);
+        return isAll ? baseMapper.listNewDynamic(uid, ids) : baseMapper.listNewVideoDynamic(uid, ids);
     }
 
     @Override
     public DynamicOutputDto findDetailsById(long uid, long did) {
-        return baseMapper.findDetailsById(uid,did);
+        return baseMapper.findDetailsById(uid, did);
     }
 
     @Override
@@ -68,14 +65,14 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
         Date lastReadTime = userMapper.findLastReadDynamicTime(uid);
         List<Long> ids = followMapper.findByFollowId(uid);
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.in("uid",ids);
-        queryWrapper.gt("create_time",lastReadTime);
+        queryWrapper.in("uid", ids);
+        queryWrapper.gt("create_time", lastReadTime);
         return count(queryWrapper);
     }
 
     @Override
     public int incrCommentNum(long did, int num) {
-        return baseMapper.incrCommentNum(did,num);
+        return baseMapper.incrCommentNum(did, num);
     }
 
 
@@ -83,15 +80,15 @@ public class DynamicServiceImpl extends ServiceImpl<DynamicMapper,Dynamic>implem
     public boolean handlerPraise(long userId, Dynamic dynamic) {
         long did = dynamic.getId();
         DynamicLog dynamicLog = logService.getOne(new QueryWrapper<DynamicLog>()
-                .eq("did",did)
-                .eq("uid",userId));
-        if (ObjectUtil.isNull(dynamicLog)){
-            baseMapper.incrPraiseNum(did,POSITIVE_NUM);
+                .eq("did", did)
+                .eq("uid", userId));
+        if (ObjectUtil.isNull(dynamicLog)) {
+            baseMapper.incrPraiseNum(did, POSITIVE_NUM);
             dynamicLog = new DynamicLog().setDid(did).setUid(userId).setPraise(true);
             logService.save(dynamicLog);
-        }else{
+        } else {
             boolean isPraise = dynamicLog.isPraise();
-            baseMapper.incrPraiseNum(dynamic.getId(),isPraise?NEGATIVE_NUM:POSITIVE_NUM);
+            baseMapper.incrPraiseNum(dynamic.getId(), isPraise ? NEGATIVE_NUM : POSITIVE_NUM);
             dynamicLog.setPraise(!isPraise);
             logService.updateById(dynamicLog);
         }

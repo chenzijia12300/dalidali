@@ -26,6 +26,6 @@ public class CrawlerReceiverServiceImpl implements CrawlerReceiverService {
     @Override
     public void saveCrawlerLog(VideoCrawlerLog crawlerLog) {
         boolean flag = crawlerLogService.save(crawlerLog);
-        log.info("接受者:{}:{}",crawlerLog,flag);
+        log.info("接受者:{}:{}", crawlerLog, flag);
     }
 }

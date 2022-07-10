@@ -40,7 +40,7 @@ public class IPUtils {
                 }
             }
         } catch (Exception e) {
-            ipAddress="";
+            ipAddress = "";
         }
         // ipAddress = this.getRequest().getRemoteAddr();
 

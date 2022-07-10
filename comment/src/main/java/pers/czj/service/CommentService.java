@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface CommentService extends IService<Comment> {
 
-/*    *//**
+    /*    *//**
      * @author czj
      * 根据动态表名添加
      * @date 2020/7/19 11:13
@@ -23,21 +23,21 @@ public interface CommentService extends IService<Comment> {
     public boolean save(TableNameEnum tableNameEnum,Comment entity);*/
 
     /**
+     * @param [nameEnum, id]
+     * @return pers.czj.dto.CommentOutputDto
      * @author czj
      * 根据表名和对应主键查询评论列表
      * @date 2020/7/15 17:44
-     * @param [nameEnum, id]
-     * @return pers.czj.dto.CommentOutputDto
      */
     public List<CommentOutputDto> listComment(TableNameEnum nameEnum, long id, long userId, int pageNum, int pageSize, OrderFieldEnum orderFieldEnum);
 
 
     /**
+     * @param [tableNameEnum, id, userId]
+     * @return boolean
      * @author czj
      * 动态处理点赞情况
      * @date 2020/7/18 23:38
-     * @param [tableNameEnum, id, userId]
-     * @return boolean
      */
-    public boolean dynamicHandlerLike(TableNameEnum tableNameEnum,long id,long userId);
+    public boolean dynamicHandlerLike(TableNameEnum tableNameEnum, long id, long userId);
 }

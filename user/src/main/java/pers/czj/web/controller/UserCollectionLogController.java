@@ -1,18 +1,16 @@
 package pers.czj.web.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import pers.czj.common.CommonResult;
 import pers.czj.dto.UserCollectionLogInputDto;
-import pers.czj.entity.UserCollectionLog;
-import pers.czj.exception.UserException;
 import pers.czj.service.UserCollectionLogService;
 
 /**
@@ -20,7 +18,7 @@ import pers.czj.service.UserCollectionLogService;
  */
 @CrossOrigin
 @RestController
-@Api(tags = "用户收藏接口",hidden = true)
+@Api(tags = "用户收藏接口", hidden = true)
 public class UserCollectionLogController {
 
     private static final Logger log = LoggerFactory.getLogger(UserCollectionLogController.class);
@@ -55,7 +53,7 @@ public class UserCollectionLogController {
     }*/
 
     @PostMapping("/collection/dynamic")
-    public CommonResult dynamicCollection(@RequestBody @Validated UserCollectionLogInputDto dto){
-        return CommonResult.success(logService.dynamicLog(dto.getUid(),dto.getVid(),dto.isAdd()));
+    public CommonResult dynamicCollection(@RequestBody @Validated UserCollectionLogInputDto dto) {
+        return CommonResult.success(logService.dynamicLog(dto.getUid(), dto.getVid(), dto.isAdd()));
     }
 }

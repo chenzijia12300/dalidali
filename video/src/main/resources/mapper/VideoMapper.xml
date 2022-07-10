@@ -21,25 +21,20 @@
     </sql>
 
 
-
-
-
-
-
     <!--SELECT-->
 
     <select id="findDetailsById" parameterType="long" resultType="pers.czj.dto.VideoDetailsOutputDto">
         SELECT
-            <include refid="detailsFieldSql"/>
-            FROM video,category as c1,category as c2 WHERE video.id = #{id}
-            AND c1.id = video.category_id
-            AND c2.id = video.category_p_id
+        <include refid="detailsFieldSql"/>
+        FROM video,category as c1,category as c2 WHERE video.id = #{id}
+        AND c1.id = video.category_id
+        AND c2.id = video.category_p_id
     </select>
 
     <select id="listRandomByCategoryPId" parameterType="long" resultType="pers.czj.dto.VideoBasicOutputDto">
         SELECT
         <include refid="basicFieldSql"/>
-        FROM video  JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
+        FROM video JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
         WHERE category_p_id = #{id} AND video.id >= t2.id AND user.id = video.uid
         ORDER BY video.id ASC
     </select>
@@ -47,7 +42,7 @@
     <select id="listRandomAll" resultType="pers.czj.dto.VideoBasicOutputDto">
         SELECT
         <include refid="basicFieldSql"/>
-        FROM video  JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
+        FROM video JOIN (SELECT ROUND(RAND() * (SELECT MAX(id) FROM video)) AS id) AS t2 JOIN user
         WHERE video.id >= t2.id AND user.id = video.uid
 
         ORDER BY video.id ASC LIMIT 2
@@ -64,16 +59,16 @@
     </select>
 
 
-<!--    <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">
-        SELECT
-        <include refid="basicFieldSql"/>
-        FROM video,user where video.uid = user.id
-        and
-        video.id in
-        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
-            #{item}
-        </foreach>
-    </select>-->
+    <!--    <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">
+            SELECT
+            <include refid="basicFieldSql"/>
+            FROM video,user where video.uid = user.id
+            and
+            video.id in
+            <foreach collection="ids" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </select>-->
 
 
     <select id="listBasicInfoByIds" resultType="pers.czj.dto.VideoBasicOutputDto">
@@ -109,7 +104,6 @@
         </foreach>
         ORDER BY video.id DESC
     </select>
-
 
 
 </mapper>

@@ -8,7 +8,7 @@ import pers.czj.service.CommentLogService;
 /**
  * 创建在 2020/7/19 16:59
  */
-public class CommentLogServiceImpl extends ServiceImpl<CommentLogMapper, CommentLog>implements CommentLogService {
+public class CommentLogServiceImpl extends ServiceImpl<CommentLogMapper, CommentLog> implements CommentLogService {
 
 
 }

@@ -5,5 +5,5 @@ package pers.czj.constant;
  */
 public enum VideoCoverTypeEnum {
 
-    EMPTY,STANDARD,GIF;
+    EMPTY, STANDARD, GIF;
 }

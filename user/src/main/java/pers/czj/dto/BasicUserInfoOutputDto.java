@@ -9,13 +9,11 @@ import lombok.Data;
 public class BasicUserInfoOutputDto {
 
 
-
     private String username;
 
     private String img;
 
     private boolean isFollow;
-
 
 
 }

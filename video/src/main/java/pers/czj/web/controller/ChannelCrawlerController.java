@@ -28,7 +28,7 @@ public class ChannelCrawlerController {
 
 
     @GetMapping("/channel")
-    public CommonResult crawlerChannel(){
+    public CommonResult crawlerChannel() {
         channelDataUtils.addChannelsInfoByWeb();
         return CommonResult.success();
     }

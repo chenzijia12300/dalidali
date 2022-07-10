@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum OrderFieldEnum {
 
-    PRAISE("praise_num"),CREATE_TIME("create_time");
+    PRAISE("praise_num"), CREATE_TIME("create_time");
     String field;
 
     OrderFieldEnum(String field) {

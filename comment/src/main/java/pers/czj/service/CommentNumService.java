@@ -7,10 +7,11 @@ public interface CommentNumService {
 
     /**
      * 自增评论数
-     * @author czj
-     * @date 2020/11/1 14:27
+     *
      * @param [pid, num]
      * @return boolean
+     * @author czj
+     * @date 2020/11/1 14:27
      */
-    public boolean incrCommentNum(long pid,int num);
+    public boolean incrCommentNum(long pid, int num);
 }

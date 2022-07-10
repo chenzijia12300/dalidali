@@ -32,8 +32,8 @@ public class TimePreFilter extends ZuulFilter {
 
     @Override
     public Object run() throws ZuulException {
-        long currentTime  = System.currentTimeMillis();
-        RequestContext.getCurrentContext().set(startTime,currentTime);
+        long currentTime = System.currentTimeMillis();
+        RequestContext.getCurrentContext().set(startTime, currentTime);
         return null;
     }
 }

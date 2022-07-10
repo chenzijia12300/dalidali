@@ -42,5 +42,5 @@ public class Message {
      */
     private Date createTime;
 
-    
+
 }

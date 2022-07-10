@@ -4,7 +4,6 @@ package pers.czj.config;
 import io.minio.MinioClient;
 import io.minio.errors.InvalidEndpointException;
 import io.minio.errors.InvalidPortException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +25,7 @@ public class MinIOConfig {
 
     @Bean
     public MinioClient minioClient() throws InvalidPortException, InvalidEndpointException {
-        MinioClient minioClient = new MinioClient(url,accessKey,secretKey);
+        MinioClient minioClient = new MinioClient(url, accessKey, secretKey);
         return minioClient;
     }
 

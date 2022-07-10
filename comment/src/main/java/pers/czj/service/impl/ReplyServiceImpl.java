@@ -18,9 +18,9 @@ import java.util.List;
 public class ReplyServiceImpl extends ServiceImpl<ReplyMapper, Reply> implements ReplyService {
 
     @Override
-    public List<ReplyOutputDto> listReply(TableNameEnum nameEnum, long id,long userId,int pageNum,int pageSize) {
-        PageHelper.startPage(pageNum,pageSize);
-        List<ReplyOutputDto> dtos = baseMapper.listReply(nameEnum.getName(),id,userId);
+    public List<ReplyOutputDto> listReply(TableNameEnum nameEnum, long id, long userId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ReplyOutputDto> dtos = baseMapper.listReply(nameEnum.getName(), id, userId);
         return dtos;
     }
 }

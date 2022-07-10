@@ -33,7 +33,7 @@ zuul:
       custom-sensitive-headers: true
   sensitive-headers: "*"
   ignored-patterns:
-              - /index.html
+    - /index.html
 
 time:
   start: start_time

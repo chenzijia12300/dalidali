@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -34,14 +35,15 @@ public class MinIOUtils {
 
     /**
      * 上传APK资源到MinIO中
-     * @author czj
-     * @date 2020/7/16 14:32
+     *
      * @param [fileName, inputStream]
      * @return java.lang.String
+     * @author czj
+     * @date 2020/7/16 14:32
      */
-    public String uploadAPK(String fileName, InputStream inputStream){
+    public String uploadAPK(String fileName, InputStream inputStream) {
         try {
-            minioClient.putObject(bucketName,fileName,inputStream,"application/octet-stream");
+            minioClient.putObject(bucketName, fileName, inputStream, "application/octet-stream");
         } catch (InvalidBucketNameException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -63,6 +65,6 @@ public class MinIOUtils {
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
         }
-        return url+bucketName+"/"+fileName;
+        return url + bucketName + "/" + fileName;
     }
 }

@@ -18,7 +18,6 @@ public class TempUserUtils {
     private static final Logger log = LoggerFactory.getLogger(TempUserUtils.class);
 
 
-
     private UserService userService;
 
     @Autowired
@@ -26,23 +25,23 @@ public class TempUserUtils {
         this.userService = userService;
     }
 
-    public Long createUserIfNeeded(String username, String img){
+    public Long createUserIfNeeded(String username, String img) {
         long userId = userService.existsUserByName(username);
-        if (userId != -1l){
-            log.info("已存在该用户：{}",username);
+        if (userId != -1l) {
+            log.info("已存在该用户：{}", username);
             return userId;
         }
-        User user = createRandomUser(username,img);
+        User user = createRandomUser(username, img);
         try {
             return userService.register(user);
         } catch (UserException e) {
-            log.info("注册临时用户:{}失败",username);
+            log.info("注册临时用户:{}失败", username);
             e.printStackTrace();
         }
         return -1l;
     }
 
-    private User createRandomUser(String username,String img){
+    private User createRandomUser(String username, String img) {
         User user = new User();
         user.setAccount(RandomUtil.randomString(12));
         user.setPassword("123456");

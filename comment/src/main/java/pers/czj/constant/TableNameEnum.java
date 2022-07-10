@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 public enum TableNameEnum {
-    VIDEO("video"),POST("post"),DYNAMIC("dynamic");
+    VIDEO("video"), POST("post"), DYNAMIC("dynamic");
 
     String name;
 

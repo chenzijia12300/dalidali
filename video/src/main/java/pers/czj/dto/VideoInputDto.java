@@ -18,7 +18,7 @@ import pers.czj.entity.Video;
 public class VideoInputDto {
 
 
-    public static final long DEFAULT_CATEGORY_PID=1;
+    public static final long DEFAULT_CATEGORY_PID = 1;
 
     public static final long DEFAULT_CATEGORY_ID = 2;
 
@@ -44,7 +44,7 @@ public class VideoInputDto {
     @ApiModelProperty(hidden = true)
     private long uid;
 
-    public static VideoInputDto createDefaultDto(){
+    public static VideoInputDto createDefaultDto() {
         VideoInputDto dto = new VideoInputDto();
         dto.setCategoryId(DEFAULT_CATEGORY_ID);
         dto.setCategoryPId(DEFAULT_CATEGORY_PID);
@@ -59,15 +59,15 @@ public class VideoInputDto {
     private String categoryName;*/
 
 
-    public Video convert(){
+    public Video convert() {
         Video video = new Video();
-        BeanUtils.copyProperties(this,video);
+        BeanUtils.copyProperties(this, video);
         video.setPublishState(VideoPublishStateEnum.AUDIT);
         video.setResolutionState(VideoResolutionEnum.LANDSCAPE_1080);
         return video;
     }
 
-    public Video convert(long uid){
+    public Video convert(long uid) {
         Video video = convert();
         video.setUid(uid);
         return video;

@@ -10,10 +10,11 @@ public interface VideoCrawlerLogService extends IService<VideoCrawlerLog> {
 
     /**
      * 检查是否存在
-     * @author czj
-     * @date 2020/10/12 17:57
+     *
      * @param [url]
      * @return boolean
+     * @author czj
+     * @date 2020/10/12 17:57
      */
     public boolean exists(String url);
 }

@@ -20,29 +20,29 @@ public class HostAddressUtils {
     private String serverUrl;
 
 
-
     public HostAddressUtils(@Value("#{':' + ${server.port} + '/'}") String port,
                             @Value("${server.protocol:http://}") String protocol) {
         try {
             InetAddress inetAddress = InetAddress.getLocalHost();
             String address = inetAddress.getHostAddress();
-            serverUrl = protocol+address+port;
-            log.info("服务器地址:{}",serverUrl);
+            serverUrl = protocol + address + port;
+            log.info("服务器地址:{}", serverUrl);
         } catch (UnknownHostException e) {
-            log.error("获得服务器IP地址失败，请检查:{}",e.getMessage());
+            log.error("获得服务器IP地址失败，请检查:{}", e.getMessage());
             throw new AssertionError("获得服务器IP地址失败");
         }
     }
 
     /**
      * 返回相对服务器路径
-     * @author czj
-     * @date 2020/9/23 22:45
+     *
      * @param [path]
      * @return java.lang.String
+     * @author czj
+     * @date 2020/9/23 22:45
      */
-    public String toServerUrl(String path){
-        return serverUrl+path;
+    public String toServerUrl(String path) {
+        return serverUrl + path;
     }
 
 }

@@ -1,7 +1,5 @@
 package pers.czj.web.controller;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -10,30 +8,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.common.CommonResult;
-import pers.czj.dto.CategoryOutputDto;
 import pers.czj.dto.CategoryTopOutputDto;
 import pers.czj.dto.VideoBasicOutputDto;
-import pers.czj.dto.VideoDetailsOutputDto;
 import pers.czj.entity.Category;
 import pers.czj.exception.CategoryException;
 import pers.czj.exception.VideoException;
 import pers.czj.service.CategoryService;
 import pers.czj.service.VideoService;
 import pers.czj.utils.RedisUtils;
-import sun.nio.ch.IOUtil;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -57,7 +44,6 @@ public class CategoryController {
     private RedisUtils redisUtils;
 
 
-
     @Value("${redis.category-list}")
     private String categoryListKey;
 
@@ -65,10 +51,10 @@ public class CategoryController {
     @ApiOperation("添加视频分类")
     public CommonResult addCategory(@RequestBody @Validated Category category) throws CategoryException {
         boolean flag = categoryService.save(category);
-        if (!flag){
+        if (!flag) {
             throw new CategoryException("遇到未知原因，添加视频分类失败");
         }
-        log.info("管理员:{}添加:{}分类","TOM",category.getName());
+        log.info("管理员:{}添加:{}分类", "TOM", category.getName());
         return CommonResult.success();
     }
 
@@ -77,12 +63,12 @@ public class CategoryController {
     @ApiOperation("获得视频总分类")
     public CommonResult listCategory() throws CategoryException {
         List list = null;
-        if (redisUtils.hasKey(categoryListKey)){
+        if (redisUtils.hasKey(categoryListKey)) {
             log.debug("分类走缓存");
             list = redisUtils.getList(categoryListKey);
-        }else {
+        } else {
             list = categoryService.listCategory();
-            redisUtils.pushList(categoryListKey,list);
+            redisUtils.pushList(categoryListKey, list);
         }
         return CommonResult.success(list);
     }
@@ -90,7 +76,7 @@ public class CategoryController {
 
     @GetMapping("/category/tops")
     @ApiOperation("获得视频顶级频道们")
-    public CommonResult listTopCategory(){
+    public CommonResult listTopCategory() {
         List<CategoryTopOutputDto> dtos = categoryService.listTopCategory();
         return CommonResult.success(dtos);
     }
@@ -99,17 +85,17 @@ public class CategoryController {
     @GetMapping("/category/random/{pid}")
     @ApiOperation("获得顶级频道随机视频列表")
     @ApiImplicitParams(
-            @ApiImplicitParam(name = "pid",paramType = "path",value = "顶级频道主键")
+            @ApiImplicitParam(name = "pid", paramType = "path", value = "顶级频道主键")
     )
     public CommonResult listRandomByPId(@PathVariable("pid") long pid) throws VideoException {
         List<VideoBasicOutputDto> list = videoService.listRandomByCategoryPId(pid);
         return CommonResult.success(list);
     }
 
-    @GetMapping(value = {"/category/random/all/{pageSize}","/category/random/all"})
+    @GetMapping(value = {"/category/random/all/{pageSize}", "/category/random/all"})
     @ApiOperation("移动端【获得首页视频信息列表】接口")
-    public CommonResult listRandomAll(@Max(8) @PathVariable(value = "pageSize",required = false)Integer pageSize){
-        List<VideoBasicOutputDto> list = videoService.listSlowRandomAll(pageSize==null?8:pageSize);
+    public CommonResult listRandomAll(@Max(8) @PathVariable(value = "pageSize", required = false) Integer pageSize) {
+        List<VideoBasicOutputDto> list = videoService.listSlowRandomAll(pageSize == null ? 8 : pageSize);
         return CommonResult.success(list);
     }
 

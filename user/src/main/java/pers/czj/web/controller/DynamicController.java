@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.scripting.xmltags.DynamicContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import pers.czj.service.UserService;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -63,12 +61,12 @@ public class DynamicController {
     }
     )
     public CommonResult listDynamic(@RequestParam long uid,
-                                    @PathVariable("pageNum")@Min(1) int pageNum,
-                                    @PathVariable("pageSize")@Max(8) int pageSize){
+                                    @PathVariable("pageNum") @Min(1) int pageNum,
+                                    @PathVariable("pageSize") @Max(8) int pageSize) {
         /**
-            查询相应动态,初始化所需参数
+         查询相应动态,初始化所需参数
          */
-        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPageAndType(uid,pageNum,pageSize,true);
+        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPageAndType(uid, pageNum, pageSize, true);
         List<DynamicOutputDto> videoDynamics = new ArrayList<>();
         List<Long> videoIds = new ArrayList<>();
         List<Long> postIds = new ArrayList<>();
@@ -78,7 +76,7 @@ public class DynamicController {
          *  循环拆分出不同类型的动态（视频/专栏/个人）
          */
         dynamics.forEach(dynamic -> {
-            switch (dynamic.getType()){
+            switch (dynamic.getType()) {
                 case VIDEO:
                     videoIds.add(dynamic.getOid());
                     videoDynamics.add(dynamic);
@@ -97,14 +95,13 @@ public class DynamicController {
             }
         }
 
-        if (!CollectionUtils.isEmpty(postIds)){
+        if (!CollectionUtils.isEmpty(postIds)) {
             // do something
         }
         //更新最后阅读个人动态时间
-        userService.updateLastReadDynamicTime(uid,new Date());
+        userService.updateLastReadDynamicTime(uid, new Date());
         return CommonResult.success(dynamics);
     }
-
 
 
     @GetMapping("/dynamic/list/video/{pageNum}/{pageSize}")
@@ -115,15 +112,15 @@ public class DynamicController {
     }
     )
     public CommonResult listVideoDynamic(@RequestParam long uid,
-                                    @PathVariable("pageNum")@Min(1) int pageNum,
-                                    @PathVariable("pageSize")@Max(8) int pageSize){
+                                         @PathVariable("pageNum") @Min(1) int pageNum,
+                                         @PathVariable("pageSize") @Max(8) int pageSize) {
         /**
          查询相应动态,初始化所需参数
          */
-        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPageAndType(uid,pageNum,pageSize,false);
+        List<DynamicOutputDto> dynamics = dynamicService.listDynamicByPageAndType(uid, pageNum, pageSize, false);
         List<Long> videoIds = new ArrayList<>();
         dynamics.forEach(dynamicOutputDto -> {
-            switch (dynamicOutputDto.getType()){
+            switch (dynamicOutputDto.getType()) {
                 case VIDEO:
                     videoIds.add(dynamicOutputDto.getOid());
                     break;
@@ -137,7 +134,7 @@ public class DynamicController {
 
         });
         List videoList = null;
-        log.info("ids:{}",videoIds);
+        log.info("ids:{}", videoIds);
         if (!CollectionUtils.isEmpty(videoIds)) {
             videoList = videoFeignClient.listBasicVideoInfoByIds(videoIds);
             for (int i = 0; i < videoIds.size(); i++) {
@@ -145,29 +142,28 @@ public class DynamicController {
             }
         }
         //更新最后阅读个人动态时间
-        userService.updateLastReadDynamicTime(uid,new Date());
+        userService.updateLastReadDynamicTime(uid, new Date());
         return CommonResult.success(dynamics);
     }
 
     @GetMapping("/dynamic/{did}")
-    public CommonResult findDynamicDetails(@RequestParam("uid")long uid,@PathVariable("did") long did){
-        return CommonResult.success(dynamicService.findDetailsById(uid,did));
+    public CommonResult findDynamicDetails(@RequestParam("uid") long uid, @PathVariable("did") long did) {
+        return CommonResult.success(dynamicService.findDetailsById(uid, did));
     }
-
 
 
     @GetMapping("/dynamic/unread")
     @ApiOperation("获得个人动态未读总数")
-    public CommonResult findUnreadDynamicCount(@RequestParam long uid){
+    public CommonResult findUnreadDynamicCount(@RequestParam long uid) {
         return CommonResult.success(dynamicService.findUnreadCount(uid));
     }
 
 
     @PostMapping("/dynamic/like")
-    public CommonResult dynamicLike(@RequestParam long uid, @RequestBody Map<String,Object> map){
+    public CommonResult dynamicLike(@RequestParam long uid, @RequestBody Map<String, Object> map) {
         int dynamicId = (int) map.get("dynamicId");
         Dynamic dynamic = dynamicService.getById(dynamicId);
-        praiseContext.handlerPraise(uid,dynamic);
+        praiseContext.handlerPraise(uid, dynamic);
         return CommonResult.success();
     }
 }
