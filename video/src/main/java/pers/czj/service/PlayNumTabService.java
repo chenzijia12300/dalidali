@@ -12,11 +12,11 @@ import java.util.Set;
 public interface PlayNumTabService extends IService<PlayNumTab> {
 
     /**
+     * @param [set]
+     * @return boolean
      * @author czj
      * 批量添加播放记录
      * @date 2020/7/17 22:55
-     * @param [set]
-     * @return boolean
      */
     public boolean addAll(Set<ZSetOperations.TypedTuple> set);
 }

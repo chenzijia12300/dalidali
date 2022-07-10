@@ -52,12 +52,13 @@ public class DynamicLog {
 
     /**
      * 创建默认的点赞对象
-     * @author czj
-     * @date 2020/10/14 18:45
+     *
      * @param []
      * @return pers.czj.entity.DynamicLog
+     * @author czj
+     * @date 2020/10/14 18:45
      */
-    public static DynamicLog createDefaultPraiseObj(){
+    public static DynamicLog createDefaultPraiseObj() {
         DynamicLog log = new DynamicLog();
         log.setPraise(true);
         return log;

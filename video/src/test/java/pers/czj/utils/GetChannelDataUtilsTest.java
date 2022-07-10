@@ -5,8 +5,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * 创建在 2020/11/30 17:27
  */
@@ -16,7 +14,7 @@ public class GetChannelDataUtilsTest {
 
 
     @Test
-    public void testChannel(){
+    public void testChannel() {
 
     }
 

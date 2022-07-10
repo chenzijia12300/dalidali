@@ -71,7 +71,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.16</version>
+            <version>8.0.28</version>
         </dependency>
         <!--        <dependency>
                     <groupId>com.alibaba</groupId>
@@ -85,15 +85,15 @@
                     <version>2.2.5.RELEASE</version>
                 </dependency>-->
         <!--阿里粑粑 json处理库-->
-         <dependency>
-           <groupId>com.alibaba</groupId>
-           <artifactId>fastjson</artifactId>
-           <version>[1.2.83,)</version>
-         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>[1.2.83,)</version>
+        </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.11.3</version>
+            <version>1.14.2</version>
         </dependency>
         <!--  线程标识注解      -->
         <dependency>

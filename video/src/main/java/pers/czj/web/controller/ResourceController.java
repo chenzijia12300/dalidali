@@ -29,14 +29,13 @@ public class ResourceController {
     @Autowired
     private MinIOUtils minIOUtils;
 
-    @PostMapping("/upload/img")
+    @GetMapping("/upload/img")
     public CommonResult uploadImg(@RequestParam("file") MultipartFile file) throws VideoException, FileNotFoundException {
         File temp = FileUtils.saveLocalFile(file);
-        String imgWebUrl = minIOUtils.uploadFile(temp.getName(),new FileInputStream(temp), HttpContentTypeEnum.JPEG);
+        String imgWebUrl = minIOUtils.uploadFile(temp.getName(), new FileInputStream(temp), HttpContentTypeEnum.JPEG);
         FileUtil.del(temp);
         return CommonResult.success(imgWebUrl);
     }
-
 
 
 }

@@ -12,21 +12,21 @@ import java.util.List;
 public interface FollowService extends IService<Follow> {
 
     /**
+     * @param [userId, followUserId]
+     * @return boolean
      * @author czj
      * 动态处理关注人
      * @date 2020/7/22 16:16
-     * @param [userId, followUserId]
-     * @return boolean
      */
-    public boolean dynamicFollow(long userId,long followUserId);
+    public boolean dynamicFollow(long userId, long followUserId);
 
 
     /**
+     * @param []
+     * @return java.util.List<pers.czj.dto.BasicUserInfoOutputDto>
      * @author czj
      * 获得所关注人的基本信息
      * @date 2020/8/12 16:58
-     * @param []
-     * @return java.util.List<pers.czj.dto.BasicUserInfoOutputDto>
      */
     public List<BasicUserInfoOutputDto> findByFollowBasicInfo(long uid);
 }

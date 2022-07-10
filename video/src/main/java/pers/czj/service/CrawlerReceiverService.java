@@ -1,9 +1,5 @@
 package pers.czj.service;
 
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import pers.czj.entity.VideoCrawlerLog;
 
 /**

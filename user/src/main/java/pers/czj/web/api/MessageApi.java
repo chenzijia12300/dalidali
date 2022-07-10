@@ -32,7 +32,7 @@ public class MessageApi {
 
     @PostMapping("/message")
     @ApiOperation("提交消息")
-    public CommonResult addMessage(@RequestBody Message message){
+    public CommonResult addMessage(@RequestBody Message message) {
         boolean flag = messageService.save(message);
         return CommonResult.success();
     }

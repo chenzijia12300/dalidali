@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pers.czj.common.CommonResult;
 import pers.czj.entity.Danmu;
 import pers.czj.service.CrawlerDanmuService;
 import pers.czj.service.DanmuService;
@@ -35,12 +34,11 @@ public class DanmuCrawlerController {
     }
 
     @GetMapping("/{cid}/{vid}")
-    public Integer crawlerDanmuList(@PathVariable("cid") long cid,@PathVariable("vid") long vid){
+    public Integer crawlerDanmuList(@PathVariable("cid") long cid, @PathVariable("vid") long vid) {
         List<Danmu> webDanmuList = crawlerDanmuService.getWebDanmuList(cid, vid);
         danmuService.saveBatch(webDanmuList);
         return webDanmuList.size();
     }
-
 
 
 }

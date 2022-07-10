@@ -32,7 +32,7 @@ public class CrawlerSendServiceImpl implements CrawlerSendService {
 
     @Override
     public void send(VideoCrawlerLog crawlerLog) {
-        log.info("发送视频爬虫信息:{}",crawlerLog);
-        rabbitTemplate.convertAndSend(exchangeName,routingKey,crawlerLog);
+        log.info("发送视频爬虫信息:{}", crawlerLog);
+        rabbitTemplate.convertAndSend(exchangeName, routingKey, crawlerLog);
     }
 }

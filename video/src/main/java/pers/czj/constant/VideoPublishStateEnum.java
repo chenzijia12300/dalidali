@@ -8,9 +8,9 @@ import lombok.Getter;
  * 视频发布状态枚举类
  */
 @Getter
-public enum  VideoPublishStateEnum implements IEnum<Integer> {
+public enum VideoPublishStateEnum implements IEnum<Integer> {
     //制作中        审核           未发布               发布            下架
-    MAKING(0),AUDIT(1),UN_PUBLISH(2),PUBLISH(3),SOLD_OUT(4),
+    MAKING(0), AUDIT(1), UN_PUBLISH(2), PUBLISH(3), SOLD_OUT(4),
 
     //审核中
     AUDITING(-1);
@@ -21,9 +21,9 @@ public enum  VideoPublishStateEnum implements IEnum<Integer> {
     }
 
 
-    public static VideoPublishStateEnum getInstance(int code){
-        for (VideoPublishStateEnum stateEnum:VideoPublishStateEnum.values()){
-            if (stateEnum.code==code){
+    public static VideoPublishStateEnum getInstance(int code) {
+        for (VideoPublishStateEnum stateEnum : VideoPublishStateEnum.values()) {
+            if (stateEnum.code == code) {
                 return stateEnum;
             }
         }

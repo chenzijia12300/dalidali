@@ -15,21 +15,21 @@ import javax.validation.constraints.Email;
 @ApiModel
 public class RegisterUserInputDto {
 
-    @Length(min = 6,max = 12)
+    @Length(min = 6, max = 12)
     private String username;
 
-    @Length(min = 6,max = 12)
+    @Length(min = 6, max = 12)
     private String account;
 
-    @Length(min = 6,max = 12)
+    @Length(min = 6, max = 12)
     private String password;
 
     @Email
     private String email;
 
-    public User convert(){
+    public User convert() {
         User user = new User();
-        BeanUtils.copyProperties(this,user);
+        BeanUtils.copyProperties(this, user);
         return user;
     }
 }

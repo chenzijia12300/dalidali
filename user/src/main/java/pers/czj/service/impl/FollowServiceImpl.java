@@ -21,7 +21,7 @@ import java.util.List;
  * 创建在 2020/7/22 13:25
  */
 @Service
-public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow>implements FollowService {
+public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow> implements FollowService {
 
     private static final Logger log = LoggerFactory.getLogger(FollowServiceImpl.class);
 
@@ -29,20 +29,20 @@ public class FollowServiceImpl extends ServiceImpl<FollowMapper, Follow>implemen
     private UserMapper userMapper;
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED,propagation = Propagation.REQUIRED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public boolean dynamicFollow(long userId, long followUserId) {
-        Long id = baseMapper.findFollowRelation(userId,followUserId);
-        if (ObjectUtils.isEmpty(id)){
-            Follow follow = new Follow(userId,followUserId);
+        Long id = baseMapper.findFollowRelation(userId, followUserId);
+        if (ObjectUtils.isEmpty(id)) {
+            Follow follow = new Follow(userId, followUserId);
             save(follow);
-            userMapper.incrFollowNum(userId,1);
-            userMapper.incrFansNum(followUserId,1);
-            log.info("用户{}关注了用户{}",userId,followUserId);
-        }else {
+            userMapper.incrFollowNum(userId, 1);
+            userMapper.incrFansNum(followUserId, 1);
+            log.info("用户{}关注了用户{}", userId, followUserId);
+        } else {
             removeById(id);
-            userMapper.incrFollowNum(userId,-1);
-            userMapper.incrFansNum(followUserId,-1);
-            log.info("用户{}取消了对用户{}的关注",userId,followUserId);
+            userMapper.incrFollowNum(userId, -1);
+            userMapper.incrFansNum(followUserId, -1);
+            log.info("用户{}取消了对用户{}的关注", userId, followUserId);
         }
         return true;
     }

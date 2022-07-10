@@ -1,8 +1,6 @@
 package pers.czj.feign;
 
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import pers.czj.common.CommonResult;
 
 import java.util.Map;
@@ -12,5 +10,5 @@ import java.util.Map;
  */
 public interface DynamicFeignClient {
 
-    public CommonResult addDynamic(@RequestBody Map<String,Object> map);
+    public CommonResult addDynamic(@RequestBody Map<String, Object> map);
 }

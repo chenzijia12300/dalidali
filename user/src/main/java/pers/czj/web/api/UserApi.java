@@ -3,7 +3,6 @@ package pers.czj.web.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pers.czj.dto.BasicUserInfoOutputDto;
-import pers.czj.service.UserInfoService;
 import pers.czj.service.UserService;
 import pers.czj.utils.TempUserUtils;
 
@@ -26,13 +25,13 @@ public class UserApi {
     }
 
     @GetMapping("/user/basic/{uid}/{followerUserId}")
-    public BasicUserInfoOutputDto findBasicUserInfoById(@PathVariable("uid") long uid,@PathVariable("followerUserId")long followerUserId){
-        return userService.findBasicUserInfoById(uid,followerUserId);
+    public BasicUserInfoOutputDto findBasicUserInfoById(@PathVariable("uid") long uid, @PathVariable("followerUserId") long followerUserId) {
+        return userService.findBasicUserInfoById(uid, followerUserId);
     }
 
     @PostMapping("/user/create")
-    public Long createUserIfNeeded(@RequestBody Map<String,String> map){
-        return tempUserUtils.createUserIfNeeded(map.get("username"),map.get("img"));
+    public Long createUserIfNeeded(@RequestBody Map<String, String> map) {
+        return tempUserUtils.createUserIfNeeded(map.get("username"), map.get("img"));
     }
 
 }

@@ -29,9 +29,9 @@ public class CommentInputDto {
     @ApiModelProperty("VIDEO(\"video\"),POST(\"post\"),DYNAMIC(\"dynamic\");")
     private TableNameEnum tableNameEnum;
 
-    public Comment convert(){
+    public Comment convert() {
         Comment comment = new Comment();
-        BeanUtils.copyProperties(this,comment);
+        BeanUtils.copyProperties(this, comment);
         comment.setTableName(tableNameEnum.getName());
         return comment;
     }

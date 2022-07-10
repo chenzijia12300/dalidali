@@ -1,6 +1,5 @@
 package pers.czj.entity;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ public class Video {
     /**
      * 视频自增主键
      */
-    @TableId(value = "id",type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private long id;
 
     /**
@@ -83,7 +82,6 @@ public class Video {
     private int height;
 
 
-
     /**
      * 预览图片
      */
@@ -100,7 +98,7 @@ public class Video {
      */
     private String compressCover;
 
-/*    *//**
+    /*    *//**
      *  视频的顶级频道（冗余）
      *//*
     private String categoryPName;

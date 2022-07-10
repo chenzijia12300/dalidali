@@ -19,9 +19,9 @@ public class DanmuServiceImpl extends ServiceImpl<DanmuMapper, Danmu> implements
     @Override
     public List<Danmu> listDanmu(long vid, long showSecond) {
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("vid",vid);
-        queryWrapper.ge("show_second",showSecond);
-        queryWrapper.le("show_second",showSecond+1000*10);
+        queryWrapper.eq("vid", vid);
+        queryWrapper.ge("show_second", showSecond);
+        queryWrapper.le("show_second", showSecond + 1000 * 10);
         return baseMapper.selectList(queryWrapper);
     }
 }

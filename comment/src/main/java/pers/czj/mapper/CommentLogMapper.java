@@ -12,11 +12,11 @@ import pers.czj.entity.CommentLog;
 public interface CommentLogMapper extends BaseMapper<CommentLog> {
 
     @Select("SELECT id FROM ${tableName}_comment_log WHERE cid = #{cid} AND uid = #{uid} FOR UPDATE")
-    public Long select(String tableName,long cid,long uid);
+    public Long select(String tableName, long cid, long uid);
 
     @Insert("INSERT INTO ${tableName}_comment_log(cid,uid) VALUES(#{log.cid},#{log.uid})")
-    public int addLog(String tableName,CommentLog log);
+    public int addLog(String tableName, CommentLog log);
 
     @Delete("DELETE FROM ${tableName}_comment_log WHERE id = #{id}")
-    public int deleteLog(String tableName,long id);
+    public int deleteLog(String tableName, long id);
 }

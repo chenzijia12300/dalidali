@@ -30,5 +30,4 @@ public class VideoBasicInfo implements Serializable {
     private String urls;
 
 
-
 }

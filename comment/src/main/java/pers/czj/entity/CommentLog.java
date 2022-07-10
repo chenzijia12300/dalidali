@@ -18,10 +18,10 @@ public class CommentLog {
     @TableField(exist = false)
     private String tableName;
 
-    public CommentLog(String tableName,long cid, long uid) {
+    public CommentLog(String tableName, long cid, long uid) {
         this.cid = cid;
         this.uid = uid;
-        this.tableName=tableName;
+        this.tableName = tableName;
     }
 
     public CommentLog() {

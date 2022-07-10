@@ -9,11 +9,11 @@ import pers.czj.entity.UserCollectionLog;
 public interface UserCollectionLogService extends IService<UserCollectionLog> {
 
     /**
+     * @param [uid, vid , isAdd]
+     * @return boolean
      * @author czj
      * 动态处理收藏记录
      * @date 2020/7/20 23:09
-     * @param [uid, vid , isAdd]
-     * @return boolean
      */
-    public boolean dynamicLog(long uid,long vid,boolean isAdd);
+    public boolean dynamicLog(long uid, long vid, boolean isAdd);
 }

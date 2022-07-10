@@ -4,13 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import java.net.ConnectException;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,53 +23,53 @@ public class RedisUtils {
 
 
     @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
 
     /**
+     * @param [key, time]
+     * @return boolean
      * @author czj
      * 设置键过期时间(秒)
      * expire(到期)
      * @date 2020/3/13 15:05
-     * @param [key, time]
-     * @return boolean
      */
-    public boolean expire(String key,long time){
-        if (time<0){
+    public boolean expire(String key, long time) {
+        if (time < 0) {
             return false;
         }
-        redisTemplate.expire(key,time, TimeUnit.SECONDS);
+        redisTemplate.expire(key, time, TimeUnit.SECONDS);
         return true;
     }
 
     /**
+     * @param [key]
+     * @return long
      * @author czj
      * 获得键过期时间(秒)
      * @date 2020/3/13 15:08
-     * @param [key]
-     * @return long
      */
-    public long getExpire(String key){
-        return redisTemplate.getExpire(key,TimeUnit.SECONDS);
+    public long getExpire(String key) {
+        return redisTemplate.getExpire(key, TimeUnit.SECONDS);
     }
 
     /**
+     * @param [key]
+     * @return boolean
      * @author czj
      * 检测该键是否存在
      * @date 2020/3/13 15:08
-     * @param [key]
-     * @return boolean
      */
-    public boolean hasKey(String key){
+    public boolean hasKey(String key) {
         return redisTemplate.hasKey(key);
     }
 
     /**
+     * @param [key]
+     * @return java.util.Optional<java.lang.Object>
      * @author czj
      * 获得值
      * @date 2020/3/13 15:12
-     * @param [key]
-     * @return java.util.Optional<java.lang.Object>
      */
     public Object get(String key) throws ConnectException {
         Object o = redisTemplate.opsForValue().get(key);
@@ -78,229 +78,230 @@ public class RedisUtils {
 
 
     /**
+     * @param [key, value, time]
+     * @return boolean
      * @author czj
      * 设置值 如果time 小于等于0 就为无限期
      * @date 2020/3/13 15:14
-     * @param [key, value, time]
-     * @return boolean
      */
-    public boolean set(String key,Object value,long time) throws ConnectException {
+    public boolean set(String key, Object value, long time) throws ConnectException {
         try {
-            if (time>0){
-                redisTemplate.opsForValue().set(key,value,time,TimeUnit.SECONDS);
-            }else {
-                redisTemplate.opsForValue().set(key,value);
+            if (time > 0) {
+                redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
+            } else {
+                redisTemplate.opsForValue().set(key, value);
             }
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ConnectException("redis连接失败！");
         }
     }
+
     /**
+     * @param [key]
+     * @return boolean
      * @author czj
      * 删除键
      * @date 2020/3/13 15:20
-     * @param [key]
-     * @return boolean
      */
-    public boolean delete(String key){
+    public boolean delete(String key) {
         return redisTemplate.delete(key);
     }
 
     /**
+     * @param [keys]
+     * @return boolean
      * @author czj
      * 批量删除
      * @date 2020/8/15 23:34
-     * @param [keys]
-     * @return boolean
      */
-    public boolean delete(Collection<String> keys){
-        keys.forEach(key->delete(key));
+    public boolean delete(Collection<String> keys) {
+        keys.forEach(key -> delete(key));
         return true;
     }
 
     /**
+     * @param [key]
+     * @return java.lang.Long
      * @author czj
      * 删除对应前缀建
      * @date 2020/7/25 23:50
-     * @param [key]
-     * @return java.lang.Long
      */
     @Deprecated
-    public Long deleteAll(String key){
-        Set keys=redisTemplate.keys(key+"*");
+    public Long deleteAll(String key) {
+        Set keys = redisTemplate.keys(key + "*");
         return redisTemplate.delete(keys);
     }
 
 
     /**
+     * @param [key, num]
+     * @return java.util.Set<java.lang.Object>
      * @author czj
      * 获得键对应的SET集合
      * @date 2020/7/25 23:51
-     * @param [key, num]
-     * @return java.util.Set<java.lang.Object>
      */
-    public Set<Object> getSet(String key,long num){
-        return redisTemplate.opsForSet().distinctRandomMembers(key,num);
+    public Set<Object> getSet(String key, long num) {
+        return redisTemplate.opsForSet().distinctRandomMembers(key, num);
     }
 
 
     /**
+     * @param [key, object]
+     * @return long
      * @author czj
      * 设置SET集合
      * @date 2020/7/25 23:51
-     * @param [key, object]
-     * @return long
      */
-    public long addSet(String key,Object object){
-        return redisTemplate.opsForSet().add(key,object);
+    public long addSet(String key, Object object) {
+        return redisTemplate.opsForSet().add(key, object);
     }
 
     /**
+     * @param [key, num, member]
+     * @return double
      * @author czj
      * 使用ZSET数据类型存储，用于排行榜
      * @date 2020/7/16 18:10
-     * @param [key, num, member]
-     * @return double
      */
-    public double zincrBy(String key,double num,String member){
-        return redisTemplate.opsForZSet().incrementScore(key,member,num);
+    public double zincrBy(String key, double num, String member) {
+        return redisTemplate.opsForZSet().incrementScore(key, member, num);
     }
 
-    public Set zRevRange(String key, long start, long end,boolean needWithScores){
+    public Set zRevRange(String key, long start, long end, boolean needWithScores) {
         if (needWithScores)
-            return redisTemplate.opsForZSet().reverseRangeWithScores(key,start,end);
+            return redisTemplate.opsForZSet().reverseRangeWithScores(key, start, end);
         else
-            return redisTemplate.opsForZSet().reverseRange(key,start,end);
+            return redisTemplate.opsForZSet().reverseRange(key, start, end);
     }
 
-    public void unionZSet(List<String> strings,String destKey){
+    public void unionZSet(List<String> strings, String destKey) {
         boolean isAllEmpty = true;
-        for (String str:strings){
-            if (isZSetNotEmpty(str)){
+        for (String str : strings) {
+            if (isZSetNotEmpty(str)) {
                 isAllEmpty = false;
                 break;
             }
         }
-        if (isAllEmpty){
+        if (isAllEmpty) {
             log.debug("子频道集合都为空,直接跳出~");
             return;
         }
-        log.debug("destKey:{}",destKey);
-        log.debug("first:{}",strings.subList(0,1).toString());
-        List<String> list = strings.subList(1,strings.size());
-        log.debug("subList:{}",list);
-        redisTemplate.opsForZSet().unionAndStore(strings.get(0),list,destKey);
+        log.debug("destKey:{}", destKey);
+        log.debug("first:{}", strings.subList(0, 1).toString());
+        List<String> list = strings.subList(1, strings.size());
+        log.debug("subList:{}", list);
+        redisTemplate.opsForZSet().unionAndStore(strings.get(0), list, destKey);
     }
 
 
-    public long addList(String key, Collection collection){
-        return redisTemplate.opsForList().leftPushAll(key,collection);
+    public long addList(String key, Collection collection) {
+        return redisTemplate.opsForList().leftPushAll(key, collection);
     }
 
 
     /**
+     * @param [key, num, flag]
+     * @return boolean
      * @author czj
      * 设置bit
      * @date 2020/7/21 15:26
-     * @param [key, num, flag]
-     * @return boolean
      */
-    public boolean setBit(String key,long num,boolean flag){
-        return redisTemplate.opsForValue().setBit(key,num,flag);
+    public boolean setBit(String key, long num, boolean flag) {
+        return redisTemplate.opsForValue().setBit(key, num, flag);
     }
 
     /**
+     * @param [key, num]
+     * @return boolean
      * @author czj
      * 获得bit的值
      * @date 2020/7/21 15:26
-     * @param [key, num]
-     * @return boolean
      */
-    public boolean getBit(String key,long num){
-        return redisTemplate.opsForValue().getBit(key,num);
+    public boolean getBit(String key, long num) {
+        return redisTemplate.opsForValue().getBit(key, num);
     }
 
 
     /**
+     * @param [key, params]
+     * @return
      * @author czj
      * 将对象存储进hash数据类型中
      * @date 2020/7/25 23:57
-     * @param [key, params]
-     * @return
      */
-    public void putHash(String key, Map<String,Object> params){
-        redisTemplate.opsForHash().putAll(key,params);
+    public void putHash(String key, Map<String, Object> params) {
+        redisTemplate.opsForHash().putAll(key, params);
     }
 
     /**
+     * @param [key, collection]
+     * @return void
      * @author czj
      * 将对象存储进list数据类型中
      * @date 2020/7/26 0:10
-     * @param [key, collection]
-     * @return void
      */
-    public void pushList(String key,Collection collection){
-        redisTemplate.opsForList().leftPushAll(key,collection);
+    public void pushList(String key, Collection collection) {
+        redisTemplate.opsForList().leftPushAll(key, collection);
     }
 
 
     /**
+     * @param [key]
+     * @return java.util.List<java.lang.Object>
      * @author czj
      * 返回list对象
      * @date 2020/7/26 0:35
-     * @param [key]
-     * @return java.util.List<java.lang.Object>
      */
-    public List<Object> getList(String key){
+    public List<Object> getList(String key) {
 
-        return redisTemplate.opsForList().range(key,0,-1);
+        return redisTemplate.opsForList().range(key, 0, -1);
     }
 
     /**
+     * @param [key, id]
+     * @return T
      * @author czj
      * 返回list对象对应的下标成员
      * @date 2020/7/26 11:34
-     * @param [key, id]
-     * @return T
      */
-    public<T> T getItemByList(String key,long id,Class<T> tClass){
-        return (T)redisTemplate.opsForList().index(key,id);
+    public <T> T getItemByList(String key, long id, Class<T> tClass) {
+        return (T) redisTemplate.opsForList().index(key, id);
     }
 
     /**
+     * @param [key, o, id]
+     * @return void
      * @author czj
      * 设置list对象对应的下标成员
      * @date 2020/7/26 11:35
-     * @param [key, o, id]
-     * @return void
      */
-    public void setItemByList(String key,Object o,long id){
-        redisTemplate.opsForList().set(key,id,o);
+    public void setItemByList(String key, Object o, long id) {
+        redisTemplate.opsForList().set(key, id, o);
     }
 
 
     /**
+     * @param [key, value]
+     * @return boolean
      * @author czj
      * SET if Not Exists
      * redis原子性操作，如果key不存在则返回true，否则返回false
      * @date 2020/8/15 17:52
-     * @param [key, value]
-     * @return boolean
      */
-    public boolean setnx(String key,String value,long second){
-        return redisTemplate.opsForValue().setIfAbsent(key,value,second,TimeUnit.SECONDS);
+    public boolean setnx(String key, String value, long second) {
+        return redisTemplate.opsForValue().setIfAbsent(key, value, second, TimeUnit.SECONDS);
     }
 
     /**
+     * @param [key]
+     * @return boolean
      * @author czj
      * 判断集合是否有元素，有返回true，否则false
      * @date 2020/8/15 23:30
-     * @param [key]
-     * @return boolean
      */
-    public boolean isZSetNotEmpty(String key){
-        return redisTemplate.opsForZSet().zCard(key)==0?false:true;
+    public boolean isZSetNotEmpty(String key) {
+        return redisTemplate.opsForZSet().zCard(key) == 0 ? false : true;
     }
 }

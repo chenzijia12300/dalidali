@@ -50,7 +50,7 @@ public class Comment {
     private Date createTime;
 
     /**
-     *  动态表名（冗余）
+     * 动态表名（冗余）
      */
     @TableField(exist = false)
     @TableLogic

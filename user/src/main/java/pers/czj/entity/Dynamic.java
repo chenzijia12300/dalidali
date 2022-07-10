@@ -33,7 +33,7 @@ public class Dynamic {
     private long forwardNum;
 
     /**
-     *  动态文字内容
+     * 动态文字内容
      */
     private String content;
 

@@ -3,7 +3,7 @@ package pers.czj.exception;
 /**
  * 创建在 2020/7/18 14:28
  */
-public class ReplyException extends Exception{
+public class ReplyException extends Exception {
 
     public ReplyException() {
     }

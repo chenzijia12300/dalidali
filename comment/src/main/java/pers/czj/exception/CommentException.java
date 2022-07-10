@@ -3,7 +3,7 @@ package pers.czj.exception;
 /**
  * 创建在 2020/7/15 21:18
  */
-public class CommentException extends Exception{
+public class CommentException extends Exception {
     public CommentException() {
     }
 

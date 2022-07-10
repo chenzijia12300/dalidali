@@ -9,15 +9,16 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class JSONUtils {
 
-    public static JSONObject get(String str,String key){
+    public static JSONObject get(String str, String key) {
         JSONObject jsonObject = JSON.parseObject(str);
         return jsonObject.getJSONObject(key);
     }
 
-    public static JSONObject get(JSONObject jsonObject,String key){
+    public static JSONObject get(JSONObject jsonObject, String key) {
         return jsonObject.getJSONObject(key);
     }
-    public static JSONArray getArr(JSONObject jsonObject, String key){
+
+    public static JSONArray getArr(JSONObject jsonObject, String key) {
         return jsonObject.getJSONArray(key);
     }
 }

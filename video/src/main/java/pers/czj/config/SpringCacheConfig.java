@@ -32,7 +32,7 @@ public class SpringCacheConfig implements Cache {
 
     @Override
     public ValueWrapper get(Object o) {
-        log.info("取数据:{}",o);
+        log.info("取数据:{}", o);
         return null;
     }
 
@@ -48,7 +48,7 @@ public class SpringCacheConfig implements Cache {
 
     @Override
     public void put(Object o, Object o1) {
-        log.info("存储数据:{}",o);
+        log.info("存储数据:{}", o);
     }
 
     @Override

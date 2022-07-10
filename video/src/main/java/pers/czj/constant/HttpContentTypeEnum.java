@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum HttpContentTypeEnum {
 
-    MP4("video/mp4"),JPEG("image/jpeg");
+    MP4("video/mp4"), JPEG("image/jpeg");
     String contentType;
 
     HttpContentTypeEnum(String contentType) {

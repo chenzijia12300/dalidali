@@ -13,20 +13,20 @@ import pers.czj.service.UserCollectionLogService;
  * 创建在 2020/7/20 22:38
  */
 @Service
-public class UserCollectionLogServiceImpl extends ServiceImpl<UserCollectionLogMapper, UserCollectionLog> implements UserCollectionLogService{
+public class UserCollectionLogServiceImpl extends ServiceImpl<UserCollectionLogMapper, UserCollectionLog> implements UserCollectionLogService {
 
     @Autowired
     private UserMapper userMapper;
 
     @Override
     public boolean dynamicLog(long uid, long vid, boolean isAdd) {
-        if (isAdd){
-            UserCollectionLog log = new UserCollectionLog(uid,vid);
+        if (isAdd) {
+            UserCollectionLog log = new UserCollectionLog(uid, vid);
             save(log);
-        }else {
+        } else {
             QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.eq("uid",uid);
-            queryWrapper.eq("vid",vid);
+            queryWrapper.eq("uid", uid);
+            queryWrapper.eq("vid", vid);
             remove(queryWrapper);
         }
         return true;

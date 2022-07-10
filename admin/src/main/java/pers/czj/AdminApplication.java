@@ -15,6 +15,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @MapperScan("pers.czj.mapper")
 public class AdminApplication {
     public static void main(String[] args) {
-        SpringApplication.run(AdminApplication.class,args);
+        SpringApplication.run(AdminApplication.class, args);
     }
 }

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.enums.IEnum;
  */
 public enum VideoScreenTypeEnum implements IEnum<Integer> {
 
-    LANDSCAPE(0),PORTRAIT(1);
+    LANDSCAPE(0), PORTRAIT(1);
 
 
     int code;

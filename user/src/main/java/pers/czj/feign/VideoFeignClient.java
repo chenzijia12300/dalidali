@@ -1,7 +1,10 @@
 package pers.czj.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import pers.czj.common.CommonResult;
 
 import java.util.Collection;
@@ -18,5 +21,5 @@ public interface VideoFeignClient {
     public List listBasicVideoInfoByIds(@RequestParam Collection<Long> ids);
 
     @PostMapping("/video/dynamic_like")
-    public CommonResult handlerVideoLike(@RequestParam long uid, @RequestBody Map<String,Object> map);
+    public CommonResult handlerVideoLike(@RequestParam long uid, @RequestBody Map<String, Object> map);
 }

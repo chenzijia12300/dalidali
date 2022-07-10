@@ -7,7 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public enum ActionType {
-    FOLLOW(0),PRAISE(1),COMMENT(2),REPLY(3);
+    FOLLOW(0), PRAISE(1), COMMENT(2), REPLY(3);
 
 
     private int type;

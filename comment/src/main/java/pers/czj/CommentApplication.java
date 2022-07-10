@@ -35,7 +35,7 @@ public class CommentApplication {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .apiInfo(apiInfo("dalidali评论模块接口文档","dalidali评论模块接口文档"));
+                .apiInfo(apiInfo("dalidali评论模块接口文档", "dalidali评论模块接口文档"));
     }
 
     private ApiInfo apiInfo(String title, String description) {

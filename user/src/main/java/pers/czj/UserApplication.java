@@ -39,7 +39,7 @@ public class UserApplication {
                 .paths(PathSelectors.any())
                 .build()
                 .ignoredParameterTypes(HttpSession.class)
-                .apiInfo(apiInfo("dalidali用户模块接口文档","dalidali用户模块接口文档"));
+                .apiInfo(apiInfo("dalidali用户模块接口文档", "dalidali用户模块接口文档"));
     }
 
     private ApiInfo apiInfo(String title, String description) {

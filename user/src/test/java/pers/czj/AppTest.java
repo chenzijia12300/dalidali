@@ -15,6 +15,8 @@ import java.util.Scanner;
 */
 /**
  * Unit test for simple App.
+ * <p>
+ * Rigorous Test :-)
  *//*
 
 
@@ -26,8 +28,8 @@ public class AppTest {
     private RabbitTemplate rabbitTemplate;
     */
 /**
-     * Rigorous Test :-)
-     *//*
+ * Rigorous Test :-)
+ *//*
 
     @Test
     public void shouldAnswerWithTrue(){

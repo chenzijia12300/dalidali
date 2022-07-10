@@ -1,8 +1,6 @@
 package pers.czj.utils;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -10,8 +8,8 @@ import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -81,7 +79,7 @@ public class HttpUtils {
         Inflater inflater = new Inflater(true);
         inflater.reset();
         inflater.setInput(data);
-        try(ByteArrayOutputStream o = new ByteArrayOutputStream(data.length)){
+        try (ByteArrayOutputStream o = new ByteArrayOutputStream(data.length)) {
             byte[] buf = new byte[1024];
             while (!inflater.finished()) {
                 int i = inflater.inflate(buf);

@@ -1,7 +1,5 @@
 package pers.czj.utils;
 
-import cn.hutool.core.lang.Pair;
-import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -138,22 +136,22 @@ public class BannerUtils {
             "                    }\n" +
             "                ]";
 
-    public List<Map<?,?>> getWebBanner(){
-        List<Map<?,?>> list = new ArrayList<>();
-        String bodyStr = HttpUtils.syncGetStr(bannerRequestUri,null,null);
-        JSONObject jsonObject = JSONUtils.get(bodyStr,"data").getJSONArray("items").getJSONObject(0);
+    public List<Map<?, ?>> getWebBanner() {
+        List<Map<?, ?>> list = new ArrayList<>();
+        String bodyStr = HttpUtils.syncGetStr(bannerRequestUri, null, null);
+        JSONObject jsonObject = JSONUtils.get(bodyStr, "data").getJSONArray("items").getJSONObject(0);
         JSONArray banners = null;
         if (jsonObject.containsKey("banner_item"))
-             banners = JSONUtils.getArr(jsonObject,"banner_item");
+            banners = JSONUtils.getArr(jsonObject, "banner_item");
         else
             banners = JSON.parseArray(DEFAULT_BANNER_ITEM);
         banners.toJavaList(JSONObject.class)
-                .forEach(item->{
+                .forEach(item -> {
                     list.add(
-                            new HashMap<String,String>(){
+                            new HashMap<String, String>() {
                                 {
-                                    put("title",item.getString("title"));
-                                    put("image",item.getString("image"));
+                                    put("title", item.getString("title"));
+                                    put("image", item.getString("image"));
                                 }
                             }
                     );

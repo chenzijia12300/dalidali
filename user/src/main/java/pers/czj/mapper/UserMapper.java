@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
-import pers.czj.entity.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.dto.DetailsUserInfoOutputDto;
+import pers.czj.entity.User;
 
 import java.util.Date;
 
@@ -24,13 +24,13 @@ public interface UserMapper extends BaseMapper<User> {
     public Long getIdByName(String username);
 
     @Update("UPDATE user SET coin_num=coin_num+#{num} WHERE id = #{id}")
-    public int incrCoinNum(long id,int num);
+    public int incrCoinNum(long id, int num);
 
     @Update("UPDATE user SET follow_num=follow_num+#{num} WHERE id = #{uid}")
-    public int incrFollowNum(long uid,int num);
+    public int incrFollowNum(long uid, int num);
 
     @Update("UPDATE user SET fans_num=fans_num+#{num} WHERE id = #{uid}")
-    public int incrFansNum(long uid,int num);
+    public int incrFansNum(long uid, int num);
 
     @Select("SELECT read_dynamic_time FROM user WHERE id = #{uid}")
     public Date findLastReadDynamicTime(long uid);

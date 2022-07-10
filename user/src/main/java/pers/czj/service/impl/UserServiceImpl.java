@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import pers.czj.entity.User;
 import pers.czj.dto.BasicUserInfoOutputDto;
 import pers.czj.dto.DetailsUserInfoOutputDto;
+import pers.czj.entity.User;
 import pers.czj.exception.UserException;
 import pers.czj.mapper.FollowMapper;
 import pers.czj.mapper.UserMapper;
@@ -35,15 +35,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User login(String account,String password) throws UserException {
-        
+    public User login(String account, String password) throws UserException {
+
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.and(userQueryWrapper -> {
-            userQueryWrapper.eq("account",account);
-            userQueryWrapper.eq("password",password);
+            userQueryWrapper.eq("account", account);
+            userQueryWrapper.eq("password", password);
         });
         User user = baseMapper.selectOne(queryWrapper);
-        if (Objects.isNull(user)){
+        if (Objects.isNull(user)) {
             throw new UserException("账户或密码错误，请重新尝试~");
         }
         return user;
@@ -52,17 +52,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Long register(User user) throws UserException {
         int row = baseMapper.insert(user);
-        if (row==0){
+        if (row == 0) {
             throw new UserException("遇到未知原因，注册账户失败，请重试~");
         }
-        log.info("row:{},id:{}",row,user.getId());
+        log.info("row:{},id:{}", row, user.getId());
         return user.getId();
     }
 
     @Override
     public Long existsUserByName(String username) {
         Long id = baseMapper.getIdByName(username);
-        return ObjectUtils.isEmpty(id)?-1l:id;
+        return ObjectUtils.isEmpty(id) ? -1l : id;
     }
 
     @Override
@@ -72,22 +72,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public int incrCoinNum(long id, int num) {
-        return baseMapper.incrCoinNum(id,num);
+        return baseMapper.incrCoinNum(id, num);
     }
 
     @Override
     public boolean updateLastReadDynamicTime(long uid, Date lastTime) {
         UpdateWrapper wrapper = new UpdateWrapper();
-        wrapper.set("read_dynamic_time",lastTime);
-        wrapper.eq("id",uid);
+        wrapper.set("read_dynamic_time", lastTime);
+        wrapper.eq("id", uid);
         return update(wrapper);
     }
 
     @Override
     public boolean updateLastReadMessageTime(long uid, Date lastTime) {
         UpdateWrapper wrapper = new UpdateWrapper();
-        wrapper.set("read_message_time",lastTime);
-        wrapper.eq("id",uid);
+        wrapper.set("read_message_time", lastTime);
+        wrapper.eq("id", uid);
         return update(wrapper);
     }
 
@@ -101,15 +101,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public BasicUserInfoOutputDto findBasicUserInfoById(long userId, long followUserId) {
         BasicUserInfoOutputDto dto = baseMapper.findBasicUserInfoById(followUserId);
-        dto.setFollow(ObjectUtils.isEmpty(followMapper.findFollowRelation(userId,followUserId))?false:true);
+        dto.setFollow(ObjectUtils.isEmpty(followMapper.findFollowRelation(userId, followUserId)) ? false : true);
 
         return dto;
     }
 
     @Override
     public DetailsUserInfoOutputDto findDetailsUserInfoById(long uid) throws UserException {
-        DetailsUserInfoOutputDto dto =  baseMapper.findDetailsUserInfoById(uid);
-        if (ObjectUtils.isEmpty(dto)){
+        DetailsUserInfoOutputDto dto = baseMapper.findDetailsUserInfoById(uid);
+        if (ObjectUtils.isEmpty(dto)) {
             throw new UserException("该用户不存在");
         }
         return dto;

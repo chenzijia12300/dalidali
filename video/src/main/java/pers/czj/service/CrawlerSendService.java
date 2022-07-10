@@ -9,10 +9,11 @@ public interface CrawlerSendService {
 
     /**
      * 发送视频爬虫信息到消息队列中
-     * @author czj
-     * @date 2020/10/12 14:56
+     *
      * @param [log]
      * @return void
+     * @author czj
+     * @date 2020/10/12 14:56
      */
     void send(VideoCrawlerLog log);
 }

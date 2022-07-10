@@ -9,11 +9,12 @@ public interface DynamicPraiseService {
 
     /**
      * 动态处理点赞信息
-     * @author czj
-     * @date 2020/10/14 15:09
-     * @param userId 用户主键
+     *
+     * @param userId  用户主键
      * @param dynamic 动态信息
      * @return boolean
+     * @author czj
+     * @date 2020/10/14 15:09
      */
-    boolean handlerPraise(long userId,Dynamic dynamic);
+    boolean handlerPraise(long userId, Dynamic dynamic);
 }

@@ -29,7 +29,7 @@ public class CommonResult<T> {
         this.message = message;
     }
 
-    private CommonResult(ResultCode resultCode,T data){
+    private CommonResult(ResultCode resultCode, T data) {
         this.code = resultCode.getCode();
         this.message = resultCode.getMessage();
         this.data = data;
@@ -37,94 +37,94 @@ public class CommonResult<T> {
 
 
     /**
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
      * @author czj
      * 返回成功通用响应信息，无数据
      * @date 2020/6/6 22:16
-     * @param [data]
-     * @return com.czj.common.CommonResult<T>
      */
-    public static <T> CommonResult<T> success(){
+    public static <T> CommonResult<T> success() {
         return success(ResultCode.SUCCESS.getMessage());
     }
 
 
     /**
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
      * @author czj
      * 返回成功自定义响应信息，无数据
      * @date 2020/6/6 22:16
+     */
+    public static <T> CommonResult<T> success(String message) {
+        return success(null, message);
+    }
+
+    /**
      * @param [data]
      * @return com.czj.common.CommonResult<T>
-     */
-    public static <T> CommonResult<T> success(String message){
-        return success(null,message);
-    }
-    /**
      * @author czj
      * 返回成功通用响应数据
      * @date 2020/6/6 22:16
-     * @param [data]
-     * @return com.czj.common.CommonResult<T>
      */
-    public static <T> CommonResult<T> success(T data){
-        return new CommonResult<>(ResultCode.SUCCESS,data);
+    public static <T> CommonResult<T> success(T data) {
+        return new CommonResult<>(ResultCode.SUCCESS, data);
     }
 
     /**
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
      * @author czj
      * 返回成功通用响应数据,自定义响应信息
      * @date 2020/6/6 22:16
-     * @param [data]
-     * @return com.czj.common.CommonResult<T>
      */
-    public static <T> CommonResult<T> success(T data,String message){
-        return new CommonResult<>(ResultCode.SUCCESS.getCode(),data,message);
+    public static <T> CommonResult<T> success(T data, String message) {
+        return new CommonResult<>(ResultCode.SUCCESS.getCode(), data, message);
     }
 
 
     /**
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
      * @author czj
      * 返回失败通用响应信息
      * @date 2020/6/6 22:19
-     * @param [data]
-     * @return com.czj.common.CommonResult<T>
      */
-    public static <T> CommonResult<T> failed(){
+    public static <T> CommonResult<T> failed() {
         return failed(null);
     }
 
     /**
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
      * @author czj
      * 返回失败自定义响应信息，无数据
      * @date 2020/6/6 22:19
-     * @param [data]
-     * @return com.czj.common.CommonResult<T>
      */
-    public static <T> CommonResult<T> failed(String message){
-        return failed(null,message);
-    }
-    /**
-     * @author czj
-     * 返回失败通用响应数据
-     * @date 2020/6/6 22:19
-     * @param [data]
-     * @return com.czj.common.CommonResult<T>
-     */
-    public static <T> CommonResult<T> failed(T data){
-        return new CommonResult<>(ResultCode.FAILED,data);
+    public static <T> CommonResult<T> failed(String message) {
+        return failed(null, message);
     }
 
     /**
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
      * @author czj
      * 返回失败通用响应数据
      * @date 2020/6/6 22:19
-     * @param [data]
-     * @return com.czj.common.CommonResult<T>
      */
-    public static <T> CommonResult<T> failed(T data,String message){
-        return new CommonResult<>(ResultCode.FAILED.getCode(),data,message);
+    public static <T> CommonResult<T> failed(T data) {
+        return new CommonResult<>(ResultCode.FAILED, data);
     }
 
-
+    /**
+     * @param [data]
+     * @return com.czj.common.CommonResult<T>
+     * @author czj
+     * 返回失败通用响应数据
+     * @date 2020/6/6 22:19
+     */
+    public static <T> CommonResult<T> failed(T data, String message) {
+        return new CommonResult<>(ResultCode.FAILED.getCode(), data, message);
+    }
 
 
     public int getCode() {

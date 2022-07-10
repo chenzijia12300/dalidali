@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import pers.czj.common.CommonResult;
 import pers.czj.dto.UserCollectionLogInputDto;
 import pers.czj.feign.UserFeignClient;
-import pers.czj.utils.CollectionUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,15 +15,15 @@ import java.util.Map;
 @Component
 public class UserFallback implements UserFeignClient {
 
-    private Map<String,Object> tempUserInfoMap;
+    private Map<String, Object> tempUserInfoMap;
 
     private CommonResult failResult;
 
     public UserFallback() {
         tempUserInfoMap = new HashMap<>();
-        tempUserInfoMap.put("username","UP_NAME");
-        tempUserInfoMap.put("img","http://116.196.105.203:9000/image/noface.png");
-        tempUserInfoMap.put("follow",Boolean.FALSE);
+        tempUserInfoMap.put("username", "UP_NAME");
+        tempUserInfoMap.put("img", "http://116.196.105.203:9000/image/noface.png");
+        tempUserInfoMap.put("follow", Boolean.FALSE);
         tempUserInfoMap = Collections.unmodifiableMap(tempUserInfoMap);
 
         failResult = CommonResult.failed("调用用户模块失败");

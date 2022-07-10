@@ -1,7 +1,6 @@
 package pers.czj.utils;
 
 
-import cn.hutool.core.util.StrUtil;
 import io.minio.MinioClient;
 import io.minio.errors.*;
 import org.slf4j.Logger;
@@ -38,31 +37,32 @@ public class MinIOUtils {
     private String url;
 
 
-
     /**
      * 上传资源到OSS服务器中,废弃原因：需要用户自己手动去closeIO流
-     * @author czj
-     * @date 2020/7/16 14:32
+     *
      * @param [fileName, inputStream]
      * @return java.lang.String
+     * @author czj
+     * @date 2020/7/16 14:32
      */
     @Deprecated
-    public String uploadFile(String fileName, InputStream inputStream, HttpContentTypeEnum contentType){
-        return uploadFileByMinIO(fileName,inputStream,contentType);
+    public String uploadFile(String fileName, InputStream inputStream, HttpContentTypeEnum contentType) {
+        return uploadFileByMinIO(fileName, inputStream, contentType);
     }
 
     /**
      * 上传文件到OSS服务器
-     * @author czj
-     * @date 2020/11/28 21:19
-     * @param fileName 文件名
-     * @param file 上传文件
+     *
+     * @param fileName    文件名
+     * @param file        上传文件
      * @param contentType 上传的文件类型
      * @return java.lang.String
+     * @author czj
+     * @date 2020/11/28 21:19
      */
-    public String uploadFile(String fileName,File file,HttpContentTypeEnum contentType){
-        try(InputStream inputStream = new FileInputStream(file)){
-            return uploadFileByMinIO(fileName,inputStream,contentType);
+    public String uploadFile(String fileName, File file, HttpContentTypeEnum contentType) {
+        try (InputStream inputStream = new FileInputStream(file)) {
+            return uploadFileByMinIO(fileName, inputStream, contentType);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -72,10 +72,10 @@ public class MinIOUtils {
     }
 
 
-    private String uploadFileByMinIO(String fileName, InputStream inputStream, HttpContentTypeEnum contentType){
-        log.debug("将上传的文件名:{}",fileName);
+    private String uploadFileByMinIO(String fileName, InputStream inputStream, HttpContentTypeEnum contentType) {
+        log.debug("将上传的文件名:{}", fileName);
         String bucketName = null;
-        switch (contentType){
+        switch (contentType) {
             case MP4:
                 bucketName = bucketVideoName;
                 break;
@@ -84,7 +84,7 @@ public class MinIOUtils {
                 break;
         }
         try {
-            minioClient.putObject(bucketName,fileName,inputStream,contentType.getContentType());
+            minioClient.putObject(bucketName, fileName, inputStream, contentType.getContentType());
         } catch (InvalidBucketNameException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -106,26 +106,26 @@ public class MinIOUtils {
         } catch (InvalidArgumentException e) {
             e.printStackTrace();
         }
-        return url+bucketName+"/"+fileName;
+        return url + bucketName + "/" + fileName;
     }
-
 
 
     /**
      * 将文件保存到本地
-     * @author czj
-     * @date 2020/7/23 19:08
+     *
      * @param fileName 文件名 例如 红莉栖.jpg
      * @param destPath 保存路径 例如 C:\Users\ZJ\Desktop\
+     * @author czj
+     * @date 2020/7/23 19:08
      */
-    public void saveVideoLocalTemp(String fileName,String destPath){
-        try(BufferedInputStream bufferedInputStream = new BufferedInputStream(minioClient.getObject(bucketImageName,fileName));
-            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(destPath,fileName)))
-        ){
-            byte [] bytes = new byte[1024];
+    public void saveVideoLocalTemp(String fileName, String destPath) {
+        try (BufferedInputStream bufferedInputStream = new BufferedInputStream(minioClient.getObject(bucketImageName, fileName));
+             BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(destPath, fileName)))
+        ) {
+            byte[] bytes = new byte[1024];
             int len = -1;
-            while((len = bufferedInputStream.read(bytes))!=-1){
-                bufferedOutputStream.write(bytes,0,len);
+            while ((len = bufferedInputStream.read(bytes)) != -1) {
+                bufferedOutputStream.write(bytes, 0, len);
             }
         } catch (InvalidBucketNameException e) {
             e.printStackTrace();
