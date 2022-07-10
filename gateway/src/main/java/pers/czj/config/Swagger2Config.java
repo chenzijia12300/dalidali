@@ -33,8 +33,8 @@ public class Swagger2Config implements SwaggerResourcesProvider {
         discoveryClient.getServices().forEach(System.out::println);
         List<SwaggerResource> list = new ArrayList<>();
         list.add(swaggerResource("视频模块API","/videoservice/v2/api-docs","1.0"));
-        list.add(swaggerResource("用户模块API","/userservice/v2/api-docs","1.0"));
-        list.add(swaggerResource("评论模块API","/commentservice/v2/api-docs","1.0"));
+//        list.add(swaggerResource("用户模块API","/userservice/v2/api-docs","1.0"));
+//        list.add(swaggerResource("评论模块API","/commentservice/v2/api-docs","1.0"));
         return list;
     }
 

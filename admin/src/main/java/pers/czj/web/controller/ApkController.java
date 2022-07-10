@@ -111,9 +111,9 @@ public class ApkController {
     }
 
 
-    @GetMapping("/apk/{level}")
-    public CommonResult updateLogLevel(@PathVariable("level") String level){
-        LoggerContext context = LogManager.getContext(false);
-    }
+//    @GetMapping("/apk/{level}")
+//    public CommonResult updateLogLevel(@PathVariable("level") String level){
+//        LoggerContext context = LogManager.getContext(false);
+//    }
 
 }

@@ -34,7 +34,6 @@ public class MinIOUtils {
     @Value("${minio.bucket-image-name}")
     private String bucketImageName;
 
-
     @Value("${minio.download-url}")
     private String url;
 
