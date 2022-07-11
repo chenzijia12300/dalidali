@@ -5,11 +5,10 @@ spring:
   application:
     name: dalidali-comment
   datasource:
-    url: jdbc:mysql://116.196.105.203:3306/dalidali?useUnicode=true&amp&useSSL=false&amp&characterEncoding=UTF-8&amp&serverTimezone=GMT%2B8&amp&allowPublicKeyRetrieval=true&amp&&autoReconnect=true
-    username: dalidali
-    password: CHENzijia12300
-  redis:
-    password: chenzijia12300
+    url: jdbc:mysql://127.0.0.1:3306/dalidali?useUnicode=true&amp&useSSL=false&amp&characterEncoding=UTF-8&amp&serverTimezone=GMT%2B8&amp&allowPublicKeyRetrieval=true&amp&&autoReconnect=true
+    username: root
+    password: root
+
   jackson:
     serialization:
       write-dates-as-timestamps: true

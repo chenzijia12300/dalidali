@@ -26,7 +26,7 @@ CREATE TABLE `apk_info` (
   `url` varchar(255) NOT NULL,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for category
@@ -38,10 +38,10 @@ CREATE TABLE `category` (
   `pid` bigint(20) NOT NULL DEFAULT '0' COMMENT '父分类的ID',
   `pro_num` bigint(20) NOT NULL DEFAULT '0' COMMENT '频道总数',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '频道图标地址',
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '频道图标地址',
   `priority` int(11) NOT NULL DEFAULT '0' COMMENT '频道显示优先级',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for danmu
@@ -56,7 +56,7 @@ CREATE TABLE `danmu` (
   `content` varchar(255) NOT NULL COMMENT '内容',
   `color` varchar(255) NOT NULL DEFAULT '#000000',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2652 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2652 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for dynamic
@@ -68,13 +68,13 @@ CREATE TABLE `dynamic` (
   `oid` bigint(20) NOT NULL COMMENT '对应视频/专栏的主键',
   `type` tinyint(4) NOT NULL COMMENT '动态类型',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `imgs` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `imgs` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `praise_num` bigint(20) NOT NULL,
   `comment_num` bigint(20) NOT NULL,
   `forward_num` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for dynamic_comment
@@ -89,7 +89,7 @@ CREATE TABLE `dynamic_comment` (
   `content` varchar(255) NOT NULL COMMENT '评论内容',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for dynamic_comment_log
@@ -100,7 +100,7 @@ CREATE TABLE `dynamic_comment_log` (
   `cid` bigint(20) NOT NULL COMMENT '评论主键',
   `uid` bigint(20) NOT NULL COMMENT '用户主键',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for dynamic_copy
@@ -112,13 +112,13 @@ CREATE TABLE `dynamic_copy` (
   `oid` bigint(20) NOT NULL COMMENT '对应视频/专栏的主键',
   `type` tinyint(4) NOT NULL COMMENT '动态类型',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `imgs` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `imgs` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `praise_num` bigint(20) NOT NULL,
   `comment_num` bigint(20) NOT NULL,
   `forward_num` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for dynamic_log
@@ -133,7 +133,7 @@ CREATE TABLE `dynamic_log` (
   `is_forward` tinyint(4) NOT NULL,
   `is_collection` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for dynamic_reply
@@ -151,7 +151,7 @@ CREATE TABLE `dynamic_reply` (
   KEY `COMMENT_ID` (`cid`),
   KEY `USER_ID` (`uid`),
   KEY `REPLY_USER_ID` (`ruid`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for dynamic_reply_log
@@ -162,7 +162,7 @@ CREATE TABLE `dynamic_reply_log` (
   `rid` bigint(20) NOT NULL COMMENT '回复主键',
   `uid` bigint(20) NOT NULL COMMENT '用户主键',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for follow
@@ -174,7 +174,7 @@ CREATE TABLE `follow` (
   `fuid` bigint(20) NOT NULL COMMENT '被关注人',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '关注时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for message
@@ -188,7 +188,7 @@ CREATE TABLE `message` (
   `content` varchar(512) DEFAULT NULL COMMENT '内容',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for old_dynamic
@@ -201,7 +201,7 @@ CREATE TABLE `old_dynamic` (
   `type` tinyint(4) NOT NULL COMMENT '动态类型',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for play_num_tab
@@ -213,7 +213,7 @@ CREATE TABLE `play_num_tab` (
   `num` bigint(20) NOT NULL COMMENT '播放量',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '对应时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=903 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=903 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for post_comment
@@ -228,7 +228,7 @@ CREATE TABLE `post_comment` (
   `content` varchar(255) NOT NULL COMMENT '评论内容',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for user
@@ -240,10 +240,10 @@ CREATE TABLE `user` (
   `password` varchar(12) NOT NULL COMMENT '密码',
   `username` varchar(48) NOT NULL COMMENT '用户名',
   `email` varchar(30) NOT NULL DEFAULT '' COMMENT '用户邮箱',
-  `img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '用户头像',
+  `img` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '用户头像',
   `follow_num` bigint(20) NOT NULL DEFAULT '0' COMMENT '关注数',
   `fans_num` bigint(20) NOT NULL DEFAULT '0' COMMENT '粉丝数',
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '个人描述',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '个人描述',
   `grade` bigint(20) NOT NULL,
   `coin_num` bigint(20) NOT NULL COMMENT '硬币数',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -252,7 +252,7 @@ CREATE TABLE `user` (
   `read_message_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `USER_ID` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for user_collection_log
@@ -264,7 +264,7 @@ CREATE TABLE `user_collection_log` (
   `vid` bigint(20) NOT NULL,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video
@@ -280,25 +280,25 @@ CREATE TABLE `video` (
   `coin_num` bigint(20) NOT NULL DEFAULT '0' COMMENT '硬币数',
   `category_p_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '视频的顶级父频道',
   `category_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '视频所属频道',
-  `category_p_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '视频所属频道字符串（冗余）',
-  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '视频所属频道字符串（冗余）',
+  `category_p_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '视频所属频道字符串（冗余）',
+  `category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '视频所属频道字符串（冗余）',
   `title` varchar(255) NOT NULL COMMENT '视频标题',
-  `urls` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '视频的路径们',
-  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '视频简介',
+  `urls` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '视频的路径们',
+  `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '视频简介',
   `tags` varchar(255) NOT NULL COMMENT '视频标签们',
   `resolution_state` int(11) NOT NULL COMMENT '视频分辨率',
   `publish_state` int(11) NOT NULL COMMENT '视频发布状态',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '视频创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '视频更改时间',
   `length` bigint(20) DEFAULT NULL COMMENT '视频时长',
-  `preview_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '预览图',
-  `cover` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '视频封面',
+  `preview_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '预览图',
+  `cover` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '视频封面',
   `width` int(11) DEFAULT NULL,
   `height` int(11) DEFAULT NULL,
   `screen_type` tinyint(4) NOT NULL,
   `compress_cover` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_comment
@@ -313,7 +313,7 @@ CREATE TABLE `video_comment` (
   `content` varchar(255) NOT NULL COMMENT '评论内容',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '评论时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_comment_log
@@ -324,7 +324,7 @@ CREATE TABLE `video_comment_log` (
   `cid` bigint(20) NOT NULL COMMENT '评论主键',
   `uid` bigint(20) NOT NULL COMMENT '用户主键',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_crawler_log
@@ -336,7 +336,7 @@ CREATE TABLE `video_crawler_log` (
   `url` varchar(255) NOT NULL,
   `time` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=216 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_crawler_log_copy
@@ -348,7 +348,7 @@ CREATE TABLE `video_crawler_log_copy` (
   `url` varchar(255) NOT NULL,
   `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_log
@@ -362,7 +362,7 @@ CREATE TABLE `video_log` (
   `is_collection` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否收藏',
   `vid` bigint(20) NOT NULL COMMENT '视频主键',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_recommend
@@ -377,7 +377,7 @@ CREATE TABLE `video_recommend` (
   `end_time` datetime DEFAULT NULL,
   `location` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_reply
@@ -395,7 +395,7 @@ CREATE TABLE `video_reply` (
   KEY `COMMENT_ID` (`cid`),
   KEY `USER_ID` (`uid`),
   KEY `REPLY_USER_ID` (`ruid`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ----------------------------
 -- Table structure for video_reply_log
@@ -406,4 +406,4 @@ CREATE TABLE `video_reply_log` (
   `rid` bigint(20) NOT NULL COMMENT '回复主键',
   `uid` bigint(20) NOT NULL COMMENT '用户主键',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
