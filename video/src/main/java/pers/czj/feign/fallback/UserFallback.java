@@ -22,7 +22,7 @@ public class UserFallback implements UserFeignClient {
     public UserFallback() {
         tempUserInfoMap = new HashMap<>();
         tempUserInfoMap.put("username", "UP_NAME");
-        tempUserInfoMap.put("img", "http://116.196.105.203:9000/image/noface.png");
+        tempUserInfoMap.put("img", "http://127.0.0.1:9000/image/noface.png");
         tempUserInfoMap.put("follow", Boolean.FALSE);
         tempUserInfoMap = Collections.unmodifiableMap(tempUserInfoMap);
 

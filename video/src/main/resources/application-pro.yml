@@ -26,8 +26,8 @@ logging:
 minio:
   accessKey: minioadmin
   secretKey: minioadmin
-  url: http://116.196.105.203:9000/
-  download-url: http://116.196.105.203:9000/
+  url: http://127.0.0.1:9000/
+  download-url: http://127.0.0.1:9000/
   bucket-video-name: dalidali
   bucket-image-name: dalidali-image
 
