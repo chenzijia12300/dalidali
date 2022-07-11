@@ -3,9 +3,6 @@ server:
 spring:
   application:
     name: dalidali-gateway
-  redis:
-    password: root
-
   mvc:
     static-path-pattern: /*
   resources:

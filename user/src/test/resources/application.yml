@@ -5,8 +5,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/dalidali?useUnicode=true&amp&useSSL=false&amp&characterEncoding=UTF-8&amp&serverTimezone=GMT%2B8&amp&allowPublicKeyRetrieval=true&amp&&autoReconnect=true
     username: root
     password: root
-  redis:
-    password: root
+
   rabbitmq:
     username: guest
     password: guest

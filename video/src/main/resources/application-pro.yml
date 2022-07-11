@@ -3,10 +3,9 @@ spring:
     name: dalidali-video
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/dalidali?useUnicode=true&amp&useSSL=false&amp&characterEncoding=UTF-8&amp&serverTimezone=GMT%2B8&amp&allowPublicKeyRetrieval=true&amp&&autoReconnect=true
-    username: dalidali
+    username: root
     password: root
-  redis:
-    password: root
+
   servlet:
     multipart:
       max-request-size: 1GB
@@ -27,8 +26,8 @@ logging:
 minio:
   accessKey: minioadmin
   secretKey: minioadmin
-  url: http://127.0.0.1:9000/
-  download-url: http://127.0.0.1:9000/
+  url: http://116.196.105.203:9000/
+  download-url: http://116.196.105.203:9000/
   bucket-video-name: dalidali
   bucket-image-name: dalidali-image
 
